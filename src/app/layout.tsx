@@ -6,6 +6,7 @@ import { BookingsContextProvider } from "@/contexts/BookingsContextProvider";
 import { CustomersContextProvider } from "@/contexts/CustomersContextProvider.";
 import TransactionsContextProvider from "@/contexts/TransactionsContextProvider";
 import { ServicesContextProvider } from "@/contexts/ServicesContextProvider";
+import Providers from "@/redux/Provider";
 
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -20,18 +21,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProvidersContextProvider>
-      <BookingsContextProvider>
-        <CustomersContextProvider>
-          <TransactionsContextProvider>
-            <ServicesContextProvider>
-              <html lang="en">
-                <body className={''}>{children}</body>
-              </html>
-            </ServicesContextProvider>
-          </TransactionsContextProvider>
-        </CustomersContextProvider>
-      </BookingsContextProvider>
-    </ProvidersContextProvider>
+     <html lang="en">
+        <body>
+          <Providers>
+            {children}
+          </Providers>
+        </body>
+      {/* <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script> */}
+    </html>
+    // <ProvidersContextProvider>
+    //   <BookingsContextProvider>
+    //     <CustomersContextProvider>
+    //       <TransactionsContextProvider>
+    //         <ServicesContextProvider>
+    //           <html lang="en">
+    //             <body className={''}>{children}</body>
+    //           </html>
+    //         </ServicesContextProvider>
+    //       </TransactionsContextProvider>
+    //     </CustomersContextProvider>
+    //   </BookingsContextProvider>
+    // </ProvidersContextProvider>
   );
 }

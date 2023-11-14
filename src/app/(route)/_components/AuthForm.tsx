@@ -25,13 +25,17 @@ import clsx from "clsx";
 import { Input } from "@/lib/utils/Input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Auth from "@/services/auth.service";
 
 interface AuthFormProps {}
 
 type Variant = "LOGIN" | "REGISTER";
-const AuthForm: FC<AuthFormProps> = ({}) => {
+const AuthForm: FC<AuthFormProps> = ({ }) => {
   const [variant, setVariant] = useState<Variant>("LOGIN");
   const [agreed, setAgreed] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false)
+
   const toggleVariant = useCallback(() => {
     if (variant === "LOGIN") {
       setVariant("REGISTER");
@@ -70,11 +74,15 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
     // const URL = data.googleLoginUrl;
     // window.open(URL, "mozillaWindow", "left=200,top=500,width=520,height=320");
   }, []);
+
+  const router = useRouter()
+  const authApis = new Auth(router)
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FieldValues>({
+  } = useForm<any>({
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -82,16 +90,14 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
       password: "",
     },
   });
-  const router = useRouter()
-  const onSubmit: SubmitHandler<FieldValues> = useCallback(
+  const onSubmit: SubmitHandler<any> = useCallback(
     (data) => {
       if (variant === "REGISTER") {
-        // Axios register
+        authApis.signup(data, { setIsLoading })
         setVariant("LOGIN");
       }
       if (variant === "LOGIN") {
-        // Axios login
-        router.push('/dashboard')
+        authApis.logIn(data, { setIsLoading })
       }
     },
     [variant, router, setVariant]
@@ -321,68 +327,14 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
             // disabled={!agreed && opt.isLoading}
             className={`h-10 font-semibold text-white rounded-md my-6 w-full`}
           >
-            {false ? (
-              <Loader2 className=" h-6 w-6 text-black animate-spin" />
+            {isLoading ? (
+              <Loader2 className=" h-6 w-6 animate-spin text-white" />
             ) : variant === "REGISTER" ? (
               "Sign up"
             ) : (
               "Log in"
             )}
           </Button>
-
-          <div className="relative mb-6">
-            <div
-              className="
-                absolute 
-                inset-0 
-                flex 
-                items-center
-              "
-            >
-              <div className="w-full max-w-[90%] sm:max-w-[75%] lg:max-w-[80%] mx-auto border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-2 text-gray-500">
-                Or continue to
-              </span>
-            </div>
-          </div>
-
-          <button
-            onClick={handleGoogleLogin}
-            type="button"
-            className="h-10 hover:scale-95 duration-500 transition-transform text-slate-700 text-xs font-semibold justify-center items-center w-full rounded-md my-1 flex border-[1px] border-slate-300"
-          >
-            <Image
-              src={imgs.google_icon}
-              alt="google_icon"
-              priority
-              className="w-5"
-            />
-            <span className="ml-2">
-              {variant === "REGISTER"
-                ? "Sign up with Google"
-                : "Log in with Google"}
-            </span>
-          </button>
-          <div className="flex flex-col gap-3 mt-4 md:mt-6 justify-center items-center text-center">
-            <p className="text-sm ">
-              {variant === "REGISTER"
-                ? "Already have an account?"
-                : "Don't have an account?"}
-            </p>
-            <button
-              onClick={() => {
-                variant === "LOGIN"
-                  ? setVariant("REGISTER")
-                  : setVariant("LOGIN");
-              }}
-              type="button"
-              className="font-semibold text-sm hover:text-afruna-gold transition duration-500 hover:underline"
-            >
-              {variant === "LOGIN" ? "Register" : "Login"}
-            </button>
-          </div>
         </section>
       </form>
     </>

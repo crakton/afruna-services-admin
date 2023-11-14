@@ -1,0 +1,108 @@
+/* Loaders */
+.lds-facebook {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.lds-facebook div {
+    display: inline-block;
+    position: absolute;
+    left: 8px;
+    width: 16px;
+    background: #fff;
+    animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+
+.lds-facebook div:nth-child(1) {
+    left: 8px;
+    animation-delay: -0.24s;
+}
+
+.lds-facebook div:nth-child(2) {
+    left: 32px;
+    animation-delay: -0.12s;
+}
+
+.lds-facebook div:nth-child(3) {
+    left: 56px;
+    animation-delay: 0;
+}
+
+@keyframes lds-facebook {
+    0% {
+        top: 8px;
+        height: 64px;
+    }
+
+    50%,
+    100% {
+        top: 24px;
+        height: 32px;
+    }
+}
+
+/* Button Spinner */
+.loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+/* Creating the dots */
+.loader span {
+    height: 25px;
+    width: 25px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background-color: white;
+    animation: loading 1s linear infinite;
+}
+
+/* Creating the loading animation*/
+@keyframes loading {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(15px);
+    }
+
+    50% {
+        transform: translateX(-15px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+
+}
+
+.loader span:nth-child(1) {
+    animation-delay: 0.1s;
+    width: 32.5px;
+    height: 32.5px;
+}
+
+.loader span:nth-child(2) {
+    animation-delay: 0.2s;
+    width: 23.21px;
+    height: 23.21px;
+}
+
+.loader span:nth-child(3) {
+    animation-delay: 0.3s;
+    width: 16.25px;
+    height: 16.25px;
+}
+
+.loader span:nth-child(4) {
+    animation-delay: 0.4s;
+    width: 9.29px;
+    height: 9.29px;
+}
+
+
