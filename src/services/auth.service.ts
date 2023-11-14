@@ -29,6 +29,7 @@ export default class Auth {
                 this.store.dispatch(updateUserBio(data.data.user));
                 // toast.success(data.message)
                 this.router?.push("/dashboard");
+                return data.data
             } else {
                 // toast.warn('Only admin can log in here!')
             }
