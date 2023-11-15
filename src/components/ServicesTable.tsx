@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useMemo, useState } from "react";
+import React, { FC, memo, useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
   SortingState,
@@ -18,17 +18,28 @@ import { T_Bookings } from "@/types/bookings";
 import { imgs } from "@/constants/images";
 import { T_Service } from "@/types/services";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
+import { IService } from "@/interfaces/IService";
 
-const ServicesTable = () => {
+interface ServicesTableProps {
+  services: IService[]
+}
+
+const ServicesTable: FC<ServicesTableProps> = ({ services }) => {
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([...service]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [data, setData] = useState<IService[]>([])
 
-  const columns = useMemo<ColumnDef<T_Service>[]>(
+  useEffect(() => {
+    setData(services)
+  }, [services])
+
+  const columns = useMemo<ColumnDef<IService>[]>(
     () => [
       {
         accessorKey: "id",
-        cell: (info) => info.getValue(),
+        cell: ({row}) => (<span key={row.id} className=" text-slate-500 text-xs ml-3">
+              {row.original.customId}
+            </span>),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
       {
@@ -43,7 +54,7 @@ const ServicesTable = () => {
               className="rounded"
             />
             <span className=" text-slate-600 text-xs">
-            Plumbing repair
+            {row.original.name}
             </span>
           </div>
         ),
@@ -55,14 +66,14 @@ const ServicesTable = () => {
         accessorKey: "category",
         cell: ({ row }) => (
             <span key={row.id} className=" text-slate-500 text-xs ml-3">
-              Household
+              {row.original.category.name}
             </span>
         ),
         header: () => <span className="text-sm text-[#7C7C7C] ml-3">Category</span>,
       },
       {
         accessorKey: "Sub_category",
-        cell: ({ row }) => ( <span key={row.id} className=" text-slate-600 text-xs ml-3">Plumbing</span>
+        cell: ({ row }) => ( <span key={row.id} className=" text-slate-600 text-xs ml-3">{row.original.subCategory.name}</span>
         ),
         header: () => (
           <span className="text-sm text-[#7C7C7C] ml-3">Sub Category</span>
@@ -70,7 +81,7 @@ const ServicesTable = () => {
       },
       {
         accessorKey: "amount",
-        cell: ({ row }) => ( <span key={row.id} className=" text-slate-800 text-xs">#64,550</span>
+        cell: ({ row }) => ( <span key={row.id} className=" text-slate-800 text-xs">{row.original.price}</span>
         ),
         header: () => (
           <span className="text-sm text-[#7C7C7C]">Amount</span>
@@ -87,8 +98,8 @@ const ServicesTable = () => {
       },
       {
         accessorKey: "status",
-        cell: ({ cell }) => {
-          switch (cell.getValue()) {
+        cell: ({ row }) => {
+          switch (row.original.status) {
             case "Pending":
               return (
                 <span className="flex justify-between items-center w-fit">
@@ -131,7 +142,7 @@ const ServicesTable = () => {
       {
         accessorKey: "created_by",
         cell: ({ row }) => (
-          <span className="text-afruna-blue text-xs">{row.original.created_by}</span>
+          <span className="text-afruna-blue text-xs">Unknown</span>
         ),
         header: () => <span className="text-sm text-[#7C7C7C]">Created By</span>,
       },

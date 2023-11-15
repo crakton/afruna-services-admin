@@ -7,11 +7,17 @@ import {
   ServicesContext,
   T_Services_Tab,
 } from "@/contexts/ServicesContextProvider";
+import { IService } from "@/interfaces/IService";
+import { setStatus } from "@/redux/features/app/table_status_slice";
+import { RootState, store } from "@/redux/store";
+import Service from "@/services/service.service";
 import { T_Services_Context } from "@/types/services";
+import { tableStatus } from "@/types/tableStatus";
 import Link from "next/link";
-import { FC, useContext } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { BsPlus } from "react-icons/bs";
 import { IoSearchOutline } from "react-icons/io5";
+import { useSelector } from "react-redux";
 
 interface pageProps {}
 const Services_Tab = [
@@ -22,10 +28,36 @@ const Services_Tab = [
   "Delected Services",
 ];
 
-const page: FC<pageProps> = ({}) => {
-  const { servicesTab, handleTabSelect } = useContext(
-    ServicesContext
-  ) as T_Services_Context;
+const page: FC<pageProps> = ({ }) => {
+  const currentStatus = useSelector((state: RootState) => state.tableStatus.status)
+  let services = useSelector((state: RootState) => state.service.services)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const serviceApis = new Service()
+
+  const handleTabSelect = (status: tableStatus) => {
+    switch (status) {
+      case 'all':
+        store.dispatch(setStatus('all'))
+        services
+        break;
+      case 'pending':
+        store.dispatch(setStatus('pending'))
+        services = services.filter((service: IService) => service.status === 'pending')
+        break;
+      default:
+        break;
+    }
+  }
+
+  useEffect(() => {
+    serviceApis.getServices({ setIsLoading })
+
+    return () => {
+      store.dispatch(setStatus('all'))
+    }
+  }, [])
+  
   return (
     <section className="flex flex-col gap-7 pb-12">
       <div className="flex justify-between items-center pl-4 lg:pr-16 lg:pl-6 bg-white w-full h-16">
@@ -47,7 +79,7 @@ const page: FC<pageProps> = ({}) => {
             <ItemPicker
               items={["A", "B"]}
               placeholder={"A-Z"}
-              getSelected={(val) => console.log(val as string)}
+              getSelected={(val) => ''}
               // contentClassName={"p-2 bg-white text-xs"}
               triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
             />
@@ -66,15 +98,15 @@ const page: FC<pageProps> = ({}) => {
             {Services_Tab.map((item, idx) => (
               <button
                 className={`${
-                  servicesTab === item && " text-sky-500"
+                  currentStatus === item.split(' ')[0].toLowerCase() && " text-sky-500"
                 } text-afruna-blue text-sm md:text-base font-bold relative flex flex-col `}
                 key={idx}
-                onClick={() => handleTabSelect(item as T_Services_Tab)}
+                onClick={() => handleTabSelect(item.split(' ')[0].toLowerCase() as tableStatus)}
               >
                 {item}
                 <div
                   className={`${
-                    servicesTab === item && "bg-sky-500"
+                    currentStatus === item && "bg-sky-500"
                   } w-full h-[2px] absolute -bottom-[0.35rem]`}
                 />
               </button>
@@ -83,7 +115,7 @@ const page: FC<pageProps> = ({}) => {
           <div className="bg-orange-200 w-full h-[2px] " />
         </div>
 
-        <ServicesTable />
+        <ServicesTable services={services} />
       </div>
     </section>
   );
