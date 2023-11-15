@@ -34,7 +34,6 @@ const CreateServicePage: FC<pageProps> = ({}) => {
   const serviceToUpdate = useSelector(
     (state: RootState) => state.service.service
   );
-
   const serviceApis = new Service();
 
   const [categories, setCategories] = useState<IServiceCategory[]>();
@@ -94,7 +93,11 @@ const CreateServicePage: FC<pageProps> = ({}) => {
     // const updateFormData = { ...serviceFormData }
     // updateFormData.availability.days = [...updateFormData.availability.days, day]
     // setServiceFormData(updateFormData)
-  };
+  }
+
+  // second steps stage
+  
+
 
   const [files, setFiles] = useState<ExtFile[]>([]);
   const [secStep, setSecStep] = useState(false);
