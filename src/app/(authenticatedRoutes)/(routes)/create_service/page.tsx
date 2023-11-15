@@ -12,24 +12,82 @@ import * as Progress from "@radix-ui/react-progress";
 import {
   FC,
   useContext,
-  useMemo,
   useEffect,
   useCallback,
   useState,
+  ChangeEvent,
 } from "react";
+import getCountryUtil from "@/lib/utils/get-country.util";
+import { IServiceCategory, IServiceSubCategory } from "@/interfaces/IService";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import Service from "@/services/services.service";
 
 interface pageProps {}
 
 const CreateServicePage: FC<pageProps> = ({}) => {
-  const pathname = usePathname();
-  console.log(pathname);
-
   const { variantCompt, setVariantCompt } = useContext(
     ServicesContext
   ) as T_Services_Context;
-  //   useEffect(() => {
-  //     setVariantCompt("1stCompt");
-  //   }, []);
+
+  const serviceId = useSelector((state: RootState) => state.service.serviceId);
+  const serviceToUpdate = useSelector(
+    (state: RootState) => state.service.service
+  );
+
+  const serviceApis = new Service();
+
+  const [categories, setCategories] = useState<IServiceCategory[]>();
+  const [subCategories, setSubCategories] = useState<IServiceSubCategory[]>();
+
+  const [name, setName] = useState<string>("");
+  const handlechangeName = (event: ChangeEvent<HTMLInputElement>) => {
+    const {
+      target: { value },
+    } = event;
+    setName(value);
+  };
+  const [serviceCategory, setServiceCategory] = useState<string>("");
+  const [subCategory, setSubCategory] = useState<string>('') 
+  const handlechangeServiceCat = (val: string) => {
+    setServiceCategory(val);
+    serviceApis
+      .getServiceSubCategories(val)
+      .then((data) => setSubCategories(data?.data));
+  };
+  const handlechangeSubCategory = (val: string) => {
+    setSubCategory(val);
+  };
+  const [state, setState] = useState<string>("");
+  const handlechangeState = (event: ChangeEvent<HTMLInputElement>) => {
+    const {
+      target: { value },
+    } = event;
+    setState(value);
+  };
+  const [country, setCountry] = useState<{ Code: string; Name: string }>({
+    Code: "",
+    Name: "",
+  });
+  const handleCountrySelection = useCallback((value: string) => {
+    let country = getCountryUtil(value);
+    setCountry(country);
+  }, []);
+  const [price, setPrice] = useState<number>(0);
+  const handlechangePrice = (value: number) => {
+    setPrice(value);
+  };
+  const [desc, setDesc] = useState<string>("");
+  const handlechangeDesc = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    const {
+      target: { value },
+    } = event;
+    setDesc(value);
+  };
+
+  useEffect(() => {
+    console.log({ name, state, price, desc, serviceCategory, subCategory });
+  }, [name, state, price, desc, serviceCategory, subCategory]);
   const addDays = (day: string) => {
     console.log(day);
 
@@ -39,17 +97,6 @@ const CreateServicePage: FC<pageProps> = ({}) => {
   };
 
   const [files, setFiles] = useState<ExtFile[]>([]);
-
-  //   const Component = useMemo(() => {
-  //     switch (variantCompt) {
-  //       case "3rdCompt":
-  //         return <ThirdComponent files={files} setFiles={setFiles} />
-  //       case "2ndCompt":
-  //         return <SecondComponent addDays={addDays} />;
-  //       default:
-  //         return <FirstComponent />;
-  //     }
-  //   }, [variantCompt]);
   const [secStep, setSecStep] = useState(false);
   const [thirdStep, setThirdStep] = useState(false);
   const orderSteps = [
@@ -104,6 +151,16 @@ const CreateServicePage: FC<pageProps> = ({}) => {
     }
   }, [setVariantCompt, variantCompt]);
 
+  useEffect(() => {
+    const categoriesData = serviceApis.getServiceCategories();
+    categoriesData.then((data) => setCategories(data?.data));
+    if (serviceId) {
+      console.log(serviceToUpdate);
+      serviceApis.getService(serviceId);
+      // setServiceFormData({...serviceToUpdate})
+    }
+  }, []);
+
   return (
     <main className=" mx-6 xl:ml-8 mt-8 mb-16 xl:mr-[4.5rem] p-2 xl:p-20 xl:pb-28 bg-white rounded-xl">
       {/* <div className="w-full   "> */}
@@ -153,7 +210,22 @@ const CreateServicePage: FC<pageProps> = ({}) => {
       ) : variantCompt === "2ndCompt" ? (
         <SecondComponent addDays={addDays} />
       ) : (
-        <FirstComponent />
+        <FirstComponent
+          name={name}
+          handlechangeName={handlechangeName}
+          price={price}
+          country={country}
+          handleCountrySelection={handleCountrySelection}
+          state={state}
+          handleStateChange={handlechangeState}
+          desc={desc}
+          handlechangeDesc={handlechangeDesc}
+          handlechangePrice={handlechangePrice}
+          cats={categories}
+          handlechangeServiceCat={handlechangeServiceCat}
+          subCats={subCategories}
+          handlechangeSubCategory={handlechangeSubCategory}
+        />
       )}
       {/* <Component.type /> */}
       <div className="flex justify-end items-center max-w-[75%] gap-8 mt-10">

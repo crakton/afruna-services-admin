@@ -1,33 +1,41 @@
-import { Input } from "@/lib/utils/Input";
-import { FC, useState, useCallback, useContext } from "react";
-import { useForm } from "react-hook-form";
+import { ChangeEvent, FC } from "react";
 import ItemPicker from "./ItemPicker";
 import ReactFlagsSelect from "react-flags-select";
-import getCountryUtil from "@/lib/utils/get-country.util";
 import { InputLabelNumber } from "./InputLabelNumber";
 import { BsPlus } from "react-icons/bs";
-import { Button } from "./ui/button";
-import { ServicesContext } from "@/contexts/ServicesContextProvider";
-import { T_Services_Context } from "@/types/services";
+import { IServiceCategory, IServiceSubCategory } from "@/interfaces/IService";
 
-interface FirstComponentProps {}
+interface FirstComponentProps {
+  name: string;
+  handlechangeName: (event: ChangeEvent<HTMLInputElement>) => void;
+  price: number;
+  handlechangePrice: (value: number) => void;
+  country: { Code: string; Name: string };
+  handleCountrySelection: (value: string) => void;
+  state: string;
+  handleStateChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  desc: string;
+  handlechangeDesc: (event: ChangeEvent<HTMLTextAreaElement>) => void;
+  cats: IServiceCategory[] | undefined;
+  handlechangeServiceCat: (val: string) => void
+  subCats: IServiceSubCategory[] | undefined;
+  handlechangeSubCategory: (val : string) => void
+}
 
-const FirstComponent: FC<FirstComponentProps> = ({}) => {
-  const [country, setCountry] = useState<{ Code: string; Name: string }>({
-    Code: "",
-    Name: "",
-  });
-  const [price, setPrice] = useState<number>(0);
-  const [description, setDescription] = useState<string>("");
-  const {
-    register,
-    formState: { errors },
-  } = useForm();
-  const handleCountrySelection = useCallback((value: string) => {
-    let country = getCountryUtil(value);
-    setCountry(country);
-  }, []);
-
+const FirstComponent: FC<FirstComponentProps> = ({
+  name,
+  handlechangeName,
+  handlechangePrice,
+  country,
+  handleCountrySelection,
+  state,
+  handleStateChange,
+  desc,
+  handlechangeDesc,
+  cats,
+  handlechangeServiceCat,
+  handlechangeSubCategory
+}) => {
   return (
     <>
       <div className="flex flex-col gap-2 justify-start items-start mt-6 xl:max-w-[50%]">
@@ -39,33 +47,37 @@ const FirstComponent: FC<FirstComponentProps> = ({}) => {
         </p>
       </div>
       <form className="w-full xl:max-w-[75%] flex flex-col gap-4 mt-8">
-        <Input
-          label="Business Name"
-          id={"businessName"}
-          type={"text"}
-          placeholder="Betali 7 lavinorima plumbing service"
-          register={register}
-          errors={errors}
-          className="px-2.5 py-2"
-        />
+        <fieldset className="w-full">
+          <label
+            htmlFor={"name"}
+            className="text-sm font-semibold text-[#232F3E] leading-6"
+          >
+            {"Business Name"}
+          </label>
+          <div className={`mt-1 flex justify-center items-center gap-2`}>
+            <input
+              id={"name"}
+              type={"text"}
+              value={name}
+              onChange={handlechangeName}
+              placeholder={"Betali 7 lavinorima plumbing service"}
+              autoComplete={"name"}
+              className={`form-input px-2.5 py-2 w-full border-[2px] focus-within:border-[2px] focus-within:border-[#FFDBB6] 
+              focus-within:shadow-md text-sm font-medium rounded-md placeholder:text-gray-400 
+              focus-visible:shadow-md transition duration-300 sm:text-[0.8rem] sm:leading-6`}
+            />
+          </div>
+        </fieldset>
         <div className="flex w-full flex-col gap-1 xl:flex-row gap-x-6">
           <fieldset className="flex w-full flex-col gap-1">
             <span className="text-sm font-semibold text-[#232F3E] leading-6">
               Service Category
             </span>
             <ItemPicker
-              items={[
-                "Kaduna state",
-                "FCT",
-                "Osun state",
-                "Oyo state",
-                "Lagos state",
-                "Ogun State",
-              ]}
-              placeholder={"Niger State"}
-              getSelected={(value) => console.log(value)}
-              // contentClassName={"p-2 bg-white text-xs"}
-              contentClassName="z-40"
+              items={cats!?.map((i) => i.name)}
+              placeholder={"Home Service"}
+              getSelected={(val) => handlechangeServiceCat(val as string)}
+              contentClassName="z-40 p-2 bg-white text-xs"
               triggerClassName="p-[13px] rounded-lg min-w-[100%] "
             />
           </fieldset>
@@ -76,7 +88,7 @@ const FirstComponent: FC<FirstComponentProps> = ({}) => {
             <ItemPicker
               items={[]}
               placeholder={"Bosso estate minnna class 1baluba"}
-              getSelected={(value) => console.log(value)}
+              getSelected={(val) => handlechangeSubCategory(val as string)}
               contentClassName="z-40"
               triggerClassName="p-[13px] rounded-lg min-w-[100%]"
             />
@@ -98,43 +110,38 @@ const FirstComponent: FC<FirstComponentProps> = ({}) => {
               // customLabels={}
               selectButtonClassName="py-2"
               className="myCustomFlagsSelect mb-0 mt-1 "
-              // border-[2px] focus-within:border-[2px] focus-within:border-[#FFDBB6] focus-within:shadow-md w-full text-sm
-              // font-medium  rounded-md placeholder:text-gray-400 focus-visible:shadow-md
-              // transition duration-300 sm:text-sm sm:leading-6
             />
-            {/* {country.Name === "" && (
-                  <span
-                    ref={localeRef}
-                    className="text-red-500 block bg-red-100 rounded-sm w-fit p-1"
-                  ></span>
-                )} */}
           </fieldset>
-          <Input
-            label="State/province"
-            id={"state"}
-            type={"text"}
-            placeholder="Enter your state"
-            register={register}
-            errors={errors}
-            className="px-2.5 py-2"
-          />
+          <fieldset className="w-full">
+            <label
+              htmlFor={"state"}
+              className="text-sm font-semibold text-[#232F3E] leading-6"
+            >
+              {"State/province"}
+            </label>
+            <div className={`mt-1 flex justify-center items-center gap-2`}>
+              <input
+                id={"state"}
+                type={"text"}
+                value={state}
+                onChange={handleStateChange}
+                placeholder={"Enter your state"}
+                autoComplete={"state"}
+                // disabled={isLoading}
+                className={`form-input px-2.5 py-1.5 w-full border-[2px] focus-within:border-[2px] focus-within:border-[#FFDBB6] 
+              focus-within:shadow-md text-sm font-medium rounded-md placeholder:text-gray-400 
+              focus-visible:shadow-md transition duration-300 sm:text-[0.8rem] sm:leading-6`}
+              />
+            </div>
+          </fieldset>
         </div>
-        <div className="flex flex-col xl:flex-row gap-x-6">
+        <div className="flex flex-col xl:flex-row gap-x-6 md:max-w-[48.5%]">
           <InputLabelNumber
-            getValue={(val) => setPrice(val as unknown as number)}
+            getValue={(val) => handlechangePrice(val as number)}
             headerTitle="Price (in USD)"
             placeholder="0"
             prefix
             suffix
-          />
-          <Input
-            label="Country"
-            id={"country"}
-            type={"text"}
-            placeholder=""
-            register={register}
-            errors={errors}
-            className="px-2.5 py-2"
           />
         </div>
         <fieldset className="w-full flex flex-col gap-1">
@@ -142,21 +149,14 @@ const FirstComponent: FC<FirstComponentProps> = ({}) => {
           <div className="flex flex-col">
             <textarea
               rows={5}
-              value={description}
-              // ref={textareaRef}
-              onChange={(e) => setDescription(e.target.value)}
+              value={desc}
+              onChange={ handlechangeDesc}
               placeholder="Enter dervice description ..."
               style={{ resize: "none" }}
               className="p-3  border-[2px] focus-within:border-[2px] focus-within:border-[#FFDBB6] focus-within:shadow-md w-full text-sm
               font-medium rounded-md placeholder:text-gray-400 focus-visible:shadow-md 
               transition duration-300 sm:text-sm sm:leading-6"
             />
-            {/* {comment === "" && (
-                              <span
-                                ref={textareaRef}
-                                className="text-rose-500 block text-xs bg-white rounded-sm w-fit mt-1"
-                              ></span>
-                            )} */}
           </div>
         </fieldset>
 
@@ -184,13 +184,13 @@ const FirstComponent: FC<FirstComponentProps> = ({}) => {
                 triggerClassName="p-[13px] rounded-lg min-w-[100%] "
               />
             </fieldset>
-            <InputLabelNumber
+            {/* <InputLabelNumber
               getValue={(val) => setPrice(val as unknown as number)}
               headerTitle="Price (in USD)"
               placeholder="0"
               prefix
               suffix
-            />
+            /> */}
           </div>
           <div className="flex justify-start items-center pl-4">
             <button className="text-sm text-blue-600 font-semibold flex justify-start items-center">

@@ -6,6 +6,7 @@ import { TSuccessResponse } from "@/types/auth.types";
 import { T_loading_provider } from "@/types/loader.types";
 import axios from "axios";
 import Cookies from 'js-cookie';
+import { toast } from "react-toastify";
 
 export default class Auth {
     private router: any
@@ -27,18 +28,18 @@ export default class Auth {
                 this.store.dispatch(login());
                 sessionStorage.setItem('user', JSON.stringify(data.data.user))
                 this.store.dispatch(updateUserBio(data.data.user));
-                // toast.success(data.message)
+                toast.success(data.message)
                 this.router?.push("/dashboard");
                 return data.data
             } else {
-                // toast.warn('Only admin can log in here!')
+                toast.warn('Only admin can log in here!')
             }
         } catch (error: any) {
            console.log(error)
             if (error.response.status === 500) {
-                // toast.error(`${error.response.statusText}, try again later`)
+                toast.error(`${error.response.statusText}, try again later`)
             }
-            // toast.error(error.response.data.message)
+            toast.error(error.response.data.message)
         } finally {
             setIsLoading && setIsLoading(false)
         }

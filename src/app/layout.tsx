@@ -21,12 +21,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-     <html lang="en">
-        <body>
-          <Providers>
-            {children}
-          </Providers>
-        </body>
+    <html lang="en">
+      <body>
+        <Providers>
+          <ServicesContextProvider>{children}</ServicesContextProvider>
+        </Providers>
+      </body>
       {/* <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script> */}
     </html>
     // <ProvidersContextProvider>
