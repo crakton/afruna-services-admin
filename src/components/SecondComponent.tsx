@@ -1,4 +1,3 @@
-import { Input } from "@/lib/utils/Input";
 import clsx from "clsx";
 import { FC, useState } from "react";
 import { BsPlus } from "react-icons/bs";
@@ -8,7 +7,8 @@ interface SecondComponentProps {
 }
 
 const SecondComponent: FC<SecondComponentProps> = ({ addDays }) => {
-  const [days, setDays] = useState<
+  const [days, setDays] = useState([])
+  const [listedDays, setListedDays] = useState<
     { value: number; title: string; selected: boolean }[]
   >([
     { value: 0, title: "All Days", selected: false },
@@ -20,18 +20,37 @@ const SecondComponent: FC<SecondComponentProps> = ({ addDays }) => {
     { value: 6, title: "Saturday", selected: false },
     { value: 7, title: "Sunday", selected: false },
   ]);
+  // const handleDaysSelected = (day: {
+  //   value: number;
+  //   title: string;
+  //   selected: boolean;
+  // }) => {
+  //   if (day.selected == false) {
+  //     day.selected = true;
+  //     setListedDays([...listedDays]);
+  //     setDays();
+  //   } else {
+  //     day.selected = false;
+  //   }
+  // };
   const handleDaysSelected = (day: {
     value: number;
     title: string;
     selected: boolean;
   }) => {
-    if (day.selected == false) {
-      day.selected = true;
-      setDays([...days]);
-      addDays(day.title);
-    } else {
-      day.selected = false;
+    // Create a copy of the 'days' array to avoid mutating the original state
+    const updatedDays = [...days];
+  
+    // Find the index of the clicked day
+    const dayIndex = updatedDays.findIndex((d) => d.value === day.value);
+  
+    // Update the selected state of the clicked day
+    if (dayIndex !== -1) {
+      updatedDays[dayIndex].selected = !updatedDays[dayIndex].selected;
     }
+  
+    // Set the updated 'days' array state
+    setDays(updatedDays);
   };
   return (
     <>
@@ -45,7 +64,7 @@ const SecondComponent: FC<SecondComponentProps> = ({ addDays }) => {
       </div>
       <div className="w-full xl:max-w-[75%] flex flex-col gap-4 mt-8">
         <div className="flex flex-wrap gap-2">
-          {days.map((day) => (
+          {listedDays.map((day) => (
             <button
               onClick={() => handleDaysSelected(day)}
               key={day.title}

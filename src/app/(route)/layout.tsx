@@ -8,9 +8,9 @@ interface layoutProps {
 
 const AuthLayout: FC<layoutProps> = ({ children }) => {
   return (
-    <div className="h-full">
+    <div className="min-h-screen flex flex-col h-full">
       <AuthHeader />
-      <div className="auth-bg min-h-full">{children}</div>
+      <div className="auth-bg min-h-screen h-full">{children}</div>
     </div>
   );
 };
