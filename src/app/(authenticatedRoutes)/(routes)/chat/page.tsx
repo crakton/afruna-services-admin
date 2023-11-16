@@ -7,6 +7,10 @@ import { useRouter } from "next/navigation";
 import { users } from "@/constants/data";
 import { UsersList } from "@/components/UsersList";
 import EmptyState from "@/components/EmptyState";
+import { Button } from "@/components/ui/button";
+import { FaPlus } from "react-icons/fa";
+import { BiSolidMessageSquareDetail } from "react-icons/bi";
+import { MdMessage } from "react-icons/md";
 
 interface pageProps {}
 
@@ -26,7 +30,7 @@ const ChatPage: FC<pageProps> = ({}) => {
         </h1>
       </div>
       <div className="flex gap-4 max-w-[96%] w-full mx-auto">
-        <div className="flex gap-2 flex-col bg-[#FDFDFF] h-full w-full max-h-[74vh] max-w-[100%] md:max-w-[60%] lg:max-w-[40%] xl:max-w-[30%] xl:max-h-[75vh] overflow-hidden border border-[#D5D5E6] rounded-2xl pt-6 xl:pl-2">
+        <div className="relative flex gap-2 flex-col bg-[#FDFDFF] h-full w-full max-h-[74vh] max-w-[100%] md:max-w-[60%] lg:max-w-[40%] xl:max-w-[30%] xl:max-h-[75vh] overflow-hidden border border-[#D5D5E6] rounded-2xl pt-6 xl:pl-2">
           <h2 className="ml-4 text-[1.2rem] text-[#0C0E3B] font-medium tracking-normal">
             Messages
           </h2>
@@ -40,7 +44,7 @@ const ChatPage: FC<pageProps> = ({}) => {
               <IoSearchOutline className="text-2xl" />
             </div>
           </div>
-          <div className="mt-1 pt-1 h-[63vh] sm:h-[55vh] text-xl rounded-lg overflow-hidden overflow-y-auto">
+          <div className=" mt-1 pt-1 h-[63vh] sm:h-[55vh] text-xl rounded-lg overflow-hidden overflow-y-auto">
             <div className="flex flex-col gap-2 p-4 ">
               {users && users.length
                 ? users.map((convo) => {
@@ -58,6 +62,11 @@ const ChatPage: FC<pageProps> = ({}) => {
                   })
                 : null}
             </div>
+          </div>
+          <div className="absolute right-4 bottom-8">
+            <button className="w-[2.3rem] h-[2.3rem] flex justify-center items-center rounded-full bg-orange-400 hover:bg-orange-500 hover:scale-105 transition-all duration-300">
+              <BiSolidMessageSquareDetail className="text-white md:text-xl font-extrabold" />
+            </button>
           </div>
         </div>
         <div className="hidden md:block h-[73vh] border border-[#D5D5E6] overflow-hidden sm:mr-2 xl:mr-16 w-full rounded-2xl">

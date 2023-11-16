@@ -12,12 +12,12 @@ export const useRoute = () => {
   const { conversationId } = useConversation();
   const params = useParams();
 
-  const userId = useMemo(() => {
-    if (!params?.userId) {
+  const customerId = useMemo(() => {
+    if (!params?.customerId) {
       return "";
     }
-    return params.userId as string;
-  }, [params?.userId]);
+    return params.customerId as string;
+  }, [params?.customerId]);
 
   const providerId = useMemo(() => {
     if (!params?.providerId) {
@@ -65,7 +65,7 @@ export const useRoute = () => {
       {
         title: "Users",
         icon: MdGroups2,
-        active: pathname === "/users" || !!userId,
+        active: pathname === "/users" || !!customerId,
         href: "/users",
         hasSubNav: false,
       },

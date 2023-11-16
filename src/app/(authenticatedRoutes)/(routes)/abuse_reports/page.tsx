@@ -1,11 +1,19 @@
-'use client'
+"use client";
 
 import ReportTable from "@/components/ReportTable";
-import { FC } from "react";
+import { RootState } from "@/redux/store";
+import AbuseReports from "@/services/abuse.service";
+import { FC, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 interface pageProps {}
 
 const AbuseReportpage: FC<pageProps> = ({}) => {
+  const loading = useSelector((state: RootState) => state.loading.loading);
+  const abuseReportApis = new AbuseReports();
+  useEffect(() => {
+    abuseReportApis.getAbuseReports();
+  }, []);
   return (
     <section className="flex flex-col gap-7 ">
       <div className="flex justify-start items-center pl-4 lg:pl-6 bg-white w-full h-16">
@@ -15,9 +23,13 @@ const AbuseReportpage: FC<pageProps> = ({}) => {
       </div>
 
       {/* report table */}
-      <div className="flex px-6 xl:pr-32 w-full">
-        <ReportTable />
-      </div>
+      {loading ? (
+        <>loading</>
+      ) : (
+        <div className="flex px-6 xl:pr-32 w-full">
+          <ReportTable />
+        </div>
+      )}
     </section>
   );
 };

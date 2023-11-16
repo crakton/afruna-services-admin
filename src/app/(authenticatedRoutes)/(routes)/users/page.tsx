@@ -1,25 +1,72 @@
 "use client";
 
-import { FC, useContext } from "react";
-import {
-  CustomersContext,
-  T_Customers_Tab,
-} from "@/contexts/CustomersContextProvider.";
-import { T_Customers_Context } from "@/types/customers";
+import { FC, useEffect } from "react";
 import CustomersTable from "@/components/CustomersTable";
 import { IoSearchOutline } from "react-icons/io5";
 import ItemPicker from "@/components/ItemPicker";
 import { Button } from "@/components/ui/button";
 import { BsPlus } from "react-icons/bs";
+import { useSelector } from "react-redux";
+import { RootState, store } from "@/redux/store";
+import Customers from "@/services/customer.service";
+import {
+  setCustomerStatus,
+  setCustomers,
+} from "@/redux/features/app/customer_slice";
 
 interface pageProps {}
 
 const customers_Tab = ["All Customers", "Active", "Inactive", "Delected"];
+export type tableStatus = "all" | "active" | "inactive" | "deleted";
 
 const CustomersPage: FC<pageProps> = ({}) => {
-  const { CustomersTab, handleTabSelect } = useContext(
-    CustomersContext
-  ) as T_Customers_Context;
+  const currentStatus = useSelector(
+    (state: RootState) => state.customer.customerStatus
+  );
+  const customers = useSelector((state: RootState) => state.customer.customers);
+  
+  const customersApis = new Customers();
+
+  const handleTabSelect = (status: tableStatus) => {
+    switch (status) {
+      case "all":
+        store.dispatch(setCustomerStatus("all"));
+        customersApis.getAllCustomers();
+        break;
+      case "active":
+        store.dispatch(setCustomerStatus("active"));
+        store.dispatch(
+          setCustomers(
+            customers.filter((customer: any) => customer.status === "active")
+          )
+        );
+        break;
+      case "inactive":
+        store.dispatch(setCustomerStatus("active"));
+        store.dispatch(
+          setCustomers(
+            customers.filter((customer: any) => customer.status === "inactive")
+          )
+        );
+        break;
+      case "deleted":
+        store.dispatch(setCustomerStatus("deleted"));
+        store.dispatch(
+          setCustomers(
+            customers.filter((customer: any) => customer.status === "active")
+          )
+        );
+        break;
+      default:
+        break;
+    }
+  };
+  useEffect(() => {
+    customersApis.getAllCustomers()
+    return () => {
+      store.dispatch(setCustomerStatus('all'))
+    }
+  }, [])
 
   return (
     <section className="flex flex-col gap-7 ">
@@ -59,15 +106,21 @@ const CustomersPage: FC<pageProps> = ({}) => {
             {customers_Tab.map((item, idx) => (
               <button
                 className={`${
-                  CustomersTab === item && " text-sky-500"
+                  currentStatus === item.split(" ")[0].toLowerCase() &&
+                  " text-sky-500"
                 } text-afruna-blue text-sm md:text-base font-bold relative flex flex-col `}
                 key={idx}
-                onClick={() => handleTabSelect(item as T_Customers_Tab)}
+                onClick={() =>
+                  handleTabSelect(
+                    item.split(" ")[0].toLowerCase() as tableStatus
+                  )
+                }
               >
                 {item}
                 <div
                   className={`${
-                    CustomersTab === item && "bg-sky-500"
+                    currentStatus === item.split(" ")[0].toLowerCase() &&
+                    "bg-sky-500"
                   } w-full h-[2px] absolute -bottom-[0.35rem]`}
                 />
               </button>

@@ -1,11 +1,20 @@
 "use client";
 
 import ReviewsTable from "@/components/ReviewsTable";
-import { FC } from "react";
+import { RootState } from "@/redux/store";
+import Reviews from "@/services/reviews.service";
+import { FC, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 interface pageProps {}
 
 const ReviewPage: FC<pageProps> = ({}) => {
+  const loading = useSelector((state: RootState) => state.loading.loading);
+  const reviewsApis = new Reviews();
+  useEffect(() => {
+    reviewsApis.getReviews()
+  }, []);
+
   return (
     <section className="flex flex-col gap-7 ">
       <div className="flex justify-start items-center pl-4 lg:pl-6 bg-white w-full h-16">
@@ -15,9 +24,13 @@ const ReviewPage: FC<pageProps> = ({}) => {
       </div>
 
       {/* report table */}
-      <div className="flex px-6  w-full">
-        <ReviewsTable />
-      </div>
+      {loading ? (
+        <>loading</>
+      ) : (
+        <div className="flex px-6 w-full">
+          <ReviewsTable />
+        </div>
+      )}
     </section>
   );
 };
