@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback } from "react";
+import { FC, useCallback, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 // import { UsersList } from "../_components/UsersList";
 import { useRouter } from "next/navigation";
@@ -22,6 +22,9 @@ const ChatPage: FC<pageProps> = ({}) => {
     },
     [router]
   );
+  
+	const [isOpen, setIsopen] = useState(false);
+	const onClose = useCallback(() => setIsopen(false), []);
   return (
     <section className="flex flex-col gap-4 ">
       <div className="flex justify-start items-center pl-4 lg:pl-6 bg-white w-full h-16">
@@ -78,3 +81,159 @@ const ChatPage: FC<pageProps> = ({}) => {
 };
 
 export default ChatPage;
+
+// const ShowModal: FC<{ children: ReactNode; cancelModel: () => void }> = memo(
+// 	({ children, cancelModel }) => (
+// 		<div
+// 			onClick={cancelModel}
+// 			className={
+// 				"absolute cursor-pointer grid place-items-center z-20 left-0 top-0 w-screen h-screen bg-black/50 py-10"
+// 			}
+// 		>
+// 			{children}
+// 		</div>
+// 	)
+// );
+// {isOpen ? (
+//   <ShowModal cancelModel={onClose}>
+//     <div
+//       className="bg-white relative h-[90vh] rounded-lg w-[300px] md:w-[500px] z-30 overflow-y-auto flex flex-col text-start p-10"
+//       role="buyer div"
+//     >
+//       <button
+//         className="place-self-end"
+//         onClick={onClose}
+//         type="button"
+//       >
+//         <FaTimes />
+//       </button>
+
+//       <Select.Root
+//         onValueChange={(val) =>
+//           setSelectedBuyer(val as unknown as IUsers)
+//         }
+//       >
+//         <Select.Trigger
+//           className={classNames(
+//             "w-full py-2 px-3 bg-white focus:bg-white text-sm text-[#777777] border border-slate-300 flex justify-between items-center rounded-lg"
+//           )}
+//         >
+//           <Select.Value placeholder={"Select Vendor"} />
+//           <Select.Icon className="SelectIcon">
+//             <RxChevronDown className="w-5 h-5 text-black font-extrabold" />
+//           </Select.Icon>
+//         </Select.Trigger>
+//         <Select.Portal>
+//           <Select.Content
+//             className="relative h-[40vh] overflow-y-auto w-full bg-white z-30"
+//             position="popper"
+//           >
+//             <Select.Viewport className="relative bg-white z-30">
+//               {vendors?.map((vendor) => {
+//                 return (
+//                   <SelectItem
+//                     onClick={() =>
+//                       setSelectedBuyer(vendor)
+//                     }
+//                     key={vendor._id}
+//                     value={
+//                       vendor as unknown as string
+//                     }
+//                   >
+//                     {vendor.firstName}{" "}
+//                     {vendor.lastName}
+//                   </SelectItem>
+//                 );
+//               })}
+//             </Select.Viewport>
+//           </Select.Content>
+//         </Select.Portal>
+//       </Select.Root>
+
+//       <fieldset>
+//         <label
+//           className="text-md font-medium"
+//           htmlFor="first-name"
+//         >
+//           First Name
+//         </label>
+//         <input
+//           disabled={true}
+//           id="first-name"
+//           type="text"
+//           name="first-name"
+//           value={selectedVendor?.firstName ?? "Nill"}
+//           className="w-full placeholder:text-slate-900 my-3 px-5 py-3 border-[1px] border-slate-300 rounded-md shadow-sm outline-none focus:outline-slate-900 focus:border-none focus:outline-[1px]"
+//         />
+//       </fieldset>
+//       <fieldset>
+//         <label
+//           className="text-md font-medium"
+//           htmlFor="last-name"
+//         >
+//           Last Name
+//         </label>
+//         <input
+//           disabled={true}
+//           id="last-name"
+//           type="text"
+//           name="last-name"
+//           value={selectedVendor?.lastName ?? "Nill"}
+//           className="w-full placeholder:text-slate-900 my-3 px-5 py-3 border-[1px] border-slate-300 rounded-md shadow-sm outline-none focus:outline-slate-900 focus:border-none focus:outline-[1px]"
+//         />
+//       </fieldset>
+
+//       <fieldset>
+//         <label
+//           className="text-md font-medium"
+//           htmlFor="user-email"
+//         >
+//           Email
+//         </label>
+//         <input
+//           disabled={true}
+//           id="user-email"
+//           type="email"
+//           value={selectedVendor?.email ?? "Nill"}
+//           placeholder="Enter user's name"
+//           className="w-full placeholder:text-slate-900 my-3 px-5 py-3 border-[1px] border-slate-300 rounded-md shadow-sm outline-none focus:outline-slate-900 focus:border-none focus:outline-[1px]"
+//         />
+//       </fieldset>
+
+//       {/* 	<fieldset>
+//         <label
+//           className="text-md font-medium"
+//           htmlFor="phone-no"
+//         >
+//           Phone Number
+//         </label>
+//         <input
+//           disabled={true}
+//           data-phone-no="phone-no"
+//           id="phone-no"
+//           type="number"
+//           max={11}
+//           maxLength={11}
+//           name="phone-no"
+//           value={phone ?? 0}
+//           className="w-full data-[phone-no=phone-no]:textfield appearance-none placeholder:text-slate-900 my-3 px-5 py-3 border-[1px] border-slate-300 rounded-md shadow-sm outline-none focus:outline-slate-900 focus:border-none focus:outline-[1px]"
+//         />
+//       </fieldset> */}
+
+//       <div className="space-x-4 place-self-end mt-10 ">
+//         <button
+//           onClick={onClose}
+//           className="p-3 rounded-sm text-sm text-red-500 bg-white"
+//         >
+//           <span className="ml-2">Cancel</span>
+//         </button>
+//         <button
+//           onClick={handleAddUser}
+//           className="p-3 rounded-sm text-sm text-white bg-green-600"
+//         >
+//           <span className="ml-2">Add User</span>
+//         </button>
+//       </div>
+//     </div>
+//   </ShowModal>
+// ) : null}
