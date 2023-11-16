@@ -2,14 +2,30 @@
 
 import { Button } from "@/components/ui/button";
 import { Dropzone, ExtFile, FileMosaic } from "@files-ui/react";
+import { Loader2 } from "lucide-react";
 import { FC, useCallback, useState } from "react";
 import { GoTrash } from "react-icons/go";
 import { TbUpload } from "react-icons/tb";
+
+import Image from "next/image";
+import uploadIcon from '../../../../assests/imgs/upload.png'
+import { toast } from "react-toastify";
+import Service from "@/services/service.service";
+import { useRouter } from "next/navigation";
 
 interface pageProps {}
 
 const CreateCategoryPage: FC<pageProps> = ({}) => {
   const [files, setFiles] = useState<ExtFile[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [categoryForm, setCategoryForm] = useState({
+    name: '',
+    icon: ''
+  })
+
+  const serviceApis = new Service()
+  const router = useRouter()
+
   const updateFiles = useCallback((incommingFiles: ExtFile[]) => {
     if (incommingFiles.length <= 10) {
       setFiles(
@@ -26,12 +42,44 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
       alert("Maximum files reached!");
     }
   }, []);
+
   const removeFile = useCallback(
     (id: string | number | undefined) => {
       setFiles(files.filter((x: ExtFile) => x.id !== id));
     },
     [files]
   );
+
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+
+    if (name == 'media') {
+      const file = e.target.files[0]
+      if (file) {
+        console.log(e.target.files[0])
+        setCategoryForm({...categoryForm, icon: file})
+      }
+    }
+    setCategoryForm({ ...categoryForm, [name]: value });
+  };
+
+  const createCategory = (e: any) => {
+    e.preventDefault()
+    if (categoryForm.name == '') {
+      toast.error('Category name must be provided')
+      return
+    }
+
+    let formData = new FormData()
+    formData.append('name', categoryForm.name)
+    formData.append('icon', categoryForm.icon)
+
+    serviceApis.createCategory(formData, { setIsLoading })
+      .then((data) => {
+        toast.success('Category created')
+        router.push('/category')
+      })
+  }
 
   return (
     <section className="flex flex-col gap-6 pb-12 ">
@@ -44,7 +92,7 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
         <h2 className=" font-semibold text-black mb-6">
           Category Creation
         </h2>
-        <form className="flex flex-col gap-4 max-w-[70%] w-full">
+        <form onSubmit={createCategory} className="flex flex-col gap-4 max-w-[70%] w-full">
           <fieldset className="w-full">
             <label
               htmlFor={"category_name"}
@@ -54,9 +102,11 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
             </label>
             <div className={`mt-1 flex justify-center items-center gap-2`}>
               <input
-                id={"category_name"}
-                type={"text"}
-                placeholder={"Enter Category Name"}
+                name="name"
+                type="text"
+                onChange={handleChange}
+                value={categoryForm.name}
+                placeholder="Enter Category Name"
                 autoComplete={"category_name"}
                 className={`form-input w-full border-[2px] px-3 py-2.5 focus-within:border-[2px] focus-within:border-[#FFDBB6] 
               focus-within:shadow-md text-sm font-medium rounded-md placeholder:text-gray-400 
@@ -64,7 +114,20 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
               />
             </div>
           </fieldset>
-          <div className="mt-8 flex flex-col gap-4 w-full">
+          <div className="form-control">
+              <div className="custom-upload-btn">
+                  <input type="file" hidden name="media" onChange={handleChange} id="media" />
+                  <label htmlFor="media" className="border-dashed border-[1px] rounded-[8px] cursor-pointer border-[#00AEEF] py-[30px] flex flex-col items-center justify-center">
+                      <span className="font-semibold text-lg mb-[11px]">Drag and drop files here</span>
+                      <span className="text-[#979797] text-sm mb-6">The file size limite is 1 MB per file</span>
+                      <span className="button flex items-center justify-center gap-2 bg-[#FED6AC] px-4 py-2 text-sm">
+                          <Image src={uploadIcon} alt="" />
+                          Browse
+                      </span>
+                  </label>
+              </div>
+          </div>
+          {/* <div className="mt-8 flex flex-col gap-4 w-full">
             <Dropzone
               value={files}
               onChange={updateFiles}
@@ -111,11 +174,13 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
                 ))}
               </div>
             )}
-          </div>
+          </div> */}
           <div className="flex justify-end mt-8">
-            <Button type="button" variant={"primary"}>
+            {isLoading ?
+              <Loader2 className=" h-6 w-6 animate-spin text-white" />
+              : <Button type="submit" variant={"primary"}>
               SUbmit
-            </Button>
+            </Button>}
           </div>
         </form>
       </div>

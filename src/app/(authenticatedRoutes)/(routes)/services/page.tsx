@@ -8,6 +8,7 @@ import {
   T_Services_Tab,
 } from "@/contexts/ServicesContextProvider";
 import { IService } from "@/interfaces/IService";
+import { setServices } from "@/redux/features/app/service_slice";
 import { setStatus } from "@/redux/features/app/table_status_slice";
 import { RootState, store } from "@/redux/store";
 import Service from "@/services/service.service";
@@ -39,11 +40,12 @@ const page: FC<pageProps> = ({ }) => {
     switch (status) {
       case 'all':
         store.dispatch(setStatus('all'))
-        services
+        serviceApis.getServices({ setIsLoading })
         break;
       case 'pending':
         store.dispatch(setStatus('pending'))
-        services = services.filter((service: IService) => service.status === 'pending')
+        store.dispatch(setServices(services.filter((service: IService) => service.status === 'pending')))
+        // services = services.filter((service: IService) => service.name === 'pending')
         break;
       default:
         break;
@@ -106,7 +108,7 @@ const page: FC<pageProps> = ({ }) => {
                 {item}
                 <div
                   className={`${
-                    currentStatus === item && "bg-sky-500"
+                    currentStatus === item.split(' ')[0].toLowerCase() && "bg-sky-500"
                   } w-full h-[2px] absolute -bottom-[0.35rem]`}
                 />
               </button>
@@ -115,7 +117,7 @@ const page: FC<pageProps> = ({ }) => {
           <div className="bg-orange-200 w-full h-[2px] " />
         </div>
 
-        <ServicesTable services={services} />
+        <ServicesTable />
       </div>
     </section>
   );

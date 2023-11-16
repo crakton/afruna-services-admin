@@ -19,15 +19,18 @@ import { imgs } from "@/constants/images";
 import { T_Service } from "@/types/services";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 import { IService } from "@/interfaces/IService";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 interface ServicesTableProps {
-  services: IService[]
+  // services: IService[]
 }
 
-const ServicesTable: FC<ServicesTableProps> = ({ services }) => {
+const ServicesTable: FC<ServicesTableProps> = () => {
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [data, setData] = useState<IService[]>([])
+  const services = useSelector((state: RootState) => state.service.services)
 
   useEffect(() => {
     setData(services)

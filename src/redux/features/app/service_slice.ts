@@ -1,10 +1,11 @@
-import { IService } from "@/interfaces/IService"
+import { IService, IServiceCategory, IServiceSubCategory } from "@/interfaces/IService"
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
     services: [] as IService[],
     service: {} as IService,
-    serviceCategories: [] as any[]
+    serviceCategories: [] as IServiceCategory[],
+    subCategories: [] as IServiceSubCategory[]
 }
 
 const serviceSlice = createSlice({
@@ -13,9 +14,15 @@ const serviceSlice = createSlice({
     reducers: {
         setServices: (state, action: PayloadAction<IService[]>) => {
             state.services = action.payload
+        },
+        setCategories: (state, action: PayloadAction<IServiceCategory[]>) => {
+            state.serviceCategories = action.payload
+        },
+        setSubCategories: (state, action: PayloadAction<IServiceSubCategory[]>) => {
+            state.subCategories = action.payload
         }
     }
 })
 
-export const { setServices } = serviceSlice.actions
+export const { setServices, setCategories, setSubCategories } = serviceSlice.actions
 export default serviceSlice.reducer

@@ -1,16 +1,17 @@
 "use client";
 
-import {
-  ProvidersContext,
-  T_Providers_Tab,
-} from "@/contexts/ProvidersContextProvider";
-import { T_Providers_Context } from "@/types/providers";
-import { FC, useContext } from "react";
+import { FC, useEffect, useState } from "react";
 import ProvidersTable from "@/components/ProvidersTable";
 import { IoSearchOutline } from "react-icons/io5";
 import ItemPicker from "@/components/ItemPicker";
 import { Button } from "@/components/ui/button";
 import { BsPlus } from "react-icons/bs";
+import { useSelector } from "react-redux";
+import { RootState, store } from "@/redux/store";
+import Provider from "@/services/provider.service";
+import { tableStatus } from "@/types/tableStatus";
+import { setStatus } from "@/redux/features/app/table_status_slice";
+import { setProviders } from "@/redux/features/app/provider_slice";
 
 interface pageProps {}
 
@@ -23,9 +24,35 @@ const Providers_Tab = [
 ];
 
 const providersPage: FC<pageProps> = ({}) => {
-  const { providersTab, handleTabSelect } = useContext(
-    ProvidersContext
-  ) as T_Providers_Context;
+  
+  const currentStatus = useSelector((state: RootState) => state.tableStatus.status)
+  let providers = useSelector((state: RootState) => state.provider.providers)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const providerApis = new Provider()
+
+  const handleTabSelect = (status: tableStatus) => {
+    switch (status) {
+      case 'all':
+        store.dispatch(setStatus('all'))
+        providerApis.getProviders({ setIsLoading })
+        break;
+      case 'pending':
+        store.dispatch(setStatus('pending'))
+        store.dispatch(setProviders(providers.filter((provider: any) => provider.status === 'pending')))
+        break;
+      default:
+        break;
+    }
+  }
+
+  useEffect(() => {
+    providerApis.getProviders({ setIsLoading })
+
+    return () => {
+      store.dispatch(setStatus('all'))
+    }
+  }, [])
 
   return (
     <section className="flex flex-col gap-7 ">
@@ -61,15 +88,15 @@ const providersPage: FC<pageProps> = ({}) => {
             {Providers_Tab.map((item, idx) => (
               <button
                 className={`${
-                  providersTab === item && " text-sky-500"
+                  currentStatus === item.split(' ')[0].toLowerCase() && " text-sky-500"
                 } text-afruna-blue text-sm md:text-base font-bold relative flex flex-col `}
                 key={idx}
-                onClick={() => handleTabSelect(item as T_Providers_Tab)}
+                onClick={() => handleTabSelect(item.split(' ')[0].toLowerCase() as tableStatus)}
               >
                 {item}
                 <div
                   className={`${
-                    providersTab === item && "bg-sky-500"
+                    currentStatus === item.split(' ')[0].toLowerCase() && "bg-sky-500"
                   } w-full h-[2px] absolute -bottom-[0.35rem]`}
                 />
               </button>

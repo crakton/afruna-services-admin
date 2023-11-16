@@ -1,0 +1,27 @@
+import { IService } from "@/interfaces/IService"
+import { PayloadAction, createSlice } from "@reduxjs/toolkit"
+
+const initialState = {
+    providers: [] as any[],
+    provider: {} as any,
+    providerService: [] as IService[]
+}
+
+const provider_slice = createSlice({
+    name: 'Provider_Slice',
+    initialState,
+    reducers: {
+        setProviders: (state, action: PayloadAction<any[]>) => {
+            state.providers = action.payload
+        },
+        setProvider: (state, action: PayloadAction<any>) => {
+            state.provider = action.payload
+        },
+        setProviderServices: (state, action: PayloadAction<IService[]>) => {
+            state.providerService = action.payload
+        },
+    }
+})
+
+export const { setProviders, setProvider, setProviderServices } = provider_slice.actions
+export default provider_slice.reducer

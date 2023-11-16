@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
   SortingState,
@@ -18,17 +18,27 @@ import { imgs } from "@/constants/images";
 import { T_SubCategory } from "@/types/services";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 import * as Switch from '@radix-ui/react-switch';
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { IServiceCategory } from "@/interfaces/IService";
 
 const CategoryTable = () => {
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([...subCategory]);
+  const [data, setData] = useState<IServiceCategory[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const categories = useSelector((state: RootState) => state.service.serviceCategories)
 
-  const columns = useMemo<ColumnDef<T_SubCategory>[]>(
+  useEffect(() => {
+    setData(categories)
+  }, [categories])
+
+  const columns = useMemo<ColumnDef<IServiceCategory>[]>(
     () => [
       {
         accessorKey: "id",
-        cell: (info) => info.getValue(),
+        cell: ({row}) => (<span key={row.id} className=" text-slate-500 text-xs ml-3">
+            {row.original.customId}
+          </span>),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
       {
@@ -42,7 +52,7 @@ const CategoryTable = () => {
               alt="item Image"
               className="rounded-md w-[35px] h-[35px] object-fill shadow-sm"
             />
-            <span className=" text-slate-600 text-xs">Plumbing repair</span>
+            <span className=" text-slate-600 text-xs">{ row.original.name }</span>
           </div>
         ),
         header: () => (

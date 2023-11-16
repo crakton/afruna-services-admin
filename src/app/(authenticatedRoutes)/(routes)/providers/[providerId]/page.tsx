@@ -5,11 +5,14 @@ import DocumentReviewTable from "@/components/DocumentReviewTable";
 import ItemPicker from "@/components/ItemPicker";
 import { Button } from "@/components/ui/button";
 import { imgs } from "@/constants/images";
+import { RootState } from "@/redux/store";
+import Provider from "@/services/provider.service";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { BsStarHalf } from "react-icons/bs";
 import { IoMdCheckmark } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
+import { useSelector } from "react-redux";
 
 type Params = {
   params: {
@@ -22,8 +25,17 @@ const statsDetails = [
   { value: "2", title: "Service by Vendor" },
 ];
 
-const ProviderDetailPage = ({ params: { providerId } } : Params) => {
-  console.log(providerId);
+const ProviderDetailPage = ({ params: { providerId } }: Params) => {
+  const providerApis = new Provider()
+  const [isLoading, setIsLoading] = useState(false)
+  const provider = useSelector((state: RootState) => state.provider.provider)
+  const providerServices = useSelector((state: RootState) => state.provider.providerService)
+
+  useEffect(() => {
+    providerApis.getProvider(providerId, { setIsLoading })
+    providerApis.getProviderServices(providerId)
+
+  }, [providerId])
 
   return (
     <main className="flex flex-col gap-7 mb-12 ">
@@ -32,14 +44,14 @@ const ProviderDetailPage = ({ params: { providerId } } : Params) => {
           Providers Details
         </h1>
       </div>
-      <section className="max-w-[96%] lg:max-w-[86%] ml-6 xl:ml-[3.5rem] flex items-center gap-6">
+      <section className="max-w-[96%] lg:max-w-[86%] ml-6 xl:ml-[3.5rem] flex items-start gap-6">
         <aside className="px-5 py-8 bg-white font-semibold text-[#666363] rounded-xl flex max-w-[25%] w-full flex-col gap-2 justify-center items-center">
           <div className="w-[7rem] h-[7rem] rounded-full transition-all overflow-hidden relative flex justify-center items-center">
             <Image src={imgs.provider3} alt="Your image" fill />
           </div>
           <div className="flex mb-3  gap-2 justify-center items-center">
             <p className="text-sm font-semibold text-afruna-blue">
-              Abubakar Dee
+              {provider.firstName} {provider.lastName}
             </p>
             <span className="rounded-full text-xs text-green-700 w-[1.2rem] h-[1.2rem] bg-green-300 flex justify-center items-center">
               <IoMdCheckmark size={13} />
@@ -47,10 +59,10 @@ const ProviderDetailPage = ({ params: { providerId } } : Params) => {
           </div>
           <span className="text-xs ">Provider Since : 27th sep, 2034</span>
           <span className="text-xs font-semibold text-[#666363]">
-            Abubaran@service.com
+            {provider.email}
           </span>
           <span className="text-xs mt-3 font-semibold text-[#666363]">
-            Biningora, Nigeria
+            {provider.state}, {provider.country}
           </span>
           <Button variant={"deepgradientblue"} className="mt-3">
             Chat Provider

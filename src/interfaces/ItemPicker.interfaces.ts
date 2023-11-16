@@ -1,5 +1,5 @@
 export interface IItemPicker {
-    items: string[];
+    items: any[];
     placeholder: string;
     getSelected: (value: string | number) => void;
     headerTitle?: string | undefined;

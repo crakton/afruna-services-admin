@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from "react";
+import React, { FC, memo, useEffect, useMemo, useState } from "react";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import {
   ColumnDef,
@@ -13,15 +13,24 @@ import {
 import { MdDeleteOutline, MdRemoveRedEye } from "react-icons/md";
 import Image from "next/image";
 import { RxChevronDown, RxChevronUp } from "react-icons/rx";
-import { bookingsData } from "@/constants/data";
-import { T_Providers } from "@/types/providers";
 import { T_Bookings } from "@/types/bookings";
 import { imgs } from "@/constants/images";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
-const BookingsTable = () => {
+interface BookingTableProps {
+  // bookings: any[]
+}
+
+const BookingsTable: FC<BookingTableProps> = () => {
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([...bookingsData]);
+  const [data, setData] = useState<any[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const bookings = useSelector((state: RootState) => state.booking.bookings)
+
+  useEffect(() => {
+    setData(bookings)
+  })
 
   const columns = useMemo<ColumnDef<T_Bookings>[]>(
     () => [

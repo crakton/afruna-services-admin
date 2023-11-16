@@ -22,12 +22,15 @@ export interface IService {
 export interface IServiceCategory {
     _id: string;
     name: string;
+    customId: string;
+    featured: boolean;
     children: IServiceSubCategory
 }
 
 export interface IServiceSubCategory {
     _id: string;
     name: string;
+    customId: string;
 }
 
 export interface ICreateService {

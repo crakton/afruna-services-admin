@@ -25,17 +25,27 @@ import { RxChevronDown, RxChevronUp } from "react-icons/rx";
 import { ProviderData } from "@/constants/data";
 import { T_Providers } from "@/types/providers";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const AllProviders = () => {
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([...ProviderData]);
+ const [data, setData] = useState<any[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const providers = useSelector((state: RootState) => state.provider.providers)
 
-  const columns = useMemo<ColumnDef<T_Providers>[]>(
+  useEffect(() => {
+    setData(providers)
+  })
+
+  const columns = useMemo<ColumnDef<any>[]>(
     () => [
       {
         accessorKey: "id",
-        cell: (info) => info.getValue(),
+        cell: ({ row }) => (
+          <div key={row.id} className="flex gap-4 items-center ml-8">
+            <span className=" text-slate-600 text-xs">{ row.original.customId }</span>
+          </div>),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
       {
@@ -50,7 +60,7 @@ const AllProviders = () => {
               className="rounded"
             />
             <div className="flex flex-col text-slate-600">
-              <span className="">{row.original.providerName}</span>
+              <span className="">{row.original.firstName} {row.original.lastName}</span>
               <span className="">{row.original.email}</span>
             </div>
           </div>
@@ -61,15 +71,18 @@ const AllProviders = () => {
       },
       {
         accessorKey: "phone",
-        cell: (info) => info.getValue(),
+        cell: ({row}) => (
+          <div key={row.id} className="flex gap-4 items-center ml-8">
+            <span className=" text-slate-600 text-xs">{ row.original.phoneNumber }</span>
+          </div>),
         header: () => (
           <span className="text-sm text-[#7C7C7C]">Mobile Number</span>
         ),
       },
       {
         accessorKey: "status",
-        cell: ({ cell }) => {
-          switch (cell.getValue()) {
+        cell: ({ row }) => {
+          switch (row.original.status) {
             case "Pending":
               return (
                 <span className="flex justify-between items-center w-fit">
@@ -124,7 +137,7 @@ const AllProviders = () => {
         cell: ({ row }) => (
           <div className="flex justify-start gap-1 items-center">
             <Link
-              href={`/providers/gsdgh7638mndjk`}
+              href={`/providers/${row.original._id}`}
               className="hover:scale-90 border-none transition duration-300"
             >
               <MdRemoveRedEye size={24} />

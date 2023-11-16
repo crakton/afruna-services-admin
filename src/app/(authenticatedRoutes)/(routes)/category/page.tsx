@@ -8,15 +8,22 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import {
   ServicesContext,
 } from "@/contexts/ServicesContextProvider";
+import Service from "@/services/service.service";
 import { T_Services_Context } from "@/types/services";
 import Link from "next/link";
-import { FC, useContext } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { BsPlus } from "react-icons/bs";
 import { IoSearchOutline } from "react-icons/io5";
 
 interface pageProps {}
 
-const Category: FC<pageProps> = ({}) => {
+const Category: FC<pageProps> = ({ }) => {
+  const serviceApis = new Service()
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    serviceApis.getCategories({ setIsLoading })
+  }, [])
   return (
     <section className="flex flex-col gap-7 pb-12">
       <div className="flex justify-between items-center pl-4 lg:pr-16 lg:pl-6 bg-white w-full h-16">
@@ -53,6 +60,12 @@ const Category: FC<pageProps> = ({}) => {
             className={buttonVariants({ variant: "greenbutton" })}
           >
             <BsPlus className="font-extrabold text-xl" /> Add Category
+          </Link>
+          <Link
+            href={"/create_subcategory"}
+            className={buttonVariants({ variant: "greenbutton" })}
+          >
+            <BsPlus className="font-extrabold text-xl" /> Add Subcategory
           </Link>
         </div>
       </div>

@@ -1,14 +1,16 @@
 "use client";
 
-import { FC, useContext } from "react";
+import { FC, useEffect, useState } from "react";
 import BookingsTable from "@/components/bookingsTable";
-import {
-  BookingsContext,
-  T_Bookings_Tab,
-} from "@/contexts/BookingsContextProvider";
-import { T_Bookings_Context } from "@/types/bookings";
 import ItemPicker from "@/components/ItemPicker";
 import { IoSearchOutline } from "react-icons/io5";
+import { IService } from "@/interfaces/IService";
+import { setStatus } from "@/redux/features/app/table_status_slice";
+import { RootState, store } from "@/redux/store";
+import { tableStatus } from "@/types/tableStatus";
+import { useSelector } from "react-redux";
+import Booking from "@/services/booking.service";
+import { setBookings } from "@/redux/features/app/booking_slice";
 
 interface pageProps {}
 
@@ -20,10 +22,36 @@ const bookings_Tab = [
   "Delected",
 ];
 
-const BookingsPage: FC<pageProps> = ({}) => {
-  const { bookingsTab, handleTabSelect } = useContext(
-    BookingsContext
-  ) as T_Bookings_Context;
+const BookingsPage: FC<pageProps> = ({ }) => {
+  
+  const currentStatus = useSelector((state: RootState) => state.tableStatus.status)
+  let bookings = useSelector((state: RootState) => state.booking.bookings)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const bookingApis = new Booking()
+
+  const handleTabSelect = (status: tableStatus) => {
+    switch (status) {
+      case 'all':
+        store.dispatch(setStatus('all'))
+        bookingApis.getBookings({ setIsLoading })
+        break;
+      case 'pending':
+        store.dispatch(setStatus('pending'))
+        store.dispatch(setBookings(bookings.filter((booking: any) => booking.status === 'pending')))
+        break;
+      default:
+        break;
+    }
+  }
+  
+  useEffect(() => {
+    bookingApis.getBookings({ setIsLoading })
+
+    return () => {
+      store.dispatch(setStatus('all'))
+    }
+  }, [])
 
   return (
     <section className="flex flex-col gap-7 ">
@@ -53,15 +81,15 @@ const BookingsPage: FC<pageProps> = ({}) => {
             {bookings_Tab.map((item, idx) => (
               <button
                 className={`${
-                  bookingsTab === item && " text-sky-500"
+                  currentStatus === item.split(' ')[0].toLowerCase() && " text-sky-500"
                 } text-afruna-blue text-sm md:text-base font-bold relative flex flex-col `}
                 key={idx}
-                onClick={() => handleTabSelect(item as T_Bookings_Tab)}
+                onClick={() => handleTabSelect(item.split(' ')[0].toLowerCase() as tableStatus)}
               >
                 {item}
                 <div
                   className={`${
-                    bookingsTab === item && "bg-sky-500"
+                    currentStatus === item.split(' ')[0].toLowerCase() && "bg-sky-500"
                   } w-full h-[2px] absolute -bottom-[0.35rem]`}
                 />
               </button>
