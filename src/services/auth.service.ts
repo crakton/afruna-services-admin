@@ -7,7 +7,6 @@ import { T_loading_provider } from "@/types/loader.types";
 import { toast } from 'react-toastify'
 import axios from "axios";
 import Cookies from 'js-cookie';
-import { toast } from "react-toastify";
 
 export default class Auth {
     private router: any

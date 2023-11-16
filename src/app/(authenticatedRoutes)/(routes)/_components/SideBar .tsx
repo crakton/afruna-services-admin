@@ -38,10 +38,6 @@ const SideBar: FC<SideBar> = ({}) => {
                     title: "Category",
                     href: "/category",
                   },
-                  {
-                    title: "Subcategory",
-                    href: "/subcategory" || "/create_subcategory",
-                  },
                 ];
                 return (
                   <>

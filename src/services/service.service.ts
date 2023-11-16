@@ -1,6 +1,6 @@
 import { headers } from "@/constants/http_config";
 import { IService, IServiceCategory, IServiceSubCategory } from "@/interfaces/IService";
-import { setCategories, setServices, setSubCategories } from "@/redux/features/app/service_slice";
+import { createService, setCategories, setServices, setSubCategories } from "@/redux/features/app/service_slice";
 import { TStore, store } from "@/redux/store";
 import { TErrorResponse, TSuccessResponse } from "@/types/auth.types";
 import { T_loading_provider } from "@/types/loader.types";
@@ -45,19 +45,24 @@ export default class Service {
         }
     }
 
-    async getSubCategories(loading_opt: T_loading_provider) {
-        const { setIsLoading } = loading_opt
-        setIsLoading && setIsLoading(true)
+    async getCategoriesforCreation() {
 
         try {
-            const { data } = await axios.get<TSuccessResponse<IServiceSubCategory[]>>('/api/services', headers)
-            store.dispatch(setSubCategories(data.data))
-            toast.success('Subcategories fetched successfully')
+            const { data } = await axios.get<TSuccessResponse<IServiceCategory[]>>('/api/servicecategories', headers)
+            return data
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>);
-        } finally {
-            setIsLoading && setIsLoading(false)
-        }
+        } 
+    }
+
+    async getSubCategories(categoryId: string) {
+
+        try {
+            const { data } = await axios.get<TSuccessResponse<IServiceSubCategory[]>>(`/api/servicecategories/${categoryId}/nested`, headers)
+            return data
+        } catch (error) {
+            handleAuthErrors(error as AxiosError<TErrorResponse>);
+        } 
     }
 
     async createCategory(category: any, loading_opt: T_loading_provider) {
@@ -67,6 +72,20 @@ export default class Service {
         try {
             const { data } = await axios.post<TSuccessResponse<IServiceCategory[]>>('/api/servicecategories', category, headers)
             return data
+        } catch (error) {
+            handleAuthErrors(error as AxiosError<TErrorResponse>);
+        } finally {
+            setIsLoading && setIsLoading(false)
+        }
+    }
+
+    async creatService(payload: any, loading_opt: T_loading_provider) {
+        const { setIsLoading } = loading_opt
+        setIsLoading && setIsLoading(true)
+        try {
+            const { data } = await axios.post<TSuccessResponse<IService>>('/api/services', payload, headers)
+            store.dispatch(createService(data.data))
+            toast.success('Service listing successful')
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>);
         } finally {

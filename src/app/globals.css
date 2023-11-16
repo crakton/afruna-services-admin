@@ -150,3 +150,19 @@ hr { width:100%;}
 	background-size: cover;
   background-position: center;
 }
+
+.day {
+  transition: all 1s;
+}
+
+.day:hover {
+  background: linear-gradient(180deg, #00AEEF 0%, #0C0E3B 100%);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.03);
+  color: white;
+  cursor: pointer;
+}
+
+.active-day {
+  background: linear-gradient(180deg, #00AEEF 0%, #0C0E3B 100%);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.03);
+}

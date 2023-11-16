@@ -20,9 +20,12 @@ const serviceSlice = createSlice({
         },
         setSubCategories: (state, action: PayloadAction<IServiceSubCategory[]>) => {
             state.subCategories = action.payload
-        }
+        },
+        createService: (state, action: PayloadAction<IService>) => {
+            state.services = [action.payload, ...state.services]
+        },
     }
 })
 
-export const { setServices, setCategories, setSubCategories } = serviceSlice.actions
+export const { setServices, setCategories, setSubCategories, createService } = serviceSlice.actions
 export default serviceSlice.reducer

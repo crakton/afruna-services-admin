@@ -18,7 +18,7 @@ export function handleAuthErrors(error: AxiosError<TErrorResponse>) {
 			else
 				toast.error(error.response.data.message as string, {
 					position: "top-center",
-					autoClose: 5000,
+					autoClose: 2000,
 					hideProgressBar: true,
 					closeOnClick: true,
 					pauseOnHover: true,
