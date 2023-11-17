@@ -104,3 +104,17 @@ const ChatCovoPage: FC<pageProps> = ({ params: { conversationId } }) => {
 };
 
 export default ChatCovoPage;
+
+// <CurrentUsersConversations
+// 										key={chat?._id}
+// 										img={chat?.from?.avatar}
+// 										message={chat?.message}
+// 										time={getChatTimeDiff(
+// 											new Date(chat?.createdAt)
+// 										)}
+// 										isOwn={
+// 											chat?.from?._id === bio_data?._id
+// 												? true
+// 												: false
+// 										}
+// 									/>
