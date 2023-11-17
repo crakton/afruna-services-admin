@@ -1,32 +1,34 @@
 "use client";
 
 import { FC, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { IoSearchOutline } from "react-icons/io5";
-import { conversations, users } from "@/constants/data";
+import { conversations } from "@/constants/data";
 import { imgs } from "@/constants/images";
 import { UsersList } from "@/components/UsersList";
 import { CurrentUserHeader } from "@/components/CurrentUserHeader";
 import { CurrentUsersConversations } from "@/components/CurrentUsersConversations";
 import { CoversationFooter } from "@/components/CoversationFooter";
 import EmptyState from "@/components/EmptyState";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 interface pageProps {
   params: {
     conversationId: string;
-  }
+  };
 }
 
-const ChatCovoPage: FC<pageProps> = ({ params: {conversationId} }) => {
-  console.log(conversationId);
-
-  const router = useRouter();
-  const handleSelectedChat = useCallback(
-    (conversationId: string) => {
-      router.push(`/chat/${conversationId}`);
-    },
-    [router]
+const ChatCovoPage: FC<pageProps> = ({ params: { conversationId } }) => {
+  const userConversations = useSelector(
+    (state: RootState) => state.chat.conversations
   );
+  const activeSelectedUser = useSelector(
+    (state: RootState) => state.chat.activeHeaderInfo
+  );
+  const messages = useSelector((state: RootState) => state.chat.messages);
+  console.log(messages);
+  
+  // console.log(conversationId);
 
   return (
     <section className="flex flex-col gap-6 sm:gap-4">
@@ -52,21 +54,15 @@ const ChatCovoPage: FC<pageProps> = ({ params: {conversationId} }) => {
           </div>
           <div className="mt-1 pt-1 h-[63vh] sm:h-[55vh] text-xl rounded-lg overflow-hidden overflow-y-auto">
             <div className="flex flex-col gap-2 p-4 ">
-              {users && users.length
-                ? users.map((convo) => {
-                    return (
-                      <UsersList
-                        selectChat={() => handleSelectedChat(convo.id)}
-                        key={convo.id}
-                        name={convo.name}
-                        number={convo.number}
-                        active={convo.active}
-                        img={convo.img}
-                        id={convo.id}
-                      />
-                    );
-                  })
-                : null}
+              {userConversations && userConversations.length ? (
+                userConversations.map((user) => {
+                  return <UsersList user={user} key={user._id} />;
+                })
+              ) : (
+                <div className="text-xs text-gray-400 font-bold">
+                  Click the yellow button to select a user
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -75,10 +71,10 @@ const ChatCovoPage: FC<pageProps> = ({ params: {conversationId} }) => {
             <div className="flex justify-between flex-col h-full">
               <div className="h-[4.5rem] px-2 sm:px-4 border-b border-[#D5D5E6] flex justify-center items-center">
                 <CurrentUserHeader
-                  name={"Bhai jan ADMIN"}
-                  img={imgs.provider1}
+                  name={activeSelectedUser?.alias}
+                  img={activeSelectedUser?.aliasAvatar || imgs.provider1}
                   active={true}
-                  id={"#CU679H"}
+                  id={activeSelectedUser?.lastMessage || 'Start a conversation'}
                 />
               </div>
               <div className="ScrollAreaRoot flex-1 w-full max-h-[50vh] h-full text-xl rounded-lg overflow-hidden overflow-y-auto">
@@ -96,7 +92,7 @@ const ChatCovoPage: FC<pageProps> = ({ params: {conversationId} }) => {
                   })}
                 </div>
               </div>
-              <CoversationFooter to={""} />
+              <CoversationFooter />
             </div>
           ) : (
             <EmptyState />
@@ -107,4 +103,4 @@ const ChatCovoPage: FC<pageProps> = ({ params: {conversationId} }) => {
   );
 };
 
-export default ChatCovoPage
+export default ChatCovoPage;

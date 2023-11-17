@@ -18,19 +18,24 @@ type Params = {
 export default function CustomerPage({ params: { customerId } }: Params) {
   const customersApis = new Customers();
   useEffect(() => {
-    customersApis.getCustomer(customerId).then((data) => {
+    customersApis.getCustomerBookings(customerId).then((data) => {
       console.log(data);
     });
   }, []);
-  const customer = useSelector((state: RootState) => state.customer.customer);
-  const createdAtDate = new Date(customer.createdAt);
+
+  const customers = useSelector((state: RootState) => state.customer.customers);
+  const customer = customers.filter(
+    (customer) => customer._id === customerId
+  )[0];
+
+  const createdAtDate = new Date(customer?.createdAt);
   const year = createdAtDate.getFullYear();
   const day = createdAtDate.getDate();
   const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
   const month = new Date(year, monthIndex).toLocaleString("en-US", {
     month: "short",
   });
-  
+
   return (
     <section className="flex flex-col gap-7 ">
       <div className="flex justify-start items-center pl-4 lg:pl-6 bg-white w-full h-16">
@@ -40,22 +45,29 @@ export default function CustomerPage({ params: { customerId } }: Params) {
       </div>
       <div className="flex flex-col justify-start gap-2 px-4 md:px-10 xl:pr-32 w-full">
         <div className="w-[6rem] h-[6rem] overflow-hidden relative rounded-full">
-          <Image src={customer.avatar || imgs.provider3} alt="provider" priority fill />
+          <Image
+            src={customer?.avatar || imgs.provider3}
+            alt="provider"
+            priority
+            fill
+          />
         </div>
         <div className="flex flex-col sm:flex-row sm:justify-between items-start gap-4 w-full">
           <div className="flex flex-col gap-2 text-[#7C7C7C] text-xs font-semibold">
-            <h2 className="text-lg text-afruna-blue">{`${customer.firstName} ${customer.lastName}`}</h2>
+            <h2 className="text-lg text-afruna-blue">{`${customer?.firstName} ${customer?.lastName}`}</h2>
             <span className=" ">Joined since {`${day} ${month}, ${year}`}</span>
-            <span className=" ">state, {customer.country}</span>
-            <span className=" ">{customer.email}</span>
+            <span className=" ">state, {customer?.country}</span>
+            <span className=" ">{customer?.email}</span>
             <div className="flex flex-col ">
-              <span className="text-sm text-black">{customer.following?.length}</span>
+              <span className="text-sm text-black">
+                {customer?.following?.length}
+              </span>
               <p className="">Following</p>
             </div>
           </div>
-          <Button variant={"afrunaOutline"} className="text-xs">
+          {/* <Button variant={"afrunaOutline"} className="text-xs">
             Remove User
-          </Button>
+          </Button> */}
         </div>
       </div>
       <div className="flex flex-col gap-4 justify-start px-4 md:px-10 xl:pr-32 ">
@@ -65,7 +77,11 @@ export default function CustomerPage({ params: { customerId } }: Params) {
             <span className="text-sm font-bold">Total spent</span>
           </div>
           <div className="border w-[13rem] py-7 pl-7 border-[#D5D5E6] rounded-xl bg-white flex flex-col gap-2">
-            <span className="text-sm font-bold">03</span>
+            <span className="text-sm font-bold">
+              {customer?.bookings <= 9
+                ? `0${customer?.bookings}`
+                : customer?.bookings}
+            </span>
             <span className="text-sm font-bold">Total booked</span>
           </div>
         </div>

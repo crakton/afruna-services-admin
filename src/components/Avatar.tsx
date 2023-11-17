@@ -1,4 +1,3 @@
-
 import { imgs } from "@/constants/images";
 import Image, { StaticImageData } from "next/image";
 import { FC } from "react";
@@ -13,14 +12,13 @@ interface AvatarProps {
 export const Avatar: FC<AvatarProps> = ({ img, active, isOwn, convo }) => {
   return (
     <div className="flex relative ">
-      <Image
-        src={img}
-        alt="image"
-        priority
-        className={`${convo ? "w-8 h-8" : "w-12 h-12"} rounded-full ${
-          isOwn && "order-2"
-        }`}
-      />
+      <div
+        className={`${
+          convo ? "w-8 h-8" : "w-12 h-12"
+        } relative overflow-hidden rounded-full flex justify-center items-center ${isOwn && "order-2"}`}
+      >
+        <Image src={img || imgs.provider1} alt="image" fill />
+      </div>
       <span
         className={`${active ? "bg-blue-500" : "bg-slate-400"} ${
           convo ? "hidden" : ""

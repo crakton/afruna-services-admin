@@ -4,7 +4,7 @@ import { TErrorResponse, TSuccessResponse } from "../types/auth.types";
 import { headers } from "../constants/http_config";
 import { createMessage, setConversations, setMessages, setUsers } from "../redux/features/app/chat_slice";
 import { handleAuthErrors } from "../utils/auth.util";
-import { IConversation } from "@/types/user";
+import { IConversation, IMessage, ISendingMessage, IUserBio } from "@/types/user";
 import { setLoading } from "@/redux/features/app/loading_slice";
 
 export default class ChatService {
@@ -26,11 +26,12 @@ export default class ChatService {
         }
     }
 
-    async sendingMessage(message: any) {
+    async sendingMessage(payload:{to: string, message: string}) {
         store.dispatch(setLoading(true))
         try {
-            const { data } = await axios.post<TSuccessResponse<any>>('/api/messages', message, headers)
+            const { data } = await axios.post<TSuccessResponse<ISendingMessage>>('/api/messages', payload, headers)
             store.dispatch(createMessage(data.data.message))
+            return data.data.message
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
         } finally {
@@ -41,8 +42,9 @@ export default class ChatService {
     async getMessages(conversationId: string) {
         store.dispatch(setLoading(true))
         try {
-            const { data } = await axios.get<TSuccessResponse<any>>(`/api/messages/${conversationId}`, headers)
+            const { data } = await axios.get<TSuccessResponse<IMessage[]>>(`/api/messages/${conversationId}`, headers)
             store.dispatch(setMessages(data.data))
+            return data.data
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
         } finally {
@@ -54,7 +56,9 @@ export default class ChatService {
         store.dispatch(setLoading(true))
         try {
             const { data } = await axios.get('/api/users', headers)
-            store.dispatch(setUsers(data.data))
+            const users:IUserBio[] = data.data
+            const filterUsers =  users.filter(user => user.role === 'user' || user.role === 'vendor' || user.role === 'provider' )
+            store.dispatch(setUsers(filterUsers))
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
         } finally {

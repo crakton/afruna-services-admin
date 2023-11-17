@@ -18,10 +18,10 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { ICustomerBio } from "@/types/customer";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 
 const CustomersTable = () => {
-  const router = useRouter();
+  // const router = useRouter();
   const customers = useSelector((state: RootState) => state.customer.customers);
   useEffect(() => {
     setData(customers);
@@ -118,49 +118,38 @@ const CustomersTable = () => {
               <span className={`${row.original.online ? 'text-blue-500' : 'text-lime-600' } text-xs`}>{row.original.online ? 'Online' : 'Offline'}</span>
             </span>
           );
-          // switch (cell.getValue()) {
-          //   case "Offline":
-              
-          //   case "Online":
-          //     return (
-          //       <span className="flex justify-between items-center w-fit">
-          //         <span className="p-1 rounded-full  mr-1" />
-          //         <span className="text-blue-500 text-xs">Online</span>
-          //       </span>
-          //     );
-          // }
-        },
-        header: () => <span className="">Last Activity</span>,
-      },
-      {
-        accessorKey: "status",
-        cell: ({ cell }) => {
-          switch (cell.getValue()) {
-            case "Inactive":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-lime-600 mr-1" />
-                  <span className="text-lime-600 text-xs">Inactive</span>
-                </span>
-              );
-            case "Deleted":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-red-500 mr-1" />
-                  <span className="text-red-500 text-xs">Deleted</span>
-                </span>
-              );
-            case "Active":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-blue-500 mr-1" />
-                  <span className="text-blue-500 text-xs">Active</span>
-                </span>
-              );
-          }
         },
         header: () => <span className="">Status</span>,
       },
+      // {
+      //   accessorKey: "status",
+      //   cell: ({ cell }) => {
+      //     switch (cell.getValue()) {
+      //       case "Inactive":
+      //         return (
+      //           <span className="flex justify-between items-center w-fit">
+      //             <span className="p-1 rounded-full bg-lime-600 mr-1" />
+      //             <span className="text-lime-600 text-xs">Inactive</span>
+      //           </span>
+      //         );
+      //       case "Deleted":
+      //         return (
+      //           <span className="flex justify-between items-center w-fit">
+      //             <span className="p-1 rounded-full bg-red-500 mr-1" />
+      //             <span className="text-red-500 text-xs">Deleted</span>
+      //           </span>
+      //         );
+      //       case "Active":
+      //         return (
+      //           <span className="flex justify-between items-center w-fit">
+      //             <span className="p-1 rounded-full bg-blue-500 mr-1" />
+      //             <span className="text-blue-500 text-xs">Active</span>
+      //           </span>
+      //         );
+      //     }
+      //   },
+      //   header: () => <span className="">Status</span>,
+      // },
       {
         id: "actions",
         cell: ({ row }) => {
@@ -174,7 +163,7 @@ const CustomersTable = () => {
               >
                 <MdRemoveRedEye size={24} />
               </Link>
-              <button
+              {/* <button
                 className="hover:scale-90 border-none transition duration-300"
                 onClick={() => {
                   const newData = data.filter((_, idx) => idx !== row.index);
@@ -182,7 +171,7 @@ const CustomersTable = () => {
                 }}
               >
                 <MdDeleteOutline size={24} />
-              </button>
+              </button> */}
             </div>
           );
         },

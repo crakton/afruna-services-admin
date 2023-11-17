@@ -21,4 +21,5 @@ export interface ICustomerBio {
     createdAt: string
     updatedAt: string
     online: boolean
+    bookings: number
 }

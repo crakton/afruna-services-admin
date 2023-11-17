@@ -10,6 +10,7 @@ import customerReducer from "./features/app/customer_slice";
 import reviewReeducer from "./features/app/review_slice";
 import loadingReeducer from "./features/app/loading_slice";
 import abuseReportsReducer from "./features/app/abuseReport_slice";
+import chatReducer from "./features/app/chat_slice";
 
 export const store = configureStore({
     reducer: {
@@ -21,7 +22,8 @@ export const store = configureStore({
         customer: customerReducer,
         reviews: reviewReeducer,
         loading: loadingReeducer,
-        abuseReports: abuseReportsReducer
+        abuseReports: abuseReportsReducer,
+        chat: chatReducer
     }
 })
 
