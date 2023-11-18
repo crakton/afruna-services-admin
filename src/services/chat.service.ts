@@ -19,13 +19,13 @@ export default class ChatService {
         try {
             const { data } = await axios.get<TSuccessResponse<IConversation[]>>('/api/conversations', headers)
             store.dispatch(setConversations(data.data))
+            return data.data
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
         } finally {
             store.dispatch(setLoading(false))
         }
     }
-
     async sendingMessage(payload:{to: string, message: string}) {
         store.dispatch(setLoading(true))
         try {

@@ -27,12 +27,11 @@ const statsDetails = [
 
 const ProviderDetailPage = ({ params: { providerId } }: Params) => {
   const providerApis = new Provider()
-  const [isLoading, setIsLoading] = useState(false)
   const provider = useSelector((state: RootState) => state.provider.provider)
   const providerServices = useSelector((state: RootState) => state.provider.providerService)
 
   useEffect(() => {
-    providerApis.getProvider(providerId, { setIsLoading })
+    providerApis.getProvider(providerId)
     providerApis.getProviderServices(providerId)
 
   }, [providerId])

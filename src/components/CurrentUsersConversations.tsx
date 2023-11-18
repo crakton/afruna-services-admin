@@ -1,3 +1,4 @@
+import { imgs } from "@/constants/images";
 import Image, { StaticImageData } from "next/image";
 import { FC } from "react";
 
@@ -17,12 +18,11 @@ export const CurrentUsersConversations: FC<CurrentUsersConversationsProps> = ({
   const convo = true;
   return (
     <div className={`flex gap-3 w-full p-2 ${isOwn && "justify-end"}`}>
-      <Image
-        src={img}
-        alt="img"
-        priority
-        className={`w-8 h-8 rounded-full ${isOwn && "order-2"}`}
-      />
+      <div
+        className={`${isOwn && "order-2"} relative overflow-hidden rounded-full flex justify-center items-center`}
+      >
+        <Image src={img || imgs.provider1} alt="image" fill />
+      </div>
       <div
         className={`flex flex-col gap-1 max-w-xs w-full ${
           isOwn && "items-end"

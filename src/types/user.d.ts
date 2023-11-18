@@ -35,8 +35,8 @@ export interface IConversation {
 }
 export interface IMessage {
   conversation: string;
-  to: string;
-  from: string;
+  to: IUserBio;
+  from: IUserBio;
   message: string;
   attachment: [];
   seen: string[];

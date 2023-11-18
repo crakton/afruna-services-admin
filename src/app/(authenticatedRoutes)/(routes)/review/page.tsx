@@ -13,7 +13,7 @@ const ReviewPage: FC<pageProps> = ({}) => {
   const reviewsApis = new Reviews();
   useEffect(() => {
     reviewsApis.getReviews()
-  }, []);
+  }, [reviewsApis]);
 
   return (
     <section className="flex flex-col gap-7 ">

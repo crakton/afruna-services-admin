@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode, memo, useCallback, useState } from "react";
+import { FC, ReactNode, memo, useCallback, useEffect, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { UsersList } from "@/components/UsersList";
 import EmptyState from "@/components/EmptyState";
@@ -18,18 +18,22 @@ interface pageProps {}
 
 const ChatPage: FC<pageProps> = ({}) => {
   const chatApis = new ChatService();
+  useEffect(() => {
+    chatApis.getConversations()
+  }, [chatApis])
   const loading = useSelector((state: RootState) => state.loading.loading);
   const usersToselect = useSelector((state: RootState) => state.chat.users);
   const userConversations = useSelector(
     (state: RootState) => state.chat.conversations
   );
+  console.log(userConversations);
   const [Open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
 
   const handleFetchUsers = useCallback(() => {
     setOpen(true);
     chatApis.getUsers();
-  }, []);
+  }, [chatApis]);
   const [userSelected, setUserSelected] = useState<IUserBio>();
   const handleAddUserTOChat = () => {
     const newUserConversation = {
@@ -82,39 +86,6 @@ const ChatPage: FC<pageProps> = ({}) => {
                     Click the yellow button to select a user
                   </div>
                 )}
-                {/* {userConversations && userConversations.length ? (
-                  userConversations.map((user) => {
-                    const selectedUser = handleSelectedChat(user); // Call handleSelectedChat and store the returned value
-
-                    return (
-                      <div key={user._id}>
-                        <UsersList
-                          // selectChat={() => handleSelectedChat(user)}
-                          key={user._id}
-                          name={user?.alias ?? ""}
-                          number={user?.unreadMessages}
-                          active={true}
-                          img={user?.aliasAvatar!}
-                          id={user.recipients[0]}
-                          lastMessage={user.lastMessage}
-                        />
-
-                        {selectedUser && ( // Check if selectedUser exists and render the following if it does
-                          <div className="selected-user-info">
-                            <p>Selected User: {selectedUser.alias}</p>
-                            <p>
-                              Unread Messages: {selectedUser.unreadMessages}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="text-xs text-gray-400 font-bold">
-                    Click the yellow button to select a user
-                  </div>
-                )} */}
               </div>
             </div>
             <div className="absolute right-4 bottom-8">
@@ -128,7 +99,7 @@ const ChatPage: FC<pageProps> = ({}) => {
             </div>
           </div>
           <div className="hidden md:block h-[73vh] border border-[#D5D5E6] overflow-hidden sm:mr-2 xl:mr-16 w-full rounded-2xl">
-            <EmptyState />
+            <EmptyState backgroud={true} text={"Click the down button or select the person you want to chat with"} />
           </div>
         </div>
       </section>

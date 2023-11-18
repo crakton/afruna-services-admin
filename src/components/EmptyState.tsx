@@ -1,12 +1,21 @@
 import { FC } from "react";
 
-interface EmptyStateProps {}
+interface EmptyStateProps {
+  backgroud: boolean;
+  text: string;
+}
 
-const EmptyState: FC<EmptyStateProps> = ({}) => {
+const EmptyState: FC<EmptyStateProps> = ({ backgroud, text }) => {
   return (
-    <section className="px-4 py-10 sm:px-6 h-full bg-white flex justify-center items-center">
+    <section
+      className={` ${
+        backgroud ? "bg-white" : null
+      } px-4 py-10 sm:px-6 h-full flex justify-center items-center`}
+    >
       <div className="flex flex-col items-center text-center">
-        <h3 className="mt-2 text-xl font-semibold text-slate-500">Select the person you want to chat with</h3>
+        <h3 className="mt-2 text-xl font-semibold text-slate-500">
+          {text}
+        </h3>
       </div>
     </section>
   );

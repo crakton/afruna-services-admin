@@ -4,9 +4,6 @@ import ItemPicker from "@/components/ItemPicker";
 import ServicesTable from "@/components/ServicesTable";
 import SubCategoryTable from "@/components/SubCategoryTable";
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  ServicesContext,
-} from "@/contexts/ServicesContextProvider";
 import { T_Services_Context } from "@/types/services";
 import Link from "next/link";
 import { FC, useContext } from "react";
@@ -16,9 +13,6 @@ import { IoSearchOutline } from "react-icons/io5";
 interface pageProps {}
 
 const Subcategory: FC<pageProps> = ({}) => {
-  const { servicesTab, handleTabSelect } = useContext(
-    ServicesContext
-  ) as T_Services_Context;
   return (
     <section className="flex flex-col gap-7 pb-12">
       <div className="flex justify-between items-center pl-4 lg:pr-16 lg:pl-6 bg-white w-full h-16">

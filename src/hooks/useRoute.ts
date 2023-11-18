@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useConversation } from "./useConversation";
 import { AiFillAccountBook } from "react-icons/ai";
 import { MdChat, MdDashboard, MdGroups2, MdPeopleAlt, MdReviews, MdSettings } from "react-icons/md";
-import { TbReportAnalytics } from "react-icons/tb";
+// import { TbReportAnalytics } from "react-icons/tb";
 import { IoMdBriefcase } from "react-icons/io";
 import { LuPanelTop } from "react-icons/lu";
 
@@ -90,13 +90,13 @@ export const useRoute = () => {
         href: "/review",
         hasSubNav: false,
       },
-      {
-        title: "Abuse Reports",
-        icon: TbReportAnalytics,
-        active: pathname === "/abuse_reports",
-        href: "/abuse_reports",
-        hasSubNav: false,
-      },
+      // {
+      //   title: "Abuse Reports",
+      //   icon: TbReportAnalytics,
+      //   active: pathname === "/abuse_reports",
+      //   href: "/abuse_reports",
+      //   hasSubNav: false,
+      // },
       // {
       //   title: "Settings",
       //   icon: MdSettings,

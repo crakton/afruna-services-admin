@@ -2,7 +2,6 @@
 
 import { FC, useCallback } from "react";
 import { IoSearchOutline } from "react-icons/io5";
-import { conversations } from "@/constants/data";
 import { imgs } from "@/constants/images";
 import { UsersList } from "@/components/UsersList";
 import { CurrentUserHeader } from "@/components/CurrentUserHeader";
@@ -11,24 +10,25 @@ import { CoversationFooter } from "@/components/CoversationFooter";
 import EmptyState from "@/components/EmptyState";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { format } from 'timeago.js'
 
 interface pageProps {
   params: {
-    conversationId: string;
+    userTOChatId: string;
   };
 }
 
-const ChatCovoPage: FC<pageProps> = ({ params: { conversationId } }) => {
+const ChatCovoPage: FC<pageProps> = ({ params: { userTOChatId } }) => {
   const userConversations = useSelector(
     (state: RootState) => state.chat.conversations
   );
   const activeSelectedUser = useSelector(
     (state: RootState) => state.chat.activeHeaderInfo
   );
-  const messages = useSelector((state: RootState) => state.chat.messages);
-  console.log(messages);
-  
-  // console.log(conversationId);
+  const chatMessages = useSelector((state: RootState) => state.chat.messages);
+  console.log(chatMessages);
+
+  console.log(userTOChatId);
 
   return (
     <section className="flex flex-col gap-6 sm:gap-4">
@@ -39,7 +39,8 @@ const ChatCovoPage: FC<pageProps> = ({ params: { conversationId } }) => {
       </div>
       <div className="flex gap-4 pl-4">
         <div className="hidden lg:flex gap-2 flex-col bg-[#FDFDFF] h-full w-full max-w-[100%] sm:max-w-[50%] lg:max-w-[40%] xl:max-w-[30%] xl:max-h-[75vh] overflow-hidden border border-[#D5D5E6] rounded-2xl pt-6 xl:pt-6 xl:pl-2">
-          <h2 className="ml-4 text-[1.2rem] text-[#0C0E3B] font-medium tracking-normal">
+          <h2 className="ml-4 text-[1.2rem]
+           text-[#0C0E3B] font-medium tracking-normal">
             Messages
           </h2>
           <div className="ml-4 mr-6 bg-white flex items-center border border-[#D5D5E6] rounded-md overflow-hidden">
@@ -66,37 +67,42 @@ const ChatCovoPage: FC<pageProps> = ({ params: { conversationId } }) => {
             </div>
           </div>
         </div>
-        <div className="max-h-[73vh] border border-[#D5D5E6] overflow-hidden mr-2 sm:mr-4 xl:mr-16 w-full rounded-2xl">
-          {conversations && conversations.length > 0 ? (
-            <div className="flex justify-between flex-col h-full">
-              <div className="h-[4.5rem] px-2 sm:px-4 border-b border-[#D5D5E6] flex justify-center items-center">
-                <CurrentUserHeader
-                  name={activeSelectedUser?.alias}
-                  img={activeSelectedUser?.aliasAvatar || imgs.provider1}
-                  active={true}
-                  id={activeSelectedUser?.lastMessage || 'Start a conversation'}
-                />
-              </div>
+        <div className="h-[73vh] border border-[#D5D5E6] overflow-hidden mr-2 sm:mr-4 xl:mr-16 w-full rounded-2xl">
+          <div className="flex justify-between flex-col h-full">
+            <div className="h-[4.5rem] px-2 sm:px-4 border-b border-[#D5D5E6] flex justify-center items-center">
+              <CurrentUserHeader
+                name={activeSelectedUser?.alias}
+                img={activeSelectedUser?.aliasAvatar || imgs.provider1}
+                active={true}
+                id={activeSelectedUser?.lastMessage || "Start a conversation"}
+              />
+            </div>
+            <>
               <div className="ScrollAreaRoot flex-1 w-full max-h-[50vh] h-full text-xl rounded-lg overflow-hidden overflow-y-auto">
-                <div className="flex h-full flex-col gap-1 pt-2 px-4">
-                  {conversations.map((message) => {
-                    return (
-                      <CurrentUsersConversations
-                        key={message.id}
-                        img={message.img}
-                        message={message.message}
-                        time={message.time}
-                        isOwn={message.isOwn}
-                      />
-                    );
-                  })}
-                </div>
+                {chatMessages && chatMessages.length > 0 ? (
+                  <div className="flex h-full flex-col gap-1 pt-2 px-4">
+                    {chatMessages.map((message) => {
+                      const time = format(message.createdAt)
+                      return (
+                        <CurrentUsersConversations
+                          key={message._id}
+                          img={message?.from?.avatar!}
+                          message={message.message}
+                          time={time}
+                          isOwn={
+                            message?.to?._id !== userTOChatId ? true : false
+                          }
+                        />
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <EmptyState backgroud={false} text={`Chat with ${activeSelectedUser?.alias}`} />
+                )}
               </div>
               <CoversationFooter />
-            </div>
-          ) : (
-            <EmptyState />
-          )}
+            </>
+          </div>
         </div>
       </div>
     </section>
@@ -104,17 +110,4 @@ const ChatCovoPage: FC<pageProps> = ({ params: { conversationId } }) => {
 };
 
 export default ChatCovoPage;
-
-// <CurrentUsersConversations
-// 										key={chat?._id}
-// 										img={chat?.from?.avatar}
-// 										message={chat?.message}
-// 										time={getChatTimeDiff(
-// 											new Date(chat?.createdAt)
-// 										)}
-// 										isOwn={
-// 											chat?.from?._id === bio_data?._id
-// 												? true
-// 												: false
-// 										}
-// 									/>
+// The "images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.

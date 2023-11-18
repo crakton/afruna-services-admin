@@ -28,7 +28,7 @@ export const UsersList: FC<UsersListProps> = ({ user }) => {
       chatApis.getMessages(conversationId).then((data) => console.log(data));
       router.push(`/chat/${userTOChatId}`);
     }
-  }, [user, userTOChatId, conversationId]);
+  }, [user, userTOChatId, conversationId, chatApis, router]);
 
   return (
     <>
