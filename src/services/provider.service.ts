@@ -1,5 +1,5 @@
 import { headers } from "@/constants/http_config";
-import { setProvider, setProviderServices, setProviders } from "@/redux/features/app/provider_slice";
+import { setProvider, setProviderBookings, setProviderServices, setProviders } from "@/redux/features/app/provider_slice";
 import { TStore, store } from "@/redux/store";
 import { TErrorResponse, TSuccessResponse } from "@/types/auth.types";
 import { T_loading_provider } from "@/types/loader.types";
@@ -19,9 +19,8 @@ export default class Provider {
         setIsLoading && setIsLoading(true)
 
         try {
-            const { data } = await axios.get<TSuccessResponse<any[]>>('/api/users', headers)
-            let providers = data.data.filter((user) => user.role === 'provider')
-            store.dispatch(setProviders(providers))
+            const { data } = await axios.get<TSuccessResponse<any[]>>('/api/admin/providers', headers)
+            store.dispatch(setProviders(data.data))
             toast.success('Providers fetched successfully')
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
@@ -35,13 +34,22 @@ export default class Provider {
         setIsLoading && setIsLoading(true)
 
         try {
-            const { data } = await axios.get<TSuccessResponse<any[]>>(`/api/users/${providerId}`, headers)
+            const { data } = await axios.get<TSuccessResponse<any[]>>(`/api/admin/providers/${providerId}`, headers)
             store.dispatch(setProvider(data.data))
             toast.success('Provider fetched successfully')
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
         } finally {
             setIsLoading && setIsLoading(false)
+        }
+    }
+
+    async getProviderBookings(providerId: string) {
+        try {
+            const { data } = await axios.get<TSuccessResponse<any[]>>(`/api/admin/providers/${providerId}`, headers)
+            store.dispatch(setProviderBookings(data.data))
+        } catch (error) {
+            handleAuthErrors(error as AxiosError<TErrorResponse>)
         }
     }
 

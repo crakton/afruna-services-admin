@@ -4,7 +4,8 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 const initialState = {
     providers: [] as any[],
     provider: {} as any,
-    providerService: [] as IService[]
+    providerService: [] as IService[],
+    providerBookings: [] as any[]
 }
 
 const provider_slice = createSlice({
@@ -20,8 +21,11 @@ const provider_slice = createSlice({
         setProviderServices: (state, action: PayloadAction<IService[]>) => {
             state.providerService = action.payload
         },
+        setProviderBookings: (state, action: PayloadAction<any[]>) => {
+            state.providerBookings = action.payload
+        },
     }
 })
 
-export const { setProviders, setProvider, setProviderServices } = provider_slice.actions
+export const { setProviders, setProvider, setProviderServices, setProviderBookings } = provider_slice.actions
 export default provider_slice.reducer

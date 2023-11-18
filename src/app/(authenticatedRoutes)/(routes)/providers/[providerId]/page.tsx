@@ -30,10 +30,12 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
   const [isLoading, setIsLoading] = useState(false)
   const provider = useSelector((state: RootState) => state.provider.provider)
   const providerServices = useSelector((state: RootState) => state.provider.providerService)
+  const providerBookings = useSelector((state: RootState) => state.provider.providerBookings)
 
   useEffect(() => {
     providerApis.getProvider(providerId, { setIsLoading })
     providerApis.getProviderServices(providerId)
+    providerApis.getProviderBookings(providerId)
 
   }, [providerId])
 
@@ -94,159 +96,102 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
       </section>
       {/* Services */}
       <div className="max-w-[96%] w-full ml-6 px-8  flex flex-col gap-6">
-        <section className="flex lg:max-w-[95%] justify-between items-center bg-white p-8 rounded-lg">
-          <h3 className="text-lg lg:pl-0 lg:text-lg leading-3 text-afruna-blue font-bold">
-            Services
-          </h3>
-          <div className="flex justify-end gap-5 items-center">
-            <fieldset className="flex">
-              <ItemPicker
-                items={["A", "B"]}
-                placeholder={"A-Z"}
-                getSelected={(val) => console.log(val as string)}
-                // contentClassName={"p-2 bg-white text-xs"}
-                triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
-              />
-            </fieldset>
-            <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="w-full py-[0.6rem] text-xs text-slate-600"
-              />
-              <IoSearchOutline className="text-slate-300 text-2xl " />
-            </fieldset>
+        <section className="flex flex-col lg:max-w-[95%] bg-white p-8 rounded-lg">
+          <div className="header flex justify-between items-center">
+            <h3 className="text-lg lg:pl-0 lg:text-lg leading-3 text-afruna-blue font-bold">
+              Services
+            </h3>
+            <div className="flex justify-end gap-5 items-center">
+              <fieldset className="flex">
+                <ItemPicker
+                  items={["A", "B"]}
+                  placeholder={"A-Z"}
+                  getSelected={(val) => console.log(val as string)}
+                  // contentClassName={"p-2 bg-white text-xs"}
+                  triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
+                />
+              </fieldset>
+              <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="w-full py-[0.6rem] text-xs text-slate-600"
+                />
+                <IoSearchOutline className="text-slate-300 text-2xl " />
+              </fieldset>
+            </div>
           </div>
+
+          Services
         </section>
+
         {/* services data */}
         <section className="flex flex-col gap-2 lg:max-w-[95%]">
           {/* Booking */}
           <div className="py-6 px-8 flex flex-col lg:gap-8 lg:flex-row justify-between w-full bg-white drop-shadow rounded-lg">
-            <div className="flex flex-col items-center sm:flex-row lg:max-w-[80%] w-full gap-6">
-              <div className="flex justify-center items-center w-full h-[12rem] sm:w-[15rem] sm:h-[9rem]">
-                <div className="w-full h-full overflow-hidden relative rounded-md">
-                  <Image src={imgs.review1} alt="review" priority fill />
+            {providerBookings.map(booking => (
+              <div key={booking.id} className="flex flex-col items-center sm:flex-row lg:max-w-[80%] w-full gap-6">
+                <div className="flex justify-center items-center w-full h-[12rem] sm:w-[15rem] sm:h-[9rem]">
+                  <div className="w-full h-full overflow-hidden relative rounded-md">
+                    <Image src={imgs.review1} alt="review" priority fill />
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col justify-start gap-4  w-full">
-                <div className="flex justify-start items-center gap-2">
-                  <span className="lg:max-w-[27%] w-full text-black font-bold">
-                    Video Editing
-                  </span>
-                  <span className="sm:text-sm flex justify-end lg:justify-start text-[0.65rem] lg:max-w-[73%] w-full text-afruna-gray">
-                    <p className="bg-rose-100 text-red-700 px-2 py-1 w-fit ">
-                      Canceled
-                    </p>
-                  </span>
-                </div>
-                <div className="flex justify-start items-center gap-2">
-                  <span className="text-xs  lg:max-w-[27%] w-full text-black font-bold">
-                    Booking Date
-                  </span>
-                  <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
-                    :January 23, 2023
-                  </span>
-                </div>
-                <div className="flex justify-start items-center gap-2">
-                  <span className="text-xs  lg:max-w-[27%] w-full text-black font-bold">
-                    Account
-                  </span>
-                  <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
-                    :#1432.00
-                  </span>
-                </div>
-                <div className="flex justify-start items-center gap-2">
-                  <span className="text-xs lg:max-w-[27%] w-full text-afruna-blue font-bold">
-                    Location
-                  </span>
-                  <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
-                    :Kaduna
-                  </span>
-                </div>
-                <div className="flex justify-start items-center gap-2">
-                  <span className="lg:max-w-[27%] sm:text-xs w-full text-black font-bold">
-                    Provider
-                  </span>
-                  <div className="flex flex-col lg:flex-row gap-2 lg:items-center lg:justify-start justify-end items-end lg:text-start lg:max-w-[73%] w-full">
-                    <div className="flex items-center gap-1">
-                      <div className="w-[1.3rem] h-[1.3rem] sm:w-[2rem] sm:h-[2rem] overflow-hidden rounded-full relative flex justify-center items-center">
-                        <Image src={imgs.seller1} alt="review" priority fill />
+                <div className="flex flex-col justify-start gap-4  w-full">
+                  <div className="flex justify-start items-center gap-2">
+                    <span className="lg:max-w-[27%] w-full text-black font-bold">
+                      {booking.name}
+                    </span>
+                    <span className="sm:text-sm flex justify-end lg:justify-start text-[0.65rem] lg:max-w-[73%] w-full text-afruna-gray">
+                      <p className="bg-rose-100 text-red-700 px-2 py-1 w-fit ">
+                        {booking.status}
+                      </p>
+                    </span>
+                  </div>
+                  <div className="flex justify-start items-center gap-2">
+                    <span className="text-xs  lg:max-w-[27%] w-full text-black font-bold">
+                      Booking Date
+                    </span>
+                    <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
+                      :January 23, 2023
+                    </span>
+                  </div>
+                  <div className="flex justify-start items-center gap-2">
+                    <span className="text-xs  lg:max-w-[27%] w-full text-black font-bold">
+                      Amount
+                    </span>
+                    <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
+                      :#{booking.price}
+                    </span>
+                  </div>
+                  <div className="flex justify-start items-center gap-2">
+                    <span className="text-xs lg:max-w-[27%] w-full text-afruna-blue font-bold">
+                      Location
+                    </span>
+                    <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
+                      :{booking.state}
+                    </span>
+                  </div>
+                  <div className="flex justify-start items-center gap-2">
+                    <span className="lg:max-w-[27%] sm:text-xs w-full text-black font-bold">
+                      Provider
+                    </span>
+                    <div className="flex flex-col lg:flex-row gap-2 lg:items-center lg:justify-start justify-end items-end lg:text-start lg:max-w-[73%] w-full">
+                      <div className="flex items-center gap-1">
+                        <div className="w-[1.3rem] h-[1.3rem] sm:w-[2rem] sm:h-[2rem] overflow-hidden rounded-full relative flex justify-center items-center">
+                          <Image src={imgs.seller1} alt="review" priority fill />
+                        </div>
+                        <span className="sm:text-xs text-[0.65rem] text-slate-600">
+                          Jahimani Masilala
+                        </span>
                       </div>
-                      <span className="sm:text-xs text-[0.65rem] text-slate-600">
-                        Jahimani Masilala
+                      <span className="sm:text-xs text-[0.65rem] text-[#787878]">
+                        jahimani@gmail.com
                       </span>
                     </div>
-                    <span className="sm:text-xs text-[0.65rem] text-[#787878]">
-                      jahimani@gmail.com
-                    </span>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {/* Booking */}
-          <div className="py-6 px-8 flex flex-col lg:gap-8 lg:flex-row justify-between w-full bg-white drop-shadow rounded-lg">
-            <div className="flex flex-col items-center sm:flex-row lg:max-w-[80%] w-full gap-6">
-              <div className="flex justify-center items-center w-full h-[12rem] sm:w-[13rem] sm:h-[9rem]">
-                <div className="w-full h-full overflow-hidden relative rounded-md">
-                  <Image src={imgs.review1} alt="review" priority fill />
-                </div>
-              </div>
-              <div className="flex flex-col justify-start gap-4  w-full">
-                <div className="flex justify-start items-center gap-2">
-                  <span className="lg:max-w-[27%] w-full text-black font-bold">
-                    Video Editing
-                  </span>
-                  <span className="sm:text-sm flex justify-end lg:justify-start text-[0.65rem] lg:max-w-[73%] w-full text-afruna-gray">
-                    <p className="bg-green-100 text-green-700 px-2 py-1 w-fit ">
-                      Completed
-                    </p>
-                  </span>
-                </div>
-                <div className="flex justify-start items-center gap-2">
-                  <span className="text-xs  lg:max-w-[27%] w-full text-black font-bold">
-                    Booking Date
-                  </span>
-                  <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
-                    :January 23, 2023
-                  </span>
-                </div>
-                <div className="flex justify-start items-center gap-2">
-                  <span className="text-xs  lg:max-w-[27%] w-full text-black font-bold">
-                    Account
-                  </span>
-                  <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
-                    :#1432.00
-                  </span>
-                </div>
-                <div className="flex justify-start items-center gap-2">
-                  <span className="text-xs lg:max-w-[27%] w-full text-afruna-blue font-bold">
-                    Location
-                  </span>
-                  <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
-                    :Kaduna
-                  </span>
-                </div>
-                <div className="flex justify-start items-center gap-2">
-                  <span className="lg:max-w-[27%] sm:text-xs w-full text-black font-bold">
-                    Provider
-                  </span>
-                  <div className="flex flex-col lg:flex-row gap-2 lg:items-center lg:justify-start justify-end items-end lg:text-start lg:max-w-[73%] w-full">
-                    <div className="flex items-center gap-1">
-                      <div className="w-[1.3rem] h-[1.3rem] sm:w-[2rem] sm:h-[2rem] overflow-hidden rounded-full relative flex justify-center items-center">
-                        <Image src={imgs.seller1} alt="review" priority fill />
-                      </div>
-                      <span className="sm:text-xs text-[0.65rem] text-slate-600">
-                        Jahimani Masilala
-                      </span>
-                    </div>
-                    <span className="sm:text-xs text-[0.65rem] text-[#787878]">
-                      jahimani@gmail.com
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
       </div>
