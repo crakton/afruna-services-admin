@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
 import "./globals.css";
-import { ProvidersContextProvider } from "@/contexts/ProvidersContextProvider";
-import { BookingsContextProvider } from "@/contexts/BookingsContextProvider";
-import { CustomersContextProvider } from "@/contexts/CustomersContextProvider.";
-import TransactionsContextProvider from "@/contexts/TransactionsContextProvider";
-import { ServicesContextProvider } from "@/contexts/ServicesContextProvider";
 import Providers from "@/redux/Provider";
 import ModalProvider from "@/components/context/ModalContext";
 

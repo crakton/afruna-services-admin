@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import {
   ColumnDef,
@@ -13,20 +13,27 @@ import {
 import { MdDeleteOutline, MdRemoveRedEye } from "react-icons/md";
 import Image from "next/image";
 import { RxChevronDown, RxChevronUp } from "react-icons/rx";
-import { customersData } from "@/constants/data";
 import { imgs } from "@/constants/images";
-import { T_Customers } from "@/types/customers";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { ICustomerBio } from "@/types/customer";
+// import { useRouter } from "next/navigation";
 
 const CustomersTable = () => {
+  // const router = useRouter();
+  const customers = useSelector((state: RootState) => state.customer.customers);
+  useEffect(() => {
+    setData(customers);
+  });
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([...customersData]);
+  const [data, setData] = useState<ICustomerBio[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = useMemo<ColumnDef<T_Customers>[]>(
+  const columns = useMemo<ColumnDef<ICustomerBio>[]>(
     () => [
       {
-        accessorKey: "id",
+        accessorKey: "_id",
         cell: (info) => info.getValue(),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
@@ -34,16 +41,19 @@ const CustomersTable = () => {
         accessorKey: "customerName",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 ml-8 items-center ">
-            <Image
-              src={imgs.provider2}
-              alt={"pro"}
-              width={35}
-              height={35}
-              className="rounded"
-            />
+            <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
+              <Image
+                src={row.original.avatar || imgs.provider2}
+                alt={"pro"}
+                fill
+                className="rounded"
+              />
+            </div>
             <div className="flex flex-col justify-start">
-              <span className=" text-slate-600 text-xs">Lativari dress</span>
-              <span className=" text-slate-600 text-xs">dress@gmail.com</span>
+              <span className=" text-slate-600 text-xs">{`${row.original.firstName} ${row.original.lastName}`}</span>
+              <span className=" text-slate-600 text-xs">
+                {row.original.email}
+              </span>
             </div>
           </div>
         ),
@@ -52,10 +62,14 @@ const CustomersTable = () => {
         ),
       },
       {
-        accessorKey: "mobileNumber",
+        accessorKey: "phoneNumber",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-4 items-center">
-            <span className=" text-slate-600 text-xs">+23408178564312</span>
+            <span className=" text-slate-600 text-xs">
+              {row.original.phoneNumber
+                ? row.original.phoneNumber
+                : "Not yet Provided"}
+            </span>
           </div>
         ),
         header: () => (
@@ -64,86 +78,103 @@ const CustomersTable = () => {
       },
       {
         accessorKey: "regDate",
-        cell: ({ row }) => (
-          <div className="flex flex-col justify-start ml-3 items-start">
-            <span className="text-afruna-blue text-xs">01 Oct 2023</span>
-            <span className=" text-afruna-blue text-xs">11:29 am</span>
-          </div>
-        ),
+        cell: ({ row }) => {
+          const createdAtDate = new Date(row.original.createdAt);
+          const dateString = createdAtDate.toLocaleDateString("en-US", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          });
+          const year = createdAtDate.getFullYear();
+          const month_in_num = createdAtDate.getMonth() + 1; // Months are zero-indexed
+          const day = createdAtDate.getDate();
+          const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
+          const month = new Date(year, monthIndex).toLocaleString("en-US", {
+            month: "short",
+          });
+
+          const timeString = createdAtDate.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          });
+          return (
+            <div className="flex flex-col justify-start ml-3 items-start">
+              <span className="text-afruna-blue text-xs">{`${day} ${month}, ${year}`}</span>
+              <span className=" text-afruna-blue text-xs">{timeString}</span>
+            </div>
+          );
+        },
         header: () => (
           <span className="text-sm text-[#7C7C7C] ml-3">Reg Date</span>
         ),
       },
       {
-        accessorKey: "lastActivity",
-        cell: ({ cell }) => {
-          switch (cell.getValue()) {
-            
-            case "Offline":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-lime-600 mr-1" />
-                  <span className="text-lime-600 text-xs">Offline</span>
-                </span>
-              );
-            case "Online":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-blue-500 mr-1" />
-                  <span className="text-blue-500 text-xs">Online</span>
-                </span>
-              );
-          }
-        },
-        header: () => <span className="">Last Activity</span>,
-      },
-      {
-        accessorKey: "status",
-        cell: ({ cell }) => {
-          switch (cell.getValue()) {
-            case "Inactive":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-lime-600 mr-1" />
-                  <span className="text-lime-600 text-xs">Inactive</span>
-                </span>
-              );
-            case "Deleted":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-red-500 mr-1" />
-                  <span className="text-red-500 text-xs">Deleted</span>
-                </span>
-              );
-            case "Active":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-blue-500 mr-1" />
-                  <span className="text-blue-500 text-xs">Active</span>
-                </span>
-              );
-          }
+        accessorKey: "Online",
+        cell: ({ row }) => {
+          return (
+            <span className="flex justify-between items-center w-fit">
+              <span className={` ${row.original.online ? 'bg-blue-500' : 'bg-lime-600' } p-1 rounded-full mr-1 `}/>
+              <span className={`${row.original.online ? 'text-blue-500' : 'text-lime-600' } text-xs`}>{row.original.online ? 'Online' : 'Offline'}</span>
+            </span>
+          );
         },
         header: () => <span className="">Status</span>,
       },
+      // {
+      //   accessorKey: "status",
+      //   cell: ({ cell }) => {
+      //     switch (cell.getValue()) {
+      //       case "Inactive":
+      //         return (
+      //           <span className="flex justify-between items-center w-fit">
+      //             <span className="p-1 rounded-full bg-lime-600 mr-1" />
+      //             <span className="text-lime-600 text-xs">Inactive</span>
+      //           </span>
+      //         );
+      //       case "Deleted":
+      //         return (
+      //           <span className="flex justify-between items-center w-fit">
+      //             <span className="p-1 rounded-full bg-red-500 mr-1" />
+      //             <span className="text-red-500 text-xs">Deleted</span>
+      //           </span>
+      //         );
+      //       case "Active":
+      //         return (
+      //           <span className="flex justify-between items-center w-fit">
+      //             <span className="p-1 rounded-full bg-blue-500 mr-1" />
+      //             <span className="text-blue-500 text-xs">Active</span>
+      //           </span>
+      //         );
+      //     }
+      //   },
+      //   header: () => <span className="">Status</span>,
+      // },
       {
         id: "actions",
-        cell: ({ row }) => (
-          <div className="flex justify-start gap-1 items-center">
-            <Link href={`/users/gdshjskjjk`}  className="hover:scale-90 border-none transition duration-300">
-              <MdRemoveRedEye size={24} />
-            </Link>
-            <button
-              className="hover:scale-90 border-none transition duration-300"
-              onClick={() => {
-                const newData = data.filter((_, idx) => idx !== row.index);
-                setData(newData);
-              }}
-            >
-              <MdDeleteOutline size={24} />
-            </button>
-          </div>
-        ),
+        cell: ({ row }) => {
+          const userId = row.original._id
+          return (
+            <div className="flex justify-start gap-1 items-center">
+              <Link
+                // onClick={() => }
+                href={`/users/${userId}`}
+                className="hover:scale-90 border-none transition duration-300"
+              >
+                <MdRemoveRedEye size={24} />
+              </Link>
+              {/* <button
+                className="hover:scale-90 border-none transition duration-300"
+                onClick={() => {
+                  const newData = data.filter((_, idx) => idx !== row.index);
+                  setData(newData);
+                }}
+              >
+                <MdDeleteOutline size={24} />
+              </button> */}
+            </div>
+          );
+        },
         header: () => <span className="text-sm text-[#7C7C7C]">Action</span>,
       },
     ],

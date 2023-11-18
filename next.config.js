@@ -9,6 +9,9 @@ const nextConfig = {
 			},
 		];
 	},
+	images: {
+		domains: ["afruna-bucket.nyc3.digitaloceanspaces.com","lh3.googleusercontent.com"],
+	},
 };
 
 module.exports = nextConfig;

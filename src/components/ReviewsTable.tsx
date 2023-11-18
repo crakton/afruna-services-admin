@@ -18,8 +18,11 @@ import { reviewData } from "@/constants/data";
 import { imgs } from "@/constants/images";
 import { T_Review } from "@/types/review";
 import { BsStarFill } from "react-icons/bs";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const ReviewTable = () => {
+  const reviews = useSelector((state: RootState )=> state.reviews.reviews) 
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState([...reviewData]);
   const [sorting, setSorting] = useState<SortingState>([]);

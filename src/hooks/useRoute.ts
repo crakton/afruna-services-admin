@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useConversation } from "./useConversation";
 import { AiFillAccountBook } from "react-icons/ai";
 import { MdChat, MdDashboard, MdGroups2, MdPeopleAlt, MdReviews, MdSettings } from "react-icons/md";
-import { TbReportAnalytics } from "react-icons/tb";
+// import { TbReportAnalytics } from "react-icons/tb";
 import { IoMdBriefcase } from "react-icons/io";
 import { LuPanelTop } from "react-icons/lu";
 
@@ -12,12 +12,12 @@ export const useRoute = () => {
   const { conversationId } = useConversation();
   const params = useParams();
 
-  const userId = useMemo(() => {
-    if (!params?.userId) {
+  const customerId = useMemo(() => {
+    if (!params?.customerId) {
       return "";
     }
-    return params.userId as string;
-  }, [params?.userId]);
+    return params.customerId as string;
+  }, [params?.customerId]);
 
   const providerId = useMemo(() => {
     if (!params?.providerId) {
@@ -65,7 +65,7 @@ export const useRoute = () => {
       {
         title: "Users",
         icon: MdGroups2,
-        active: pathname === "/users" || !!userId,
+        active: pathname === "/users" || !!customerId,
         href: "/users",
         hasSubNav: false,
       },
@@ -90,13 +90,13 @@ export const useRoute = () => {
         href: "/review",
         hasSubNav: false,
       },
-      {
-        title: "Abuse Reports",
-        icon: TbReportAnalytics,
-        active: pathname === "/abuse_reports",
-        href: "/abuse_reports",
-        hasSubNav: false,
-      },
+      // {
+      //   title: "Abuse Reports",
+      //   icon: TbReportAnalytics,
+      //   active: pathname === "/abuse_reports",
+      //   href: "/abuse_reports",
+      //   hasSubNav: false,
+      // },
       // {
       //   title: "Settings",
       //   icon: MdSettings,

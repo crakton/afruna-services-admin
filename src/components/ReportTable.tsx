@@ -18,8 +18,11 @@ import { RxChevronDown, RxChevronUp } from "react-icons/rx";
 import { reportData } from "@/constants/data";
 import { imgs } from "@/constants/images";
 import { T_Report } from "@/types/report";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const ReportTable = () => {
+  const abuseReport = useSelector((state: RootState )=> state.abuseReports.abuseReports) 
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState([...reportData]);
   const [sorting, setSorting] = useState<SortingState>([]);

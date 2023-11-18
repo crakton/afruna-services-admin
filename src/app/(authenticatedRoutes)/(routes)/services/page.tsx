@@ -3,10 +3,6 @@
 import ItemPicker from "@/components/ItemPicker";
 import ServicesTable from "@/components/ServicesTable";
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  ServicesContext,
-  T_Services_Tab,
-} from "@/contexts/ServicesContextProvider";
 import { IService } from "@/interfaces/IService";
 import { setServices } from "@/redux/features/app/service_slice";
 import { setStatus } from "@/redux/features/app/table_status_slice";

@@ -6,6 +6,11 @@ import authReducer from './features/auth/auth_slice'
 import tableStatusReducer from './features/app/table_status_slice'
 import bookingReducer from './features/app/booking_slice'
 import providerReducer from './features/app/provider_slice'
+import customerReducer from "./features/app/customer_slice";
+import reviewReeducer from "./features/app/review_slice";
+import loadingReeducer from "./features/app/loading_slice";
+import abuseReportsReducer from "./features/app/abuseReport_slice";
+import chatReducer from "./features/app/chat_slice";
 
 export const store = configureStore({
     reducer: {
@@ -13,7 +18,12 @@ export const store = configureStore({
         service: serviceReducer,
         booking: bookingReducer,
         tableStatus: tableStatusReducer,
-        provider: providerReducer
+        provider: providerReducer,
+        customer: customerReducer,
+        reviews: reviewReeducer,
+        loading: loadingReeducer,
+        abuseReports: abuseReportsReducer,
+        chat: chatReducer
     }
 })
 

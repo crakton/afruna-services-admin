@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect} from "react";
 import ProvidersTable from "@/components/ProvidersTable";
 import { IoSearchOutline } from "react-icons/io5";
 import ItemPicker from "@/components/ItemPicker";
@@ -27,15 +27,13 @@ const providersPage: FC<pageProps> = ({}) => {
   
   const currentStatus = useSelector((state: RootState) => state.tableStatus.status)
   let providers = useSelector((state: RootState) => state.provider.providers)
-  const [isLoading, setIsLoading] = useState(false)
-
   const providerApis = new Provider()
 
   const handleTabSelect = (status: tableStatus) => {
     switch (status) {
       case 'all':
         store.dispatch(setStatus('all'))
-        providerApis.getProviders({ setIsLoading })
+        providerApis.getProviders()
         break;
       case 'pending':
         store.dispatch(setStatus('pending'))
@@ -47,8 +45,7 @@ const providersPage: FC<pageProps> = ({}) => {
   }
 
   useEffect(() => {
-    providerApis.getProviders({ setIsLoading })
-
+    providerApis.getProviders()
     return () => {
       store.dispatch(setStatus('all'))
     }

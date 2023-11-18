@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { memo, useMemo, useState } from "react";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
@@ -15,17 +15,20 @@ import {
 import { MdDeleteOutline, MdRemoveRedEye } from "react-icons/md";
 import Image from "next/image";
 import { RxChevronDown, RxChevronUp } from "react-icons/rx";
-import { customerDetailsData } from "@/constants/data";
 import { imgs } from "@/constants/images";
-import { T_Customers } from "@/types/customers";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const CustomerBookingDetailsTable = () => {
+  const customerBookings = useSelector(
+    (state: RootState) => state.customer.customerBookings
+  );
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([...customerDetailsData]);
+  const [data, setData] = useState([...customerBookings]);
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = useMemo<ColumnDef<T_Customers>[]>(
+  const columns = useMemo<ColumnDef<any>[]>(
     () => [
       {
         accessorKey: "id",
@@ -34,12 +37,26 @@ const CustomerBookingDetailsTable = () => {
       },
       {
         accessorKey: "bookingDate",
-        cell: ({ row }) => (
-          <div className="flex flex-col justify-start ml-3 items-start">
-            <span className="text-afruna-blue text-xs">01 Oct 2023</span>
-            <span className=" text-afruna-blue text-xs">11:29 am</span>
-          </div>
-        ),
+        cell: ({ row }) => {
+          const createdAtDate = new Date(row.original.createdAt);
+          const year = createdAtDate.getFullYear();
+          const day = createdAtDate.getDate();
+          const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
+          const month = new Date(year, monthIndex).toLocaleString("en-US", {
+            month: "short",
+          });
+          const timeString = createdAtDate.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          });
+          return (
+            <div className="flex flex-col justify-start ml-3 items-start">
+              <span className="text-afruna-blue text-xs">{`${day} ${month}, ${year}`}</span>
+              <span className=" text-afruna-blue text-xs">{timeString}</span>
+            </div>
+          );
+        },
         header: () => (
           <span className="text-sm text-[#7C7C7C] ml-3">Booking Date</span>
         ),
@@ -48,29 +65,25 @@ const CustomerBookingDetailsTable = () => {
         accessorKey: "provider",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2  items-center ">
-            <Image
-              src={imgs.provider3}
-              alt={"pro"}
-              width={35}
-              height={35}
-              className="rounded"
-            />
-              <span className=" text-slate-600 text-xs">Lativari dress</span>
+            <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
+              <Image
+                src={row.original.avatar || imgs.provider2}
+                alt={"pro"}
+                fill
+                className="rounded"
+              />
+            </div>
+            <span className=" text-slate-600 text-xs">{`${row.original.firstName} ${row.original.lastName}`}</span>
           </div>
         ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C] ">Provider</span>
-        ),
+        header: () => <span className="text-sm text-[#7C7C7C] ">Provider</span>,
       },
       {
         accessorKey: "service",
         cell: ({ row }) => (
-            <span className=" text-slate-600 text-xs">Plumbing repair</span>
-          
+          <span className=" text-slate-600 text-xs">Plumbing repair</span>
         ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C]">Services</span>
-        ),
+        header: () => <span className="text-sm text-[#7C7C7C]">Services</span>,
       },
       {
         accessorKey: "status",
@@ -104,33 +117,33 @@ const CustomerBookingDetailsTable = () => {
       {
         accessorKey: "amount",
         cell: ({ row }) => (
-            <span className=" text-slate-600 text-xs">#3500</span>
-          
+          <span className=" text-slate-600 text-xs">#3500</span>
         ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C]">Amount</span>
-        ),
+        header: () => <span className="text-sm text-[#7C7C7C]">Amount</span>,
       },
-      {
-        id: "actions",
-        cell: ({ row }) => (
-          <div className="flex justify-start gap-1 items-center">
-            <Link href={`/users/gdshjskjjk`}  className="hover:scale-90 border-none transition duration-300">
-              <MdRemoveRedEye size={24} />
-            </Link>
-            <button
-              className="hover:scale-90 border-none transition duration-300"
-              onClick={() => {
-                const newData = data.filter((_, idx) => idx !== row.index);
-                setData(newData);
-              }}
-            >
-              <MdDeleteOutline size={24} />
-            </button>
-          </div>
-        ),
-        header: () => <span className="text-sm text-[#7C7C7C]">Action</span>,
-      },
+      // {
+      //   id: "actions",
+      //   cell: ({ row }) => (
+      //     <div className="flex justify-start gap-1 items-center">
+      //       <Link
+      //         href={`/users/gdshjskjjk`}
+      //         className="hover:scale-90 border-none transition duration-300"
+      //       >
+      //         <MdRemoveRedEye size={24} />
+      //       </Link>
+      //       <button
+      //         className="hover:scale-90 border-none transition duration-300"
+      //         onClick={() => {
+      //           const newData = data.filter((_, idx) => idx !== row.index);
+      //           setData(newData);
+      //         }}
+      //       >
+      //         <MdDeleteOutline size={24} />
+      //       </button>
+      //     </div>
+      //   ),
+      //   header: () => <span className="text-sm text-[#7C7C7C]">Action</span>,
+      // },
     ],
     [data]
   );
