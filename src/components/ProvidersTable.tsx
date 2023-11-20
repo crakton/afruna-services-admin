@@ -27,16 +27,17 @@ import { T_Providers } from "@/types/providers";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { imgs } from "@/constants/images";
 
 const AllProviders = () => {
   const [rowSelection, setRowSelection] = useState({});
- const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const providers = useSelector((state: RootState) => state.provider.providers)
+  const providers = useSelector((state: RootState) => state.provider.providers);
 
   useEffect(() => {
-    setData(providers)
-  })
+    setData(providers);
+  });
 
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
@@ -44,23 +45,29 @@ const AllProviders = () => {
         accessorKey: "id",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-4 items-center ml-8">
-            <span className=" text-slate-600 text-xs">{ row.original.customId }</span>
-          </div>),
+            <span className=" text-slate-600 text-xs">
+              {row.original.customId}
+            </span>
+          </div>
+        ),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
       {
         accessorKey: "productName",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-4 items-center ml-8">
-            <Image
-              src={row.original.img}
-              alt={row.original.providerName}
-              width={45}
-              height={45}
-              className="rounded"
-            />
+            <div className="flex relative w-[40px] h-[40px] overflow-hidden justify-center items-center">
+              <Image
+                src={row.original.img || imgs.provider1}
+                alt={row.original.providerName}
+                fill
+                className="rounded"
+              />
+            </div>
             <div className="flex flex-col text-slate-600">
-              <span className="">{row.original.firstName} {row.original.lastName}</span>
+              <span className="">
+                {row.original.firstName} {row.original.lastName}
+              </span>
               <span className="">{row.original.email}</span>
             </div>
           </div>
@@ -71,10 +78,13 @@ const AllProviders = () => {
       },
       {
         accessorKey: "phone",
-        cell: ({row}) => (
+        cell: ({ row }) => (
           <div key={row.id} className="flex gap-4 items-center ml-8">
-            <span className=" text-slate-600 text-xs">{ row.original.phoneNumber }</span>
-          </div>),
+            <span className=" text-slate-600 text-xs">
+              {row.original.phoneNumber}
+            </span>
+          </div>
+        ),
         header: () => (
           <span className="text-sm text-[#7C7C7C]">Mobile Number</span>
         ),

@@ -1,27 +1,53 @@
 import { imgs } from "@/constants/images";
-import Image, { StaticImageData } from "next/image";
-import { FC } from "react";
+import { IMessage } from "@/types/user";
+import Image from "next/image";
+import { FC, useEffect, useRef } from "react";
 
 interface CurrentUsersConversationsProps {
-  img: string | StaticImageData;
   message: string;
   time: string;
   isOwn: boolean;
+  convo: IMessage;
 }
 
 export const CurrentUsersConversations: FC<CurrentUsersConversationsProps> = ({
-  img,
   message,
   time,
   isOwn,
+  convo,
 }) => {
-  const convo = true;
+  // const usersData = useSelector((state: RootState) => state.chat.users);
+  // const userConvoAvatar = usersData.filter(
+  //   (user) => user?._id === convo?.to?._id
+  // )[0];
+  // const avatar = userConvoAvatar?.avatar;
+  const name = `${convo?.from?.firstName} ${convo?.from?.lastName}`
+  const nameSplit = name?.split(" ");
+  const firstWord = nameSplit[0];
+  const secondWord = nameSplit[1];
+  const firstLetterFirstWord = firstWord.charAt(0).toUpperCase();
+  const firstLetterSecondWord = secondWord.charAt(0).toUpperCase();
+  const scroll = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (scroll.current) {
+      scroll.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [scroll]);
+  
   return (
-    <div className={`flex gap-3 w-full p-2 ${isOwn && "justify-end"}`}>
+    <div ref={scroll} className={`flex gap-2 w-full p-2 ${isOwn && "justify-end"}`}>
       <div
-        className={`${isOwn && "order-2"} relative overflow-hidden rounded-full flex justify-center items-center`}
+        className={`${
+          isOwn ? "order-2 bg-afruna-blue/60 ring-4 ring-slate-300 w-6 h-6" : 'w-8 h-8'
+        }  relative overflow-hidden rounded-full flex justify-center items-center`}
       >
-        <Image src={img || imgs.provider1} alt="image" fill />
+        {isOwn ? (
+          <Image src={imgs.afruna_2nd_logo} alt="image" fill />
+        ) : (
+          convo?.from?.avatar ? <Image src={convo?.from?.avatar} alt="image" fill /> : <div className=" text-[0.68rem] w-full h-full bg-slate-300 flex justify-center items-center">
+          {`${firstLetterFirstWord} ${firstLetterSecondWord}`}
+        </div>
+        )}
       </div>
       <div
         className={`flex flex-col gap-1 max-w-xs w-full ${

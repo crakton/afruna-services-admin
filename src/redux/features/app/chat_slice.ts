@@ -5,6 +5,7 @@ const initialState = {
     conversations: [] as IConversation[],
     userConversations: [] as IConversation[],
     activeHeaderInfo: {} as IConversation,
+    activeUserConvo: {} as IConversation,
     chatDetails: {},
     users: [] as IUserBio[],
     messages: [] as IMessage[],
@@ -24,6 +25,9 @@ const chat_slice = createSlice({
         setActiveHeaderInfo: (state, action: PayloadAction<IConversation>) => {
             state.activeHeaderInfo = action.payload
         },
+        setActiveUserConvo: (state, action: PayloadAction<IConversation>) => {
+            state.activeUserConvo = action.payload
+        },
         setUsers: (state, action: PayloadAction<IUserBio[]>) => {
             state.users = action.payload
         },
@@ -36,5 +40,5 @@ const chat_slice = createSlice({
     }
 })
 
-export const { setConversations, setUsers, setMessages, createMessage, setActiveHeaderInfo, setUserTOChatId } = chat_slice.actions
+export const { setConversations, setUsers, setMessages, createMessage, setActiveHeaderInfo, setUserTOChatId , setActiveUserConvo} = chat_slice.actions
 export default chat_slice.reducer

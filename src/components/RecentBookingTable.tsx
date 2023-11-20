@@ -13,14 +13,17 @@ import {
 } from "@tanstack/react-table";
 import { MdDeleteOutline, MdRemoveRedEye } from "react-icons/md";
 import Image from "next/image";
-import { bookingsData } from "@/constants/data";
 import { T_Bookings } from "@/types/bookings";
 import { imgs } from "@/constants/images";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const RecentBookingTable = () => {
+  const recentBookings = useSelector((state: RootState) => state.booking.recentBookings)
+  console.log(recentBookings);
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([...bookingsData]);
+  const [data, setData] = useState([...recentBookings]);
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const columns = useMemo<ColumnDef<T_Bookings>[]>(

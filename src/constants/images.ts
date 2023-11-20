@@ -1,4 +1,5 @@
 import afruna_logo from "@/assests/imgs/logo.png";
+import afruna_2nd_logo from "@/assests/imgs/afruna.png";
 import google_icon from "@/assests/imgs/google.png";
 import seller1 from "@/assests/imgs/seller1.png";
 import provider1 from "@/assests/imgs/provider1.png"
@@ -13,6 +14,7 @@ import review1 from "@/assests/imgs/review1.png"
 
 export const imgs = {
   afruna_logo,
+  afruna_2nd_logo,
   google_icon,
   seller1,
   provider1,

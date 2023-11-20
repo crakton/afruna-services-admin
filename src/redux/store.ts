@@ -11,6 +11,7 @@ import reviewReeducer from "./features/app/review_slice";
 import loadingReeducer from "./features/app/loading_slice";
 import abuseReportsReducer from "./features/app/abuseReport_slice";
 import chatReducer from "./features/app/chat_slice";
+import transactionsReducer from "./features/app/transactions_slice";
 
 export const store = configureStore({
     reducer: {
@@ -23,7 +24,8 @@ export const store = configureStore({
         reviews: reviewReeducer,
         loading: loadingReeducer,
         abuseReports: abuseReportsReducer,
-        chat: chatReducer
+        chat: chatReducer,
+        transaction: transactionsReducer
     }
 })
 

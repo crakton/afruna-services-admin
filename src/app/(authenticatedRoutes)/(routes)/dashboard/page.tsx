@@ -8,8 +8,9 @@ import TopProviderTable from "@/components/TopProviderTable";
 import TopServiceTable from "@/components/TopServiceTable";
 import { buttonVariants } from "@/components/ui/button";
 import { DashboardStats } from "@/constants/data";
+import Booking from "@/services/booking.service";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { FaArrowRight } from "react-icons/fa";
 
 interface pageProps {}
@@ -103,6 +104,11 @@ const DashboardPage: FC<pageProps> = ({}) => {
     },
     // Add more data... background: linear-gradient(180deg, #817AF3 0%, #74B0FA 47.92%, #79D0F1 100%);
   ];
+  const bookingApis = new Booking()
+  useEffect(() => {
+    bookingApis.getRecentBookings().then(data => console.log(data)
+    )
+  }, [])
   return (
     <section className="flex flex-col gap-6 pb-12 ">
       <div className="flex justify-start items-center pl-4 lg:pl-6 bg-white w-full h-16">

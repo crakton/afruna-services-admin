@@ -13,14 +13,17 @@ import { useSelector } from "react-redux";
 import { RootState, store } from "@/redux/store";
 import { IUserBio } from "@/types/user";
 import { setConversations } from "@/redux/features/app/chat_slice";
+import { LuMessageSquarePlus } from "react-icons/lu";
+import { toast } from "react-toastify";
+import { IoRemoveOutline } from "react-icons/io5";
 
 interface pageProps {}
 
 const ChatPage: FC<pageProps> = ({}) => {
-  const chatApis = new ChatService();
   useEffect(() => {
-    chatApis.getConversations()
-  }, [chatApis])
+    const chatApis = new ChatService();
+    chatApis.getConversations();
+  }, []);
   const loading = useSelector((state: RootState) => state.loading.loading);
   const usersToselect = useSelector((state: RootState) => state.chat.users);
   const userConversations = useSelector(
@@ -32,10 +35,16 @@ const ChatPage: FC<pageProps> = ({}) => {
 
   const handleFetchUsers = useCallback(() => {
     setOpen(true);
+    const chatApis = new ChatService();
     chatApis.getUsers();
-  }, [chatApis]);
+  }, []);
   const [userSelected, setUserSelected] = useState<IUserBio>();
   const handleAddUserTOChat = () => {
+    const isUserInTheConvoList = userConversations.some(
+      (conversation) =>
+        conversation.alias ===
+        `${userSelected?.firstName} ${userSelected?.lastName}`
+    );
     const newUserConversation = {
       _id: "",
       recipients: [`${userSelected?._id}`],
@@ -46,10 +55,17 @@ const ChatPage: FC<pageProps> = ({}) => {
       createdAt: "",
       updatedAt: "",
     };
-    store.dispatch(
-      setConversations([newUserConversation, ...userConversations])
-    );
-    onClose();
+    if (isUserInTheConvoList) {
+      toast.info(
+        `${userSelected?.firstName} ${userSelected?.lastName} is already in your chat list`
+      );
+      return;
+    } else {
+      store.dispatch(
+        setConversations([newUserConversation, ...userConversations])
+      );
+      onClose();
+    }
   };
 
   return (
@@ -94,60 +110,83 @@ const ChatPage: FC<pageProps> = ({}) => {
                 onClick={handleFetchUsers}
                 className="w-[2.3rem] h-[2.3rem] flex justify-center items-center rounded-full bg-orange-400 hover:bg-orange-500 hover:scale-105 transition-all duration-300"
               >
-                <BiSolidMessageSquareDetail className="text-white md:text-xl font-extrabold" />
+                <LuMessageSquarePlus className="text-white md:text-xl font-extrabold" />
               </button>
             </div>
           </div>
           <div className="hidden md:block h-[73vh] border border-[#D5D5E6] overflow-hidden sm:mr-2 xl:mr-16 w-full rounded-2xl">
-            <EmptyState backgroud={true} text={"Click the down button or select the person you want to chat with"} />
+            <EmptyState
+              backgroud={true}
+              text={
+                "Click the down button or select the person you want to chat with"
+              }
+            />
           </div>
         </div>
       </section>
       {Open ? (
         <ShowModal cancelModel={onClose}>
           <div
-            className="bg-white h-[100vh] sm:h-[95vh] justify-between sm:rounded-lg w-full md:w-[400px] z-50 overflow-y-auto flex flex-col text-start py-6 px-6"
+            className="bg-white h-[100vh] sm:h-[95vh] sm:rounded-lg w-full md:w-[400px] z-50 overflow-y-auto flex flex-col text-start pt-2 sm:py-6 px-6"
             role="buyer div"
           >
-            <button
-              className="place-self-end mb-4"
+            {/* <button
+              className="place-self-end hidden md:block mb-4 fl"
               onClick={onClose}
               type="button"
             >
-              <FaTimes className="text-xl" />
+              <FaTimes className="md:text-lg" />
+            </button> */}
+            <button
+              className="place-self-center px-2 rounded-full mb-4 bg-slate-100 hover:bg-slate-300"
+              onClick={onClose}
+              type="button"
+            >
+              <IoRemoveOutline className="text-lg" />
             </button>
 
-            <div className=" h-[72vh] overflow-y-auto px-2 flex flex-col gap-1">
+            <div className=" h-[72vh] sm:h-[82vh] overflow-y-auto px-2 flex flex-col gap-1">
               {loading ? (
                 <>Loading..</>
               ) : (
-                usersToselect.map((user) => {
-                  return (
-                    <button
-                      onClick={() => setUserSelected(user)}
-                      key={user._id}
-                      className={` ${
-                        user._id === userSelected?._id ? "bg-slate-200" : 'bg-white'
-                      } p-4 w-full rounded-md flex gap-5 justify-start items-center hover:bg-slate-200`}
-                    >
-                      <div className="flex justify-start items-center gap-6">
-                        <Avatar img={user.avatar!} />
-                        <div className="flex justify-start items-start flex-1 flex-col gap-1 w-full">
-                          <h2 className="text-sm text-[#0C0E3B] font-semibold tracking-tight">
-                            {`${user.firstName} ${user.lastName}`}
-                          </h2>
-                          <p className="text-xs text-[#A2A2A2] tracking-tight">
-                            {user.role === "vendor"
-                              ? "Product Seller"
-                              : user.role === "provider"
-                              ? "Service Render"
-                              : "Client"}
-                          </p>
+                usersToselect
+                  .filter((_) => _.blocked === false)
+                  .map((user) => {
+                    return (
+                      <button
+                        onClick={() => setUserSelected(user)}
+                        key={user._id}
+                        className={` ${
+                          user._id === userSelected?._id
+                            ? "bg-slate-200"
+                            : "bg-white"
+                        } p-4 w-full rounded-md flex gap-5 justify-start items-center hover:bg-slate-200`}
+                      >
+                        <div className="flex justify-start items-center gap-6">
+                          <Avatar
+                            img={user.avatar!}
+                            name={`${user.firstName
+                              .charAt(0)
+                              .toUpperCase()} ${user.lastName
+                              .charAt(0)
+                              .toUpperCase()}`}
+                          />
+                          <div className="flex justify-start items-start flex-1 flex-col gap-1 w-full">
+                            <h2 className="text-sm text-[#0C0E3B] font-semibold tracking-tight">
+                              {`${user.firstName} ${user.lastName}`}
+                            </h2>
+                            <p className="text-xs text-[#A2A2A2] tracking-tight">
+                              {user.role === "vendor"
+                                ? "Product Seller"
+                                : user.role === "provider"
+                                ? "Service Render"
+                                : "Client"}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  );
-                })
+                      </button>
+                    );
+                  })
               )}
             </div>
 
@@ -179,7 +218,7 @@ const ShowModal: FC<{ children: ReactNode; cancelModel: () => void }> = memo(
     <div
       // onClick={cancelModel}
       className={
-        "absolute flex justify-center items-center z-30 top-0 left-0 w-screen h-screen bg-black/50 py-10"
+        "fixed flex justify-center items-center z-30 top-[12.8%] sm:top-0 left-0 w-screen h-screen bg-black/50 py-10"
       }
     >
       {children}

@@ -1,5 +1,6 @@
 import { headers } from "@/constants/http_config";
-import { setBookings } from "@/redux/features/app/booking_slice";
+import { setBookings, setRecentBookings } from "@/redux/features/app/booking_slice";
+import { setLoading } from "@/redux/features/app/loading_slice";
 import { TStore, store } from "@/redux/store";
 import { TErrorResponse, TSuccessResponse } from "@/types/auth.types";
 import { T_loading_provider } from "@/types/loader.types";
@@ -26,6 +27,19 @@ export default class Booking {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
         } finally {
             setIsLoading && setIsLoading(false)
+        }
+    }
+    async getRecentBookings() {
+        store.dispatch(setLoading(true))
+        try {
+            const { data } = await axios.get<TSuccessResponse<any[]>>('/api/bookings', headers)
+            const recent = data.data.slice(0, 15)
+            store.dispatch(setRecentBookings(recent))
+            toast.success('Recent Bookings fetched successfully')
+        } catch (error) {
+            handleAuthErrors(error as AxiosError<TErrorResponse>)
+        } finally {
+            store.dispatch(setLoading(false))
         }
     }
 }

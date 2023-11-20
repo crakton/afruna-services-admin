@@ -9,7 +9,7 @@ interface layoutProps {
 
 const RoutesLayout: FC<layoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen h-full">
       <MainHeader />
       <div className=" min-h-full h-full flex w-full bg-[#F7F7FF]">
         <SideBar />

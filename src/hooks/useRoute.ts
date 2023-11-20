@@ -9,7 +9,7 @@ import { LuPanelTop } from "react-icons/lu";
 
 export const useRoute = () => {
   const pathname = usePathname();
-  const { conversationId } = useConversation();
+  const { userTOChatId } = useConversation();
   const params = useParams();
 
   const customerId = useMemo(() => {
@@ -79,7 +79,7 @@ export const useRoute = () => {
       {
         title: "Chat",
         icon: MdChat,
-        active: pathname === "/chat" || !!conversationId,
+        active: pathname === "/chat" || !!userTOChatId,
         href: "/chat",
         hasSubNav: false,
       },
@@ -97,14 +97,14 @@ export const useRoute = () => {
       //   href: "/abuse_reports",
       //   hasSubNav: false,
       // },
-      // {
-      //   title: "Settings",
-      //   icon: MdSettings,
-      //   active: pathname === "/profile",
-      //   href: "/profile",
-      // },
+      {
+        title: "Profile",
+        icon: MdSettings,
+        active: pathname === "/profile",
+        href: "/profile",
+      },
     ],
-    [pathname, conversationId]
+    [pathname, userTOChatId]
   );
 
   return accountRoutes;

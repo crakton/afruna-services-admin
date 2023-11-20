@@ -80,14 +80,7 @@ const CustomersTable = () => {
         accessorKey: "regDate",
         cell: ({ row }) => {
           const createdAtDate = new Date(row.original.createdAt);
-          const dateString = createdAtDate.toLocaleDateString("en-US", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          });
-          const year = createdAtDate.getFullYear();
-          const month_in_num = createdAtDate.getMonth() + 1; // Months are zero-indexed
-          const day = createdAtDate.getDate();
+          const year = createdAtDate.getFullYear();const day = createdAtDate.getDate();
           const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
           const month = new Date(year, monthIndex).toLocaleString("en-US", {
             month: "short",

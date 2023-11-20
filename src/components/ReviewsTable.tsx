@@ -16,18 +16,18 @@ import Image from "next/image";
 import { RxChevronDown, RxChevronUp } from "react-icons/rx";
 import { reviewData } from "@/constants/data";
 import { imgs } from "@/constants/images";
-import { T_Review } from "@/types/review";
+import { T_Review, T_Service_Review } from "@/types/review";
 import { BsStarFill } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
 const ReviewTable = () => {
-  const reviews = useSelector((state: RootState )=> state.reviews.reviews) 
+  const reviews = useSelector((state: RootState) => state.reviews.reviews);
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([...reviewData]);
+  const [data, setData] = useState([...reviews]);
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = useMemo<ColumnDef<T_Review>[]>(
+  const columns = useMemo<ColumnDef<T_Service_Review>[]>(
     () => [
       {
         accessorKey: "id",
@@ -36,12 +36,26 @@ const ReviewTable = () => {
       },
       {
         accessorKey: "bookingdate",
-        cell: ({ row }) => (
-          <div className="flex flex-col justify-start ml-4 items-start">
-            <span className="text-afruna-blue text-xs">01 Oct 2023</span>
-            <span className=" text-afruna-blue text-xs">11:29 am</span>
-          </div>
-        ),
+        cell: ({ row }) => {
+          const createdAtDate = new Date(row.original.createdAt);
+          const year = createdAtDate.getFullYear();const day = createdAtDate.getDate();
+          const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
+          const month = new Date(year, monthIndex).toLocaleString("en-US", {
+            month: "short",
+          });
+
+          const timeString = createdAtDate.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          });
+          return (
+            <div className="flex flex-col justify-start ml-3 items-start">
+              <span className="text-afruna-blue text-xs">{`${day} ${month}, ${year}`}</span>
+              <span className=" text-afruna-blue text-xs">{timeString}</span>
+            </div>
+          );
+        },
         header: () => (
           <span className="text-xs text-[#7C7C7C] ml-4">Booking Date</span>
         ),
@@ -57,7 +71,7 @@ const ReviewTable = () => {
               height={35}
               className="rounded"
             />
-            <span className=" text-slate-600 text-xs">Smith Shenier</span>
+            <span className=" text-slate-600 text-xs">{`${row.original.serviceId?.providerId?.firstName} ${row.original.serviceId?.providerId?.lastName}`}</span>
           </div>
         ),
         header: () => (
@@ -84,7 +98,9 @@ const ReviewTable = () => {
         accessorKey: "service",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-4 items-center ml-4">
-            <span className=" text-slate-600 text-xs">Plumbing repair</span>
+            <span className=" text-slate-600 text-xs">
+              {row.original?.serviceId?.name}
+            </span>
           </div>
         ),
         header: () => (
@@ -92,27 +108,17 @@ const ReviewTable = () => {
         ),
       },
       {
-        accessorKey: "type",
-        cell: ({ cell }) => {
-          switch (cell.getValue()) {
-            case "Normal":
-              return <span className="text-xs text-slate-600">Normal</span>;
-            case "Excellent":
-              return <span className="text-xs text-slate-600">Excellent</span>;
-            case "High":
-              return <span className="text-xs text-slate-600">High</span>;
-          }
-        },
-        header: () => <span className="text-xs">Type</span>,
-      },
-      {
         accessorKey: "ratings",
         cell: ({ row }) => (
           <div className="flex gap-2 items-center ml-4">
-            <BsStarFill className="text-afruna-gold text-xs" />
-            <span className=" text-slate-600 text-xs">
-              {row.original.ratings}
-            </span>
+            {row.original.rating > 0 ? (
+              <>
+                <BsStarFill className="text-afruna-gold text-xs" />
+                <span className=" text-slate-600 text-xs">
+                  {row.original.rating}
+                </span>
+              </>
+            ) : null}
           </div>
         ),
         header: () => (
@@ -123,12 +129,10 @@ const ReviewTable = () => {
         accessorKey: "comment",
         cell: ({ row }) => (
           <span className=" text-slate-600 text-xs">
-            {row.original.description}
+            {row.original.comment}
           </span>
         ),
-        header: () => (
-          <span className="text-xs text-[#7C7C7C] ">Comment</span>
-        ),
+        header: () => <span className="text-xs text-[#7C7C7C] ">Comment</span>,
       },
     ],
     [data]

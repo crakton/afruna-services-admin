@@ -10,10 +10,11 @@ interface pageProps {}
 
 const ReviewPage: FC<pageProps> = ({}) => {
   const loading = useSelector((state: RootState) => state.loading.loading);
-  const reviewsApis = new Reviews();
+  
   useEffect(() => {
+    const reviewsApis = new Reviews();
     reviewsApis.getReviews()
-  }, [reviewsApis]);
+  }, []);
 
   return (
     <section className="flex flex-col gap-7 ">

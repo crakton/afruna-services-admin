@@ -7,17 +7,17 @@ import { useMemo } from 'react'
 export const useConversation = () => {
     const params = useParams()
 
-    const conversationId = useMemo(() => {
-        if (!params?.conversationId) {
+    const userTOChatId = useMemo(() => {
+        if (!params?.userTOChatId) {
             return ''
         }
-        return params.conversationId as string
+        return params.userTOChatId as string
 
-    }, [params?.conversationId])
+    }, [params?.userTOChatId])
 
-    const isOpen = useMemo(() => !!conversationId, [conversationId])
+    const isOpen = useMemo(() => !!userTOChatId, [userTOChatId])
 
     return useMemo(() => ({
-        isOpen, conversationId
-    }), [isOpen, conversationId])
+        isOpen, userTOChatId
+    }), [isOpen, userTOChatId])
 }

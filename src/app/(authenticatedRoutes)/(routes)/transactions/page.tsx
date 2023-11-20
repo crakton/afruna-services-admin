@@ -4,36 +4,44 @@ import BookingsTransactionsTable from "@/components/BookingsTransactionsTable";
 import OtherTransactionstable from "@/components/OtherTransactionstable";
 import { Button } from "@/components/ui/button";
 import { imgs } from "@/constants/images";
-import {
-  T_Transactions_Tab,
-  TransactionsContext,
-} from "@/contexts/TransactionsContextProvider";
-import { T_Transactions_Context } from "@/types/transactions";
+import Transactions from "@/services/transactions.service";
 import Image from "next/image";
-import { FC, useContext, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 interface pageProps {}
+export type tableStatus = "Other Transactions" | "Bookings Transactions";
 const transactions_tab = ["Other Transactions", "Bookings Transactions"];
 
 const TransactionsPage: FC<pageProps> = ({}) => {
-  const { transactionsTab, handleTabSelect } = useContext(
-    TransactionsContext
-  ) as T_Transactions_Context;
+  const [transactionsTab, setTransactionsTab] =
+    useState<tableStatus>("Other Transactions");
+  const handleTabSelect = useCallback((tab: tableStatus) => {
+    const transactionApis = new Transactions();
+    if (tab === "Other Transactions") {
+      transactionApis.getOtherTransactions();
+      setTransactionsTab(tab);
+    } else {
+      transactionApis.getBookingsTransactions();
+      setTransactionsTab(tab);
+    }
+  }, []);
   const Component = useMemo(() => {
+    const transactionApis = new Transactions();
     switch (transactionsTab) {
       case "Bookings Transactions":
         return <BookingsTransactionsTable />;
       default:
+        transactionApis.getOtherTransactions();
         return <OtherTransactionstable />;
     }
   }, [transactionsTab]);
+
   return (
     <section className="flex flex-col gap-7 ">
       <div className="flex justify-start items-center pl-4 lg:pl-6 bg-white w-full h-16">
         <h1 className="text-lg lg:pl-0 lg:text-2xl leading-3 text-afruna-blue font-bold">
           Transaction
         </h1>
-
       </div>
       <div className="flex flex-col gap-6 px-6 xl:pr-16 w-full">
         <div className="flex flex-col lg:flex-row gap-8 w-full">
@@ -73,7 +81,7 @@ const TransactionsPage: FC<pageProps> = ({}) => {
                   transactionsTab === item && " text-sky-500"
                 } text-afruna-blue text-sm md:text-base font-bold relative flex flex-col `}
                 key={idx}
-                onClick={() => handleTabSelect(item as T_Transactions_Tab)}
+                onClick={() => handleTabSelect(item as tableStatus)}
               >
                 {item}
                 <div

@@ -30,7 +30,10 @@ export default class ChatService {
         store.dispatch(setLoading(true))
         try {
             const { data } = await axios.post<TSuccessResponse<ISendingMessage>>('/api/messages', payload, headers)
-            store.dispatch(createMessage(data.data.message))
+            // store.dispatch(createMessage(data.data.message))
+            const _id = data.data.message.conversation
+			this.getMessages(_id);
+			this.getConversations();
             return data.data.message
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
@@ -43,7 +46,8 @@ export default class ChatService {
         store.dispatch(setLoading(true))
         try {
             const { data } = await axios.get<TSuccessResponse<IMessage[]>>(`/api/messages/${conversationId}`, headers)
-            store.dispatch(setMessages(data.data))
+            const messages: IMessage[] = data.data.slice().reverse();
+            store.dispatch(setMessages(messages))
             return data.data
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)

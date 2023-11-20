@@ -71,11 +71,11 @@ export const CoversationFooter: FC<CoversationFooterProps> = ({}) => {
         </div>
         <button
           type="submit"
-          className="w-28 h-28 flex justify-start items-end p-4 absolute rounded-full -bottom-2 -right-12 bg-[#00AEEF]"
+          className="w-28 h-28 flex justify-start items-end absolute rounded-full -bottom-2 -right-12 bg-[#00AEEF]"
         >
           <IoPaperPlane
-            size={30}
-            className="text-white hover:scale-90 transition duration-300 cursor-pointer"
+            size={27}
+            className="text-white hover:scale-90 transition mb-3 ml-6 duration-300 cursor-pointer"
           />
         </button>
       </form>

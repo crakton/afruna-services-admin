@@ -3,6 +3,7 @@ import { setLoading } from "@/redux/features/app/loading_slice";
 import { setReviews } from "@/redux/features/app/review_slice";
 import { TStore, store } from "@/redux/store";
 import { TErrorResponse, TSuccessResponse } from "@/types/auth.types";
+import { T_Service_Review } from "@/types/review";
 import { handleAuthErrors } from "@/utils/auth.util";
 import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
@@ -17,7 +18,7 @@ export default class Reviews {
     async getReviews() {
         store.dispatch(setLoading(true))
         try {
-            const { data } = await axios.get<TSuccessResponse<any[]>>('/api/admin/reviews', headers)
+            const { data } = await axios.get<TSuccessResponse<T_Service_Review[]>>('/api/reviews/all', headers)
             store.dispatch(setReviews(data.data))
             toast.success('Review fetched successfully')
             return data.data

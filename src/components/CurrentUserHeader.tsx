@@ -8,30 +8,35 @@ import { useRouter } from "next/navigation";
 
 interface CurrentUserHeaderProps {
   active: boolean;
-  id: string;
   name: string;
   img: string | StaticImageData;
 }
 
 export const CurrentUserHeader: FC<CurrentUserHeaderProps> = ({
-  id,
   active,
   name,
   img,
 }) => {
-  const {push} = useRouter()
+  const { push } = useRouter();
+  const nameSplit = name?.split(" ");
+  const firstWord = nameSplit[0].charAt(0).toUpperCase();
+  const secondWord = nameSplit[1].charAt(0).toUpperCase();
   return (
     <div className="flex justify-between items-center w-full">
-      <div className="flex gap-3 justify-start items-center">
-        <button onClick={()=> push('/chat')}>
-          <MdArrowBackIosNew className="text-lg text-sky-400 lg:hidden" />
+      <div className="flex gap-2 justify-start items-center">
+        <button onClick={() => push("/chat")}>
+          <MdArrowBackIosNew className="text-lg text-sky-400" />
         </button>
-        <Avatar img={img} active={active} />
-        <div className="flex flex-1 flex-col gap-1">
+        <Avatar
+          img={img}
+          active={active}
+          name={`${firstWord} ${secondWord}`}
+        />
+        <div className="flex flex-1 flex-col">
           <h2 className="text-sm font-semibold tracking-tight text-[#0C0E3B]">
             {name}
           </h2>
-          <p className="text-xs text-[#A2A2A2] tracking-tight">{id}</p>
+          <p className={`${active? 'text-purple-400 ' : 'Offline'} tracking-wider font-semibold text-xs text-[#A2A2A2]`}>{active? 'Online' : 'Offline'}</p>
         </div>
       </div>
       <div className="flex justify-between items-center max-w-[5rem] w-full text-[#0C0E3B]">
