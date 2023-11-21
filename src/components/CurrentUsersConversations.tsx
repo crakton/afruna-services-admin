@@ -21,7 +21,7 @@ export const CurrentUsersConversations: FC<CurrentUsersConversationsProps> = ({
   //   (user) => user?._id === convo?.to?._id
   // )[0];
   // const avatar = userConvoAvatar?.avatar;
-  const name = `${convo?.from?.firstName} ${convo?.from?.lastName}`
+  const name = `${convo?.from?.firstName} ${convo?.from?.lastName}`;
   const nameSplit = name?.split(" ");
   const firstWord = nameSplit[0];
   const secondWord = nameSplit[1];
@@ -30,23 +30,30 @@ export const CurrentUsersConversations: FC<CurrentUsersConversationsProps> = ({
   const scroll = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (scroll.current) {
-      scroll.current.scrollIntoView({ behavior: 'smooth' });
+      scroll.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [scroll]);
-  
+
   return (
-    <div ref={scroll} className={`flex gap-2 w-full p-2 ${isOwn && "justify-end"}`}>
+    <div
+      ref={scroll}
+      className={`flex gap-2 w-full p-2 ${isOwn && "justify-end"}`}
+    >
       <div
         className={`${
-          isOwn ? "order-2 bg-afruna-blue/60 ring-4 ring-slate-300 w-6 h-6" : 'w-8 h-8'
+          isOwn
+            ? "order-2 bg-afruna-blue/60 ring-4 ring-slate-300 w-6 h-6"
+            : "w-8 h-8"
         }  relative overflow-hidden rounded-full flex justify-center items-center`}
       >
         {isOwn ? (
           <Image src={imgs.afruna_2nd_logo} alt="image" fill />
+        ) : convo?.from?.avatar ? (
+          <Image src={convo?.from?.avatar} alt="image" fill />
         ) : (
-          convo?.from?.avatar ? <Image src={convo?.from?.avatar} alt="image" fill /> : <div className=" text-[0.68rem] w-full h-full bg-slate-300 flex justify-center items-center">
-          {`${firstLetterFirstWord} ${firstLetterSecondWord}`}
-        </div>
+          <div className=" text-[0.68rem] w-full h-full bg-slate-300 flex justify-center items-center">
+            {`${firstLetterFirstWord} ${firstLetterSecondWord}`}
+          </div>
         )}
       </div>
       <div

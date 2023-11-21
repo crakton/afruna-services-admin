@@ -13,6 +13,7 @@ import {
 } from "@/redux/features/app/chat_slice";
 import ChatService from "@/services/chat.service";
 import { useSelector } from "react-redux";
+import { setLoading } from "@/redux/features/app/loading_slice";
 
 interface UsersListProps {
   user: IConversation;
@@ -39,16 +40,21 @@ export const UsersList: FC<UsersListProps> = ({ user }) => {
   const handleSelectedChat = useCallback(() => {
     store.dispatch(setActiveHeaderInfo(user));
     store.dispatch(setUserTOChatId(userTOChatId));
+    store.dispatch(setLoading(true));
     if (conversationId === "") {
       store.dispatch(setMessages([]));
       router.push(`/chat/${userTOChatId}`);
+      store.dispatch(setLoading(false));
     } else {
       const chatApis = new ChatService();
-      chatApis.getMessages(conversationId).then((data) => {
-        if (data) {
-          store.dispatch(setMessages(data));
-        }
-      });
+      chatApis
+        .getMessages(conversationId)
+        .then((data) => {
+          if (data) {
+            store.dispatch(setMessages(data));
+          }
+        })
+        .finally(() => store.dispatch(setLoading(false)));
       router.push(`/chat/${userTOChatId}`);
     }
     store.dispatch(setActiveUserConvo(user));

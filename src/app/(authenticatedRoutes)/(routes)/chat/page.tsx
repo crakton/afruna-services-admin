@@ -16,13 +16,17 @@ import { setConversations } from "@/redux/features/app/chat_slice";
 import { LuMessageSquarePlus } from "react-icons/lu";
 import { toast } from "react-toastify";
 import { IoRemoveOutline } from "react-icons/io5";
+import { LoadingUser } from "../_components/LoadingUser";
 
 interface pageProps {}
 
 const ChatPage: FC<pageProps> = ({}) => {
+  const [loadingConvo, setLoadingConvo] = useState<boolean>(false);
+  const [loadingUser, setLoadingUser] = useState<boolean>(false);
   useEffect(() => {
     const chatApis = new ChatService();
-    chatApis.getConversations();
+    setLoadingConvo(true);
+    chatApis.getConversations().finally(() => setLoadingConvo(false));
   }, []);
   const loading = useSelector((state: RootState) => state.loading.loading);
   const usersToselect = useSelector((state: RootState) => state.chat.users);
@@ -36,7 +40,8 @@ const ChatPage: FC<pageProps> = ({}) => {
   const handleFetchUsers = useCallback(() => {
     setOpen(true);
     const chatApis = new ChatService();
-    chatApis.getUsers();
+    setLoadingUser(true);
+    chatApis.getUsers().finally(() => setLoadingUser(false));
   }, []);
   const [userSelected, setUserSelected] = useState<IUserBio>();
   const handleAddUserTOChat = () => {
@@ -77,51 +82,63 @@ const ChatPage: FC<pageProps> = ({}) => {
           </h1>
         </div>
         <div className="flex gap-4 max-w-[96%] w-full mx-auto">
-          <div className="relative flex gap-2 flex-col bg-[#FDFDFF] h-full w-full max-h-[74vh] max-w-[100%] md:max-w-[60%] lg:max-w-[40%] xl:max-w-[30%] xl:max-h-[75vh] overflow-hidden border border-[#D5D5E6] rounded-2xl pt-6 xl:pl-2">
-            <h2 className="ml-4 text-[1.2rem] text-[#0C0E3B] font-medium tracking-normal">
-              Messages
-            </h2>
-            <div className="ml-4 mr-6 bg-white flex items-center border border-[#D5D5E6] rounded-md overflow-hidden">
-              <input
-                type="text"
-                placeholder="Search Name, Id..."
-                className="w-full p-2 focus:outline-none placeholder:text-[#D2D2D2]"
+          {/* {loading ? (
+            <>loading...</>
+          ) : ( */}
+          <>
+            <div className="relative flex gap-2 flex-col bg-[#FDFDFF] h-full w-full max-h-[74vh] max-w-[100%] md:max-w-[60%] lg:max-w-[40%] xl:max-w-[30%] xl:max-h-[75vh] overflow-hidden border border-[#D5D5E6] rounded-2xl pt-6 xl:pl-2">
+              <h2 className="ml-4 text-[1.2rem] text-[#0C0E3B] font-medium tracking-normal">
+                Messages
+              </h2>
+              <div className="ml-4 mr-6 bg-white flex items-center border border-[#D5D5E6] rounded-md overflow-hidden">
+                <input
+                  type="text"
+                  placeholder="Search Name, Id..."
+                  className="w-full p-2 focus:outline-none placeholder:text-[#D2D2D2]"
+                />
+                <div className="w-14 text-[#D2D2D2]">
+                  <IoSearchOutline className="text-2xl" />
+                </div>
+              </div>
+              <div className=" mt-1 pt-1 h-[63vh] sm:h-[55vh] text-xl rounded-lg overflow-hidden overflow-y-auto">
+                <div className="flex flex-col gap-2 p-4 ">
+                  {loadingConvo ? (
+                    <LoadingUser/>
+                  ) : userConversations && userConversations.length ? (
+                    userConversations.map((user) => {
+                      return (
+                        // <Suspense fallback={<>Loading...</>}>
+                        <UsersList user={user} key={user._id} />
+                        // </Suspense>
+                      );
+                    })
+                  ) : (
+                    <div className="text-xs text-gray-400 font-bold">
+                      Click the yellow button to select a user
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="absolute right-4 bottom-8">
+                <button
+                  type="button"
+                  onClick={handleFetchUsers}
+                  className="w-[2.3rem] h-[2.3rem] flex justify-center items-center rounded-full bg-orange-400 hover:bg-orange-500 hover:scale-105 transition-all duration-300"
+                >
+                  <LuMessageSquarePlus className="text-white md:text-xl font-extrabold" />
+                </button>
+              </div>
+            </div>
+            <div className="hidden md:block h-[73vh] border border-[#D5D5E6] overflow-hidden sm:mr-2 xl:mr-16 w-full rounded-2xl">
+              <EmptyState
+                backgroud={true}
+                text={
+                  "Click the down button or select the person you want to chat with"
+                }
               />
-              <div className="w-14 text-[#D2D2D2]">
-                <IoSearchOutline className="text-2xl" />
-              </div>
             </div>
-            <div className=" mt-1 pt-1 h-[63vh] sm:h-[55vh] text-xl rounded-lg overflow-hidden overflow-y-auto">
-              <div className="flex flex-col gap-2 p-4 ">
-                {userConversations && userConversations.length ? (
-                  userConversations.map((user) => {
-                    return <UsersList user={user} key={user._id} />;
-                  })
-                ) : (
-                  <div className="text-xs text-gray-400 font-bold">
-                    Click the yellow button to select a user
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="absolute right-4 bottom-8">
-              <button
-                type="button"
-                onClick={handleFetchUsers}
-                className="w-[2.3rem] h-[2.3rem] flex justify-center items-center rounded-full bg-orange-400 hover:bg-orange-500 hover:scale-105 transition-all duration-300"
-              >
-                <LuMessageSquarePlus className="text-white md:text-xl font-extrabold" />
-              </button>
-            </div>
-          </div>
-          <div className="hidden md:block h-[73vh] border border-[#D5D5E6] overflow-hidden sm:mr-2 xl:mr-16 w-full rounded-2xl">
-            <EmptyState
-              backgroud={true}
-              text={
-                "Click the down button or select the person you want to chat with"
-              }
-            />
-          </div>
+          </>
+          {/* // )} */}
         </div>
       </section>
       {Open ? (
@@ -146,8 +163,8 @@ const ChatPage: FC<pageProps> = ({}) => {
             </button>
 
             <div className=" h-[72vh] sm:h-[82vh] overflow-y-auto px-2 flex flex-col gap-1">
-              {loading ? (
-                <>Loading..</>
+              {loadingUser ? (
+                <LoadingUser/>
               ) : (
                 usersToselect
                   .filter((_) => _.blocked === false)

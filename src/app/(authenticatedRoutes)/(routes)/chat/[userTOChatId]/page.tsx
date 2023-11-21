@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import { FC, Suspense, useEffect, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { UsersList } from "@/components/UsersList";
 import { CurrentUserHeader } from "@/components/CurrentUserHeader";
@@ -10,7 +10,7 @@ import EmptyState from "@/components/EmptyState";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import ChatService from "@/services/chat.service";
-import { IMessage } from "@/types/user";
+import { ImSpinner3 } from "react-icons/im";
 
 interface pageProps {
   params: {
@@ -22,12 +22,12 @@ const ChatCovoPage: FC<pageProps> = ({ params: { userTOChatId } }) => {
   const userConversations = useSelector(
     (state: RootState) => state.chat.conversations
   );
+  const loading = useSelector((state: RootState) => state.loading.loading);
   const activeSelectedUser = useSelector(
     (state: RootState) => state.chat.activeHeaderInfo
   );
   const chatMessages = useSelector((state: RootState) => state.chat.messages);
   console.log(chatMessages);
-  const [activetMessagea, setActivetMessagea] = useState<IMessage[]>([])
 
   useEffect(() => {
     const chatApis = new ChatService();
@@ -66,7 +66,11 @@ const ChatCovoPage: FC<pageProps> = ({ params: { userTOChatId } }) => {
             <div className="flex flex-col gap-1 p-4  pr-6 ">
               {userConversations && userConversations.length ? (
                 userConversations.map((user) => {
-                  return <UsersList user={user} key={user._id} />;
+                  return (
+                    // <Suspense fallback={<>Loading...</>}>
+                    <UsersList user={user} key={user._id} />
+                    // </Suspense>
+                  );
                 })
               ) : (
                 <div className="text-xs text-gray-400 font-bold">
@@ -87,7 +91,12 @@ const ChatCovoPage: FC<pageProps> = ({ params: { userTOChatId } }) => {
             </div>
             <>
               <div className="ScrollAreaRoot flex-1 w-full max-h-[50vh] h-full text-xl rounded-lg overflow-hidden overflow-y-auto">
-                {chatMessages && chatMessages.length > 0 ? (
+                {loading ? (
+                  <div className="flex justify-center items-center h-full">
+                    <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
+                    
+                  </div>
+                ) : chatMessages && chatMessages.length > 0 ? (
                   <div className="flex h-full flex-col gap-1 px-4">
                     {chatMessages.map((message) => {
                       // const time = format(message.createdAt);
