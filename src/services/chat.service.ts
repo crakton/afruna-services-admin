@@ -5,8 +5,6 @@ import { headers } from "../constants/http_config";
 import { setConversations, setMessages, setUsers } from "../redux/features/app/chat_slice";
 import { handleAuthErrors } from "../utils/auth.util";
 import { IConversation, IMessage, ISendingMessage, IUserBio } from "@/types/user";
-import { setLoading } from "@/redux/features/app/loading_slice";
-
 export default class ChatService {
     private store: TStore
 

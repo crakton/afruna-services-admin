@@ -1,8 +1,9 @@
 import { IService } from "@/interfaces/IService"
+import { T_Providers } from "@/types/providers"
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
-    providers: [] as any[],
+    providers: [] as T_Providers[],
     provider: {} as any,
     providerService: [] as IService[],
     providerBookings: [] as any[]

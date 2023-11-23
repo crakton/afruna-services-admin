@@ -5,20 +5,23 @@ import DocumentReviewTable from "@/components/DocumentReviewTable";
 import ItemPicker from "@/components/ItemPicker";
 import { Button } from "@/components/ui/button";
 import { imgs } from "@/constants/images";
-import { RootState } from "@/redux/store";
+import { RootState, store } from "@/redux/store";
 import Provider from "@/services/provider.service";
 import Image from "next/image";
-import { FC, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { BsStarHalf } from "react-icons/bs";
 import { IoMdCheckmark } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
+import { LoadingProviderDetails } from "../../_components/LoadingProviderDetails";
+import { setConversations } from "@/redux/features/app/chat_slice";
+import { useRouter } from "next/navigation";
 
 type Params = {
   params: {
     providerId: string;
   };
-}
+};
 const statsDetails = [
   { value: "#34564", title: "Total Sales" },
   { value: "3", title: "Service Booked" },
@@ -26,17 +29,35 @@ const statsDetails = [
 ];
 
 const ProviderDetailPage = ({ params: { providerId } }: Params) => {
-  const providerApis = new Provider()
-  const provider = useSelector((state: RootState) => state.provider.provider)
-  const providerServices = useSelector((state: RootState) => state.provider.providerService)
-  const providerBookings = useSelector((state: RootState) => state.provider.providerBookings)
+  const router = useRouter()
+  const providerApis = new Provider();
+  const userConversations = useSelector(
+    (state: RootState) => state.chat.conversations
+  );
+  const providerServices = useSelector(
+    (state: RootState) => state.provider.providerService
+  );
+  const providerBookings = useSelector(
+    (state: RootState) => state.provider.providerBookings
+  );
+  const loading = useSelector((state: RootState) => state.loading.loading);
 
   useEffect(() => {
-    providerApis.getProvider(providerId)
-    providerApis.getProviderServices(providerId)
-    providerApis.getProviderBookings(providerId)
-
-  }, [providerId])
+    providerApis.getProviders();
+    // providerApis.getProviderServices(providerId);
+    // providerApis.getProviderBookings(providerId);
+  }, [providerId]);
+  const providers = useSelector((state: RootState) => state.provider.providers);
+  const provider = providers.filter(
+    (provider) => provider._id === providerId
+  )[0];
+  const createdAtDate = new Date(provider?.createdAt);
+  const year = createdAtDate.getFullYear();
+  const day = createdAtDate.getDate();
+  const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
+  const month = new Date(year, monthIndex).toLocaleString("en-US", {
+    month: "short",
+  });
 
   return (
     <main className="flex flex-col gap-7 mb-12 ">
@@ -45,54 +66,62 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
           Providers Details
         </h1>
       </div>
-      <section className="max-w-[96%] lg:max-w-[86%] ml-6 xl:ml-[3.5rem] flex items-start gap-6">
-        <aside className="px-5 py-8 bg-white font-semibold text-[#666363] rounded-xl flex max-w-[25%] w-full flex-col gap-2 justify-center items-center">
-          <div className="w-[7rem] h-[7rem] rounded-full transition-all overflow-hidden relative flex justify-center items-center">
-            <Image src={imgs.provider3} alt="Your image" fill />
-          </div>
-          <div className="flex mb-3  gap-2 justify-center items-center">
-            <p className="text-sm font-semibold text-afruna-blue">
-              {provider.firstName} {provider.lastName}
-            </p>
-            <span className="rounded-full text-xs text-green-700 w-[1.2rem] h-[1.2rem] bg-green-300 flex justify-center items-center">
-              <IoMdCheckmark size={13} />
-            </span>
-          </div>
-          <span className="text-xs ">Provider Since : 27th sep, 2034</span>
-          <span className="text-xs font-semibold text-[#666363]">
-            {provider.email}
-          </span>
-          <span className="text-xs mt-3 font-semibold text-[#666363]">
-            {provider.state}, {provider.country}
-          </span>
-          <Button variant={"deepgradientblue"} className="mt-3">
-            Chat Provider
-          </Button>
-          <Button variant={"afrunaOutline"} className="mt-1 ">
-            Suspend Provider
-          </Button>
-        </aside>
-        <aside className="flex flex-col gap-8 w-full">
-          <div className=" overflow-hidden w-full bg-white  lg:px-6 rounded-xl border shadow-sm border-slate-300">
-            <header className="flex justify-start items-center py-4 ">
-              <h1 className="font-bold text-slate-500 text-sm">
-                Uploaded Document
-              </h1>
-            </header>
-            <DocumentReviewTable />
-          </div>
-          <div className="flex flex-wrap gap-5 justify-start items-center">
-            {statsDetails.map(({ title, value }) => {
-              return (
-                <div className="border text-sm font-semibold text-afruna-blue flex flex-col gap-2 justify-start w-[14.6rem] pt-8 h-[8rem] overflow-hidden  pl-7 border-[#D5D5E6] relative rounded-xl bg-white ">
-                  <span className=" ">{value}</span>
-                  <p className="text-sm ">{title}</p>
-                </div>
-              );
-            })}
-          </div>
-        </aside>
-      </section>
+      {loading ? (
+        <LoadingProviderDetails />
+      ) : (
+        provider && (
+          <section className="max-w-[96%] lg:max-w-[86%] ml-6 xl:ml-[3.5rem] flex items-start gap-6">
+            <aside className="px-5 py-8 bg-white font-semibold text-[#666363] rounded-xl flex max-w-[25%] w-full flex-col gap-2 justify-center items-center">
+              <div className="w-[7rem] h-[7rem] rounded-full transition-all overflow-hidden relative flex justify-center items-center">
+                <Image src={imgs.provider3} alt="Your image" fill />
+              </div>
+              <div className="flex mb-3  gap-2 justify-center items-center">
+                <p className="text-sm font-semibold text-afruna-blue">
+                  {provider.firstName} {provider.lastName}
+                </p>
+                <span className="rounded-full text-xs text-green-700 w-[1.2rem] h-[1.2rem] bg-green-300 flex justify-center items-center">
+                  <IoMdCheckmark size={13} />
+                </span>
+              </div>
+              <span className="text-xs ">
+                Provider Since : {`${day} ${month}, ${year}`}
+              </span>
+              <span className="text-xs font-semibold text-[#666363]">
+                {provider.email}
+              </span>
+              <span className="text-xs mt-3 font-semibold text-[#666363]">
+                {`State`}, {provider.country}
+              </span>
+              <Button onClick={() => router.push(`/chat`)} variant={"deepgradientblue"} className="mt-3">
+                Chat Provider
+              </Button>
+              <Button variant={"afrunaOutline"} className="mt-1 ">
+                Suspend Provider
+              </Button>
+            </aside>
+            <aside className="flex flex-col gap-8 w-full">
+              <div className=" overflow-hidden w-full bg-white  lg:px-6 rounded-xl border shadow-sm border-slate-300">
+                <header className="flex justify-start items-center py-4 ">
+                  <h1 className="font-bold text-slate-500 text-sm">
+                    Uploaded Document
+                  </h1>
+                </header>
+                <DocumentReviewTable />
+              </div>
+              <div className="flex flex-wrap gap-5 justify-start items-center">
+                {statsDetails.map(({ title, value }) => {
+                  return (
+                    <div className="border text-sm font-semibold text-afruna-blue flex flex-col gap-2 justify-start w-[14.6rem] pt-8 h-[8rem] overflow-hidden  pl-7 border-[#D5D5E6] relative rounded-xl bg-white ">
+                      <span className=" ">{value}</span>
+                      <p className="text-sm ">{title}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </aside>
+          </section>
+        )
+      )}
       {/* Services */}
       <div className="max-w-[96%] w-full ml-6 px-8  flex flex-col gap-6">
         <section className="flex flex-col lg:max-w-[95%] bg-white p-8 rounded-lg">
@@ -120,16 +149,17 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
               </fieldset>
             </div>
           </div>
-
-          Services
         </section>
 
         {/* services data */}
         <section className="flex flex-col gap-2 lg:max-w-[95%]">
           {/* Booking */}
           <div className="py-6 px-8 flex flex-col lg:gap-8 lg:flex-row justify-between w-full bg-white drop-shadow rounded-lg">
-            {providerBookings.map(booking => (
-              <div key={booking.id} className="flex flex-col items-center sm:flex-row lg:max-w-[80%] w-full gap-6">
+            {providerBookings.map((booking) => (
+              <div
+                key={booking.id}
+                className="flex flex-col items-center sm:flex-row lg:max-w-[80%] w-full gap-6"
+              >
                 <div className="flex justify-center items-center w-full h-[12rem] sm:w-[15rem] sm:h-[9rem]">
                   <div className="w-full h-full overflow-hidden relative rounded-md">
                     <Image src={imgs.review1} alt="review" priority fill />
@@ -177,7 +207,12 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
                     <div className="flex flex-col lg:flex-row gap-2 lg:items-center lg:justify-start justify-end items-end lg:text-start lg:max-w-[73%] w-full">
                       <div className="flex items-center gap-1">
                         <div className="w-[1.3rem] h-[1.3rem] sm:w-[2rem] sm:h-[2rem] overflow-hidden rounded-full relative flex justify-center items-center">
-                          <Image src={imgs.seller1} alt="review" priority fill />
+                          <Image
+                            src={imgs.seller1}
+                            alt="review"
+                            priority
+                            fill
+                          />
                         </div>
                         <span className="sm:text-xs text-[0.65rem] text-slate-600">
                           Jahimani Masilala
@@ -198,4 +233,4 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
   );
 };
 
-export default ProviderDetailPage
+export default ProviderDetailPage;

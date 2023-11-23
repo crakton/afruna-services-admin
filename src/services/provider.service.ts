@@ -5,7 +5,7 @@ import { TStore, store } from "@/redux/store";
 import { TErrorResponse, TSuccessResponse } from "@/types/auth.types";
 import { handleAuthErrors } from "@/utils/auth.util";
 import axios, { AxiosError } from "axios";
-import { toast } from "react-toastify";
+import { T_Providers } from "@/types/providers";
 
 export default class Provider {
     store: TStore;
@@ -17,22 +17,8 @@ export default class Provider {
     async getProviders() {
         store.dispatch(setLoading(true))
         try {
-            const { data } = await axios.get<TSuccessResponse<any[]>>('/api/admin/providers', headers)
+            const { data } = await axios.get<TSuccessResponse<T_Providers[]>>('/api/admin/providers', headers)
             store.dispatch(setProviders(data.data))
-            toast.success('Providers fetched successfully')
-        } catch (error) {
-            handleAuthErrors(error as AxiosError<TErrorResponse>)
-        } finally {
-            store.dispatch(setLoading(false))
-        }
-    }
-
-    async getProvider(providerId: string) {
-        store.dispatch(setLoading(true))
-        try {
-            const { data } = await axios.get<TSuccessResponse<any[]>>(`/api/admin/providers/${providerId}`, headers)
-            store.dispatch(setProvider(data.data))
-            toast.success('Provider fetched successfully')
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
         } finally {
@@ -59,9 +45,5 @@ export default class Provider {
         } finally {
             store.dispatch(setLoading(false))
         }
-    }
-
-    async createProvider() {
-        
     }
 }

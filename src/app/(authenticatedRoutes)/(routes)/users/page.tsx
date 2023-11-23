@@ -94,10 +94,6 @@ const CustomersPage: FC<pageProps> = ({}) => {
               triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
             />
           </fieldset>
-          <Button variant={"greenbutton"}>
-            {" "}
-            <BsPlus className="font-extrabold text-xl" /> Add User
-          </Button>
         </div>
       </div>
       <div className="flex flex-col gap-6 px-6 xl:pr-32 w-full">

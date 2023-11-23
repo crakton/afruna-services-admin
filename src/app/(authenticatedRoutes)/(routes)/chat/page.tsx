@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode, memo, useCallback, useEffect, useState } from "react";
+import { FC, ReactNode, memo, useCallback, useEffect, useMemo, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { UsersList } from "@/components/UsersList";
 import EmptyState from "@/components/EmptyState";
@@ -11,23 +11,20 @@ import { Avatar } from "@/components/Avatar";
 import ChatService from "@/services/chat.service";
 import { useSelector } from "react-redux";
 import { RootState, store } from "@/redux/store";
-import { IUserBio } from "@/types/user";
+import { IConversation, IUserBio } from "@/types/user";
 import { setConversations } from "@/redux/features/app/chat_slice";
 import { LuMessageSquarePlus } from "react-icons/lu";
 import { toast } from "react-toastify";
 import { IoRemoveOutline } from "react-icons/io5";
 import { LoadingUser } from "../_components/LoadingUser";
+import useSearchConvo from "@/hooks/useSearchConvo";
 
 interface pageProps {}
 
 const ChatPage: FC<pageProps> = ({}) => {
   const [loadingConvo, setLoadingConvo] = useState<boolean>(false);
   const [loadingUser, setLoadingUser] = useState<boolean>(false);
-  useEffect(() => {
-    const chatApis = new ChatService();
-    setLoadingConvo(true);
-    chatApis.getConversations().finally(() => setLoadingConvo(false));
-  }, []);
+
   const loading = useSelector((state: RootState) => state.loading.loading);
   const usersToselect = useSelector((state: RootState) => state.chat.users);
   const userConversations = useSelector(
@@ -35,16 +32,20 @@ const ChatPage: FC<pageProps> = ({}) => {
   );
   console.log(userConversations);
   const [Open, setOpen] = useState(false);
-  const onClose = useCallback(() => setOpen(false), []);
+  const onClose = () => setOpen(false);
 
-  const handleFetchUsers = useCallback(() => {
+  const handleFetchUsers = () => {
     setOpen(true);
     const chatApis = new ChatService();
     setLoadingUser(true);
     chatApis.getUsers().finally(() => setLoadingUser(false));
-  }, []);
+  };
   const [userSelected, setUserSelected] = useState<IUserBio>();
   const handleAddUserTOChat = () => {
+    if (userSelected === undefined) {
+      toast.warn("Select the person you want to chat up");
+      return;
+    }
     const isUserInTheConvoList = userConversations.some(
       (conversation) =>
         conversation.alias ===
@@ -72,6 +73,24 @@ const ChatPage: FC<pageProps> = ({}) => {
       onClose();
     }
   };
+  useEffect(() => {
+    const chatApis = new ChatService();
+    setLoadingConvo(true);
+    chatApis.getConversations().finally(() => setLoadingConvo(false));
+  }, []);
+
+  const { searchResult, setSearchInput } = useSearchConvo({
+    data: userConversations,
+  });
+
+    
+    // const [convo, setConvo] = useState<IConversation[]>([])
+    
+  // useMemo(() => {
+	// 	setConvo(searchResult)
+  //   console.log(convo);
+    
+	// }, [searchResult, convo]);
 
   return (
     <>
@@ -92,8 +111,9 @@ const ChatPage: FC<pageProps> = ({}) => {
               </h2>
               <div className="ml-4 mr-6 bg-white flex items-center border border-[#D5D5E6] rounded-md overflow-hidden">
                 <input
-                  type="text"
-                  placeholder="Search Name, Id..."
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  type="search"
+                  placeholder="Search Name"
                   className="w-full p-2 focus:outline-none placeholder:text-[#D2D2D2]"
                 />
                 <div className="w-14 text-[#D2D2D2]">
@@ -103,7 +123,7 @@ const ChatPage: FC<pageProps> = ({}) => {
               <div className=" mt-1 pt-1 h-[63vh] sm:h-[55vh] text-xl rounded-lg overflow-hidden overflow-y-auto">
                 <div className="flex flex-col gap-2 p-4 ">
                   {loadingConvo ? (
-                    <LoadingUser/>
+                    <LoadingUser />
                   ) : userConversations && userConversations.length ? (
                     userConversations.map((user) => {
                       return (
@@ -164,7 +184,7 @@ const ChatPage: FC<pageProps> = ({}) => {
 
             <div className=" h-[72vh] sm:h-[82vh] overflow-y-auto px-2 flex flex-col gap-1">
               {loadingUser ? (
-                <LoadingUser/>
+                <LoadingUser />
               ) : (
                 usersToselect
                   .filter((_) => _.blocked === false)

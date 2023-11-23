@@ -1,5 +1,4 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
-import * as ScrollArea from "@radix-ui/react-scroll-area";
 import {
   ColumnDef,
   SortingState,
@@ -10,7 +9,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { MdDeleteOutline, MdRemoveRedEye } from "react-icons/md";
+import { MdRemoveRedEye } from "react-icons/md";
 import Image from "next/image";
 import { RxChevronDown, RxChevronUp } from "react-icons/rx";
 import { imgs } from "@/constants/images";
@@ -18,17 +17,19 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { ICustomerBio } from "@/types/customer";
-// import { useRouter } from "next/navigation";
+import { ImSpinner3 } from "react-icons/im";
 
 const CustomersTable = () => {
-  // const router = useRouter();
+  const loading = useSelector((state: RootState) => state.loading.loading);
   const customers = useSelector((state: RootState) => state.customer.customers);
-  useEffect(() => {
-    setData(customers);
-  });
+  
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<ICustomerBio[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  useEffect(() => {
+    setData(customers)
+  }, [] )
+  
 
   const columns = useMemo<ColumnDef<ICustomerBio>[]>(
     () => [
@@ -80,7 +81,8 @@ const CustomersTable = () => {
         accessorKey: "regDate",
         cell: ({ row }) => {
           const createdAtDate = new Date(row.original.createdAt);
-          const year = createdAtDate.getFullYear();const day = createdAtDate.getDate();
+          const year = createdAtDate.getFullYear();
+          const day = createdAtDate.getDate();
           const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
           const month = new Date(year, monthIndex).toLocaleString("en-US", {
             month: "short",
@@ -107,8 +109,18 @@ const CustomersTable = () => {
         cell: ({ row }) => {
           return (
             <span className="flex justify-between items-center w-fit">
-              <span className={` ${row.original.online ? 'bg-blue-500' : 'bg-lime-600' } p-1 rounded-full mr-1 `}/>
-              <span className={`${row.original.online ? 'text-blue-500' : 'text-lime-600' } text-xs`}>{row.original.online ? 'Online' : 'Offline'}</span>
+              <span
+                className={` ${
+                  row.original.online ? "bg-blue-500" : "bg-lime-600"
+                } p-1 rounded-full mr-1 `}
+              />
+              <span
+                className={`${
+                  row.original.online ? "text-blue-500" : "text-lime-600"
+                } text-xs`}
+              >
+                {row.original.online ? "Online" : "Offline"}
+              </span>
             </span>
           );
         },
@@ -146,7 +158,7 @@ const CustomersTable = () => {
       {
         id: "actions",
         cell: ({ row }) => {
-          const userId = row.original._id
+          const userId = row.original._id;
           return (
             <div className="flex justify-start gap-1 items-center">
               <Link
@@ -193,8 +205,12 @@ const CustomersTable = () => {
 
   return (
     <div className="mt-4 pb-12 w-full">
-      <ScrollArea.Root className="ScrollAreaRoot w-full h-[60vh] px-4 pb-2 bg-white overflow-auto rounded-xl border shadow-sm border-slate-300">
-        <ScrollArea.Viewport className="ScrollAreaViewport w-full h-full pb-6">
+      {loading ? (
+        <div className="flex justify-center items-center w-full h-[67vh] bg-white rounded-xl border shadow-sm border-slate-300">
+          <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
+        </div>
+      ) : (
+        <div className="h-[67vh] px-4 bg-white relative w-full rounded-xl border shadow-sm border-slate-300">
           <table className="w-screen lg:w-full px-8 relative">
             <thead className="sticky top-0 bg-white">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -259,21 +275,8 @@ const CustomersTable = () => {
               })}
             </tbody>
           </table>
-        </ScrollArea.Viewport>
-        <ScrollArea.Scrollbar
-          className="ScrollAreaScrollbar p-[2px] rounded-xl` mb-4 flex bg-slate-100 hover:bg-slate-200"
-          orientation="vertical"
-        >
-          <ScrollArea.Thumb className="relative flex-1 rounded-xl bg-slate-400" />
-        </ScrollArea.Scrollbar>
-        <ScrollArea.Scrollbar
-          className="ScrollAreaScrollbar p-[2px] rounded-xl` mb-4 flex bg-slate-100 hover:bg-slate-200 "
-          orientation="horizontal"
-        >
-          <ScrollArea.Thumb className="relative flex-1 rounded-xl bg-slate-400" />
-        </ScrollArea.Scrollbar>
-        <ScrollArea.Corner className="" />
-      </ScrollArea.Root>
+        </div>
+      )}
     </div>
   );
 };

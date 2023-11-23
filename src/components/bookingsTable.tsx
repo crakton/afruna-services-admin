@@ -17,20 +17,22 @@ import { T_Bookings } from "@/types/bookings";
 import { imgs } from "@/constants/images";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { ImSpinner3 } from "react-icons/im";
 
 interface BookingTableProps {
   // bookings: any[]
 }
 
 const BookingsTable: FC<BookingTableProps> = () => {
+  const loading = useSelector((state: RootState) => state.loading.loading);
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<any[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const bookings = useSelector((state: RootState) => state.booking.bookings)
+  const bookings = useSelector((state: RootState) => state.booking.bookings);
 
   useEffect(() => {
-    setData(bookings)
-  })
+    setData(bookings);
+  });
 
   const columns = useMemo<ColumnDef<T_Bookings>[]>(
     () => [
@@ -57,19 +59,15 @@ const BookingsTable: FC<BookingTableProps> = () => {
           <div key={row.id} className="flex gap-2 items-center ">
             <Image
               src={imgs.provider2}
-              alt={'pro'}
+              alt={"pro"}
               width={35}
               height={35}
               className="rounded"
             />
-            <span className=" text-slate-600 text-xs">
-            Lativari dress
-            </span>
+            <span className=" text-slate-600 text-xs">Lativari dress</span>
           </div>
         ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C] ">Provider</span>
-        ),
+        header: () => <span className="text-sm text-[#7C7C7C] ">Provider</span>,
       },
       {
         accessorKey: "user",
@@ -77,14 +75,12 @@ const BookingsTable: FC<BookingTableProps> = () => {
           <div key={row.id} className="flex gap-2 items-center ml-8">
             <Image
               src={imgs.provider1}
-              alt={'user'}
+              alt={"user"}
               width={35}
               height={35}
               className="rounded"
             />
-            <span className=" text-slate-500 text-xs">
-              Smith Lativari 
-            </span>
+            <span className=" text-slate-500 text-xs">Smith Lativari</span>
           </div>
         ),
         header: () => <span className="text-sm text-[#7C7C7C] ml-8">User</span>,
@@ -185,9 +181,13 @@ const BookingsTable: FC<BookingTableProps> = () => {
   });
 
   return (
-    <div className="my-8 pb-12 w-full">
-      <ScrollArea.Root className="ScrollAreaRoot w-full h-[70vh] px-4 pb-2 bg-white overflow-auto rounded-xl border shadow-sm border-slate-300">
-        <ScrollArea.Viewport className="ScrollAreaViewport w-full h-full pb-6">
+    <div className="mt-4 pb-12 w-full">
+      <div className="h-[65vh] px-4 bg-white relative w-full rounded-xl border shadow-sm border-slate-300">
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
+          </div>
+        ) : bookings?.length > 0 ? (
           <table className="w-screen lg:w-full px-8 relative">
             <thead className="sticky top-0 bg-white">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -252,21 +252,12 @@ const BookingsTable: FC<BookingTableProps> = () => {
               })}
             </tbody>
           </table>
-        </ScrollArea.Viewport>
-        <ScrollArea.Scrollbar
-          className="ScrollAreaScrollbar p-[2px] rounded-xl` mb-4 flex bg-slate-100 hover:bg-slate-200"
-          orientation="vertical"
-        >
-          <ScrollArea.Thumb className="relative flex-1 rounded-xl bg-slate-400" />
-        </ScrollArea.Scrollbar>
-        <ScrollArea.Scrollbar
-          className="ScrollAreaScrollbar p-[2px] rounded-xl` mb-4 flex bg-slate-100 hover:bg-slate-200 "
-          orientation="horizontal"
-        >
-          <ScrollArea.Thumb className="relative flex-1 rounded-xl bg-slate-400" />
-        </ScrollArea.Scrollbar>
-        <ScrollArea.Corner className="" />
-      </ScrollArea.Root>
+        ) : (
+          <h3 className="flex justify-center text-sm text-slate-500 h-full items-center">
+            Currently, No Client as book for any sevice yet
+          </h3>
+        )}
+      </div>
     </div>
   );
 };

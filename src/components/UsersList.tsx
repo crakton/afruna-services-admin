@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect } from "react";
+import { FC, useEffect } from "react";
 import { Avatar } from "./Avatar";
 import { IConversation } from "@/types/user";
 import { useRouter } from "next/navigation";
@@ -37,7 +37,7 @@ export const UsersList: FC<UsersListProps> = ({ user }) => {
   const usersData = useSelector((state: RootState) => state.chat.users);
   const singleUser = usersData.filter((user) => user._id === userTOChatId)[0];
 
-  const handleSelectedChat = useCallback(() => {
+  const handleSelectedChat = () => {
     store.dispatch(setActiveHeaderInfo(user));
     store.dispatch(setUserTOChatId(userTOChatId));
     store.dispatch(setLoading(true));
@@ -58,7 +58,7 @@ export const UsersList: FC<UsersListProps> = ({ user }) => {
       router.push(`/chat/${userTOChatId}`);
     }
     store.dispatch(setActiveUserConvo(user));
-  }, [user, userTOChatId, conversationId, router]);
+  }
 
   const activeUserConvo = useSelector(
     (state: RootState) => state.chat.activeUserConvo

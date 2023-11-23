@@ -2,16 +2,10 @@
 
 import CategoryTable from "@/components/CategoryTable";
 import ItemPicker from "@/components/ItemPicker";
-import ServicesTable from "@/components/ServicesTable";
-import SubCategoryTable from "@/components/SubCategoryTable";
-import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  ServicesContext,
-} from "@/contexts/ServicesContextProvider";
+import { buttonVariants } from "@/components/ui/button";
 import Service from "@/services/service.service";
-import { T_Services_Context } from "@/types/services";
 import Link from "next/link";
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useEffect} from "react";
 import { BsPlus } from "react-icons/bs";
 import { IoSearchOutline } from "react-icons/io5";
 
@@ -19,10 +13,9 @@ interface pageProps {}
 
 const Category: FC<pageProps> = ({ }) => {
   const serviceApis = new Service()
-  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    serviceApis.getCategories({ setIsLoading })
+    serviceApis.getCategories()
   }, [])
   return (
     <section className="flex flex-col gap-7 pb-12">

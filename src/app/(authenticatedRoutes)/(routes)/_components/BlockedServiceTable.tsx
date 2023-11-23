@@ -24,11 +24,11 @@ import * as Switch from "@radix-ui/react-switch";
 
 interface ServicesTableProps {}
 
-const ServicesTable: FC<ServicesTableProps> = () => {
+const BlockedServiceTable: FC<ServicesTableProps> = () => {
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [data, setData] = useState<IService[]>([]);
-  const services = useSelector((state: RootState) => state.service.services);
+  const services = useSelector((state: RootState) => state.service.blockedServices);
   const loading = useSelector((state: RootState) => state.loading.loading);
   const serviceApis = new Service();
 
@@ -123,64 +123,64 @@ const ServicesTable: FC<ServicesTableProps> = () => {
         },
         header: () => <span className="text-sm text-[#7C7C7C] ml-3">Date</span>,
       },
-      // {
-      //   accessorKey: "status",
-      //   cell: ({ row }) => {
-      //     switch (row.original.status) {
-      //       case "pending":
-      //         return (
-      //           <span className="flex justify-between items-center w-fit">
-      //             <span className="p-1 rounded-full bg-amber-500 mr-1" />
-      //             <span className="text-amber-500 text-xs">Pending</span>
-      //           </span>
-      //         );
-      //       case "inactive":
-      //         return (
-      //           <span className="flex justify-between items-center w-fit">
-      //             <span className="p-1 rounded-full bg-[#9B9999] mr-1" />
-      //             <span className="text-[#9B9999] text-xs">Inactive</span>
-      //           </span>
-      //         );
-      //       case "active":
-      //         return (
-      //           <span className="flex justify-between items-center w-fit">
-      //             <span className="p-1 rounded-full bg-lime-600 mr-1" />
-      //             <span className="text-lime-600 text-xs">Active</span>
-      //           </span>
-      //         );
-      //       case "deleted":
-      //         return (
-      //           <span className="flex justify-between items-center w-fit">
-      //             <span className="p-1 rounded-full bg-red-500 mr-1" />
-      //             <span className="text-red-500 text-xs">Deleted</span>
-      //           </span>
-      //         );
-      //       case "processing":
-      //         return (
-      //           <span className="flex justify-between items-center w-fit">
-      //             <span className="p-1 rounded-full bg-blue-500 mr-1" />
-      //             <span className="text-blue-500 text-xs">Processing</span>
-      //           </span>
-      //         );
-      //     }
-      //   },
-      //   header: () => <span className="">Status</span>,
-      // },
+    //   {
+    //     accessorKey: "status",
+    //     cell: ({ row }) => {
+    //       switch (row.original.status) {
+    //         case "pending":
+    //           return (
+    //             <span className="flex justify-between items-center w-fit">
+    //               <span className="p-1 rounded-full bg-amber-500 mr-1" />
+    //               <span className="text-amber-500 text-xs">Pending</span>
+    //             </span>
+    //           );
+    //         case "inactive":
+    //           return (
+    //             <span className="flex justify-between items-center w-fit">
+    //               <span className="p-1 rounded-full bg-[#9B9999] mr-1" />
+    //               <span className="text-[#9B9999] text-xs">Inactive</span>
+    //             </span>
+    //           );
+    //         case "active":
+    //           return (
+    //             <span className="flex justify-between items-center w-fit">
+    //               <span className="p-1 rounded-full bg-lime-600 mr-1" />
+    //               <span className="text-lime-600 text-xs">Active</span>
+    //             </span>
+    //           );
+    //         case "deleted":
+    //           return (
+    //             <span className="flex justify-between items-center w-fit">
+    //               <span className="p-1 rounded-full bg-red-500 mr-1" />
+    //               <span className="text-red-500 text-xs">Deleted</span>
+    //             </span>
+    //           );
+    //         case "processing":
+    //           return (
+    //             <span className="flex justify-between items-center w-fit">
+    //               <span className="p-1 rounded-full bg-blue-500 mr-1" />
+    //               <span className="text-blue-500 text-xs">Processing</span>
+    //             </span>
+    //           );
+    //       }
+    //     },
+    //     header: () => <span className="">Status</span>,
+    //   },
       {
         accessorKey: "verified",
         cell: ({ row }) => {
           const verified = row.original.verified;
           const serviceId = row.original._id!;
-          const publish = row.original.publish;
+          const publish = row.original.publish
 
           const handleVerificaton = () => {
             if (publish) {
               serviceApis
-                .verifyService(serviceId)
-                .then((data) => console.log(data));
-              serviceApis.getServices();
+              .verifyService(serviceId)
+              .then((data) => console.log(data));
+              serviceApis.getServices()
             } else {
-              toast.info(`Service is yet to be publish`);
+              toast.info(`Service is yet to be publish`)
             }
           };
           return (
@@ -218,10 +218,9 @@ const ServicesTable: FC<ServicesTableProps> = () => {
           const serviceId = row.original._id!;
 
           const handleBlockService = () => {
-            serviceApis
-              .blockService(serviceId)
+              serviceApis.blockService(serviceId)
               .then((data) => console.log(data));
-            serviceApis.getServices();
+              serviceApis.getServices()
           };
           return (
             <div className="ml-3">
@@ -356,11 +355,11 @@ const ServicesTable: FC<ServicesTableProps> = () => {
         </table>
       ) : (
         <h3 className="flex justify-center text-sm text-slate-500 h-full items-center">
-          Currently, No services is yet to be created on the platform
+          Currently, No Blocked service(s)
         </h3>
       )}
     </div>
   );
 };
 
-export default memo(ServicesTable);
+export default memo(BlockedServiceTable);

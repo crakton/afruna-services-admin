@@ -10,7 +10,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { DashboardStats } from "@/constants/data";
 import Booking from "@/services/booking.service";
 import Link from "next/link";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 
 interface pageProps {}
@@ -104,11 +104,14 @@ const DashboardPage: FC<pageProps> = ({}) => {
     },
     // Add more data... background: linear-gradient(180deg, #817AF3 0%, #74B0FA 47.92%, #79D0F1 100%);
   ];
-  const bookingApis = new Booking()
+  const [loadingRecentBookings, setLoadingRecentBookings] =
+    useState<boolean>(true);
+  const bookingApis = new Booking();
   useEffect(() => {
-    bookingApis.getRecentBookings().then(data => console.log(data)
-    )
-  }, [])
+    bookingApis
+      .getRecentBookings()
+      .finally(() => setLoadingRecentBookings(false));
+  }, []);
   return (
     <section className="flex flex-col gap-6 pb-12 ">
       <div className="flex justify-start items-center pl-4 lg:pl-6 bg-white w-full h-16">
@@ -132,7 +135,7 @@ const DashboardPage: FC<pageProps> = ({}) => {
               View all
             </Link> */}
           </header>
-          <Barchart bar_data={bar_data}/>
+          <Barchart bar_data={bar_data} />
         </div>
         <div className="max-w-[40%] w-full bg-white rounded-xl border shadow-sm border-slate-300">
           <header className="flex justify-between w-full px-4 py-6 items-center">
@@ -193,7 +196,7 @@ const DashboardPage: FC<pageProps> = ({}) => {
             </Link>
           </div>
         </header>
-        <RecentBookingTable />
+        <RecentBookingTable loadingRecentBookings={loadingRecentBookings} />
       </div>
     </section>
   );

@@ -2,33 +2,32 @@
 
 import ItemPicker from "@/components/ItemPicker";
 import ServicesTable from "@/components/ServicesTable";
-import { Button, buttonVariants } from "@/components/ui/button";
 import { IService } from "@/interfaces/IService";
-import { setServices } from "@/redux/features/app/service_slice";
+import { setBlockedServices, setPendingServices, setServices, setUnpublishedServices, setVerifiedServices } from "@/redux/features/app/service_slice";
 import { setStatus } from "@/redux/features/app/table_status_slice";
 import { RootState, store } from "@/redux/store";
 import Service from "@/services/service.service";
-import { T_Services_Context } from "@/types/services";
-import { tableStatus } from "@/types/tableStatus";
-import Link from "next/link";
-import { FC, useContext, useEffect, useState } from "react";
-import { BsPlus } from "react-icons/bs";
+import { FC, useEffect, useMemo } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
+import PendingServiceTable from "../_components/PendingServiceTable";
+import BlockedServiceTable from "../_components/BlockedServiceTable";
+import VerifiedServicesTable from "../_components/VerifiedServicesTable";
+import UnPublishServicesTable from "../_components/UnPublishServicesTable";
 
 interface pageProps {}
 const Services_Tab = [
   "All Services",
+  "Verified Services",
   "Pending Services",
-  "Active Services",
-  "Inactive Services",
-  "Delected Services",
+  "Unpublished Services",
+  "Blocked Services",
 ];
+export type tableStatus = 'all' | 'pending' | 'verified' | 'blocked' | 'unpublished'
 
 const page: FC<pageProps> = ({ }) => {
   const currentStatus = useSelector((state: RootState) => state.tableStatus.status)
   let services = useSelector((state: RootState) => state.service.services)
-  const [isLoading, setIsLoading] = useState(false)
 
   const serviceApis = new Service()
 
@@ -36,20 +35,46 @@ const page: FC<pageProps> = ({ }) => {
     switch (status) {
       case 'all':
         store.dispatch(setStatus('all'))
-        serviceApis.getServices({ setIsLoading })
+        serviceApis.getServices()
         break;
       case 'pending':
         store.dispatch(setStatus('pending'))
-        store.dispatch(setServices(services.filter((service: IService) => service.status === 'pending')))
-        // services = services.filter((service: IService) => service.name === 'pending')
+        store.dispatch(setPendingServices(services.filter((service: IService) => service.verified === false || service.verified === undefined  || service.blocked === true)))
+        
+        break;
+      case 'blocked':
+        store.dispatch(setStatus('blocked'))
+        store.dispatch(setBlockedServices(services.filter((service: IService) => service.blocked === true)))
+        break;
+      case 'verified':
+        store.dispatch(setStatus('verified'))
+        store.dispatch(setVerifiedServices(services.filter((service: IService) =>service.verified === true || service.blocked === false && service.blocked === undefined)))
+        break;
+      case 'unpublished':
+        store.dispatch(setStatus('unpublished'))
+        store.dispatch(setUnpublishedServices(services.filter((service: IService) => service.publish === false || service.publish=== undefined )))
         break;
       default:
         break;
     }
   }
+  const Component = useMemo(() => {
+    switch (currentStatus) {
+      case "pending":
+        return <PendingServiceTable />;
+      case "blocked":
+        return <BlockedServiceTable />;
+      case "verified":
+        return <VerifiedServicesTable />;
+      case "unpublished":
+        return <UnPublishServicesTable />;
+      default:
+        return <ServicesTable />
+    }
+  }, [currentStatus]);
 
   useEffect(() => {
-    serviceApis.getServices({ setIsLoading })
+    serviceApis.getServices()
 
     return () => {
       store.dispatch(setStatus('all'))
@@ -82,12 +107,12 @@ const page: FC<pageProps> = ({ }) => {
               triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
             />
           </fieldset>
-          <Link
+          {/* <Link
             href={"/create_service"}
             className={buttonVariants({ variant: "greenbutton" })}
           >
             <BsPlus className="font-extrabold text-xl" /> Add Service
-          </Link>
+          </Link> */}
         </div>
       </div>
       <div className="flex flex-col gap-6 px-6 xl:pr-16 w-full">
@@ -113,7 +138,7 @@ const page: FC<pageProps> = ({ }) => {
           <div className="bg-orange-200 w-full h-[2px] " />
         </div>
 
-        <ServicesTable />
+        <Component.type />
       </div>
     </section>
   );

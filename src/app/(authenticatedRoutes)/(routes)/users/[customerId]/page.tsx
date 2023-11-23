@@ -1,13 +1,13 @@
 "use client";
 
 import CustomerBookingDetailsTable from "@/components/CustomerBookingDetailsTable";
-import { Button } from "@/components/ui/button";
 import { imgs } from "@/constants/images";
 import { RootState } from "@/redux/store";
 import Customers from "@/services/customer.service";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { LoadingUserDetails } from "../../_components/LoadingUserDetails";
 
 type Params = {
   params: {
@@ -16,11 +16,18 @@ type Params = {
 };
 
 export default function CustomerPage({ params: { customerId } }: Params) {
+  const loading = useSelector((state: RootState) => state.loading.loading);
+  const [loadingBookings, setLoadingBookings] = useState<boolean>(true);
   const customersApis = new Customers();
   useEffect(() => {
-    customersApis.getCustomerBookings(customerId).then((data) => {
-      console.log(data);
-    });
+    customersApis
+      .getCustomerBookings(customerId)
+      .then((data) => {
+        console.log(data);
+      })
+      .finally(() => {
+        setLoadingBookings(false);
+      });
   }, []);
 
   const customers = useSelector((state: RootState) => state.customer.customers);
@@ -43,49 +50,56 @@ export default function CustomerPage({ params: { customerId } }: Params) {
           Customers Details
         </h1>
       </div>
-      <div className="flex flex-col justify-start gap-2 px-4 md:px-10 xl:pr-32 w-full">
-        <div className="w-[6rem] h-[6rem] overflow-hidden relative rounded-full">
-          <Image
-            src={customer?.avatar || imgs.provider3}
-            alt="provider"
-            priority
-            fill
-          />
-        </div>
-        <div className="flex flex-col sm:flex-row sm:justify-between items-start gap-4 w-full">
-          <div className="flex flex-col gap-2 text-[#7C7C7C] text-xs font-semibold">
-            <h2 className="text-lg text-afruna-blue">{`${customer?.firstName} ${customer?.lastName}`}</h2>
-            <span className=" ">Joined since {`${day} ${month}, ${year}`}</span>
-            <span className=" ">state, {customer?.country}</span>
-            <span className=" ">{customer?.email}</span>
-            <div className="flex flex-col ">
-              <span className="text-sm text-black">
-                {customer?.following?.length}
-              </span>
-              <p className="">Following</p>
+      {loading ? (
+        <LoadingUserDetails/>
+      ) : (
+        <>
+          <div className="flex flex-col justify-start gap-2 px-4 md:px-10 xl:pr-32 w-full">
+            <div className="w-[6rem] h-[6rem] overflow-hidden relative rounded-full">
+              <Image
+                src={customer?.avatar || imgs.provider3}
+                alt="provider"
+                priority
+                fill
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row sm:justify-between items-start gap-4 w-full">
+              <div className="flex flex-col gap-2 text-[#7C7C7C] text-xs font-semibold">
+                <h2 className="text-lg text-afruna-blue">{`${customer?.firstName} ${customer?.lastName}`}</h2>
+                <span className=" ">
+                  Joined since {`${day} ${month}, ${year}`}
+                </span>
+                <span className=" ">state, {customer?.country}</span>
+                <span className=" ">{customer?.email}</span>
+                <div className="flex flex-col ">
+                  <span className="text-sm text-black">
+                    {customer?.following?.length}
+                  </span>
+                  <p className="">Following</p>
+                </div>
+              </div>
             </div>
           </div>
-          {/* <Button variant={"afrunaOutline"} className="text-xs">
-            Remove User
-          </Button> */}
-        </div>
-      </div>
-      <div className="flex flex-col gap-4 justify-start px-4 md:px-10 xl:pr-32 ">
-        <div className="flex justify-start items-start gap-2">
-          <div className="border w-[13rem] py-7 pl-7 border-[#D5D5E6] rounded-xl bg-white flex flex-col gap-2">
-            <span className="text-sm font-bold">#3253</span>
-            <span className="text-sm font-bold">Total spent</span>
+          <div className="flex justify-start px-4 md:px-10 xl:pr-32 ">
+            <div className="flex justify-start items-start gap-2">
+              <div className="border w-[13rem] py-7 pl-7 border-[#D5D5E6] rounded-xl bg-white flex flex-col gap-2">
+                <span className="text-sm font-bold">#3253</span>
+                <span className="text-sm font-bold">Total spent</span>
+              </div>
+              <div className="border w-[13rem] py-7 pl-7 border-[#D5D5E6] rounded-xl bg-white flex flex-col gap-2">
+                <span className="text-sm font-bold">
+                  {customer?.bookings <= 9
+                    ? `0${customer?.bookings}`
+                    : customer?.bookings}
+                </span>
+                <span className="text-sm font-bold">Total booked</span>
+              </div>
+            </div>
           </div>
-          <div className="border w-[13rem] py-7 pl-7 border-[#D5D5E6] rounded-xl bg-white flex flex-col gap-2">
-            <span className="text-sm font-bold">
-              {customer?.bookings <= 9
-                ? `0${customer?.bookings}`
-                : customer?.bookings}
-            </span>
-            <span className="text-sm font-bold">Total booked</span>
-          </div>
-        </div>
-        <CustomerBookingDetailsTable />
+        </>
+      )}
+      <div className="flex justify-start px-4 md:px-10 xl:pr-32 ">
+        <CustomerBookingDetailsTable loadingBookings={loadingBookings} />
       </div>
     </section>
   );

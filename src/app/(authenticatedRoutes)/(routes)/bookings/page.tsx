@@ -26,7 +26,6 @@ const BookingsPage: FC<pageProps> = ({ }) => {
   
   const currentStatus = useSelector((state: RootState) => state.tableStatus.status)
   let bookings = useSelector((state: RootState) => state.booking.bookings)
-  const [isLoading, setIsLoading] = useState(false)
 
   const bookingApis = new Booking()
 
@@ -34,7 +33,7 @@ const BookingsPage: FC<pageProps> = ({ }) => {
     switch (status) {
       case 'all':
         store.dispatch(setStatus('all'))
-        bookingApis.getBookings({ setIsLoading })
+        bookingApis.getBookings()
         break;
       case 'pending':
         store.dispatch(setStatus('pending'))
@@ -46,7 +45,7 @@ const BookingsPage: FC<pageProps> = ({ }) => {
   }
   
   useEffect(() => {
-    bookingApis.getBookings({ setIsLoading })
+    bookingApis.getBookings()
 
     return () => {
       store.dispatch(setStatus('all'))

@@ -1,19 +1,15 @@
 "use client";
 
 import ReviewsTable from "@/components/ReviewsTable";
-import { RootState } from "@/redux/store";
 import Reviews from "@/services/reviews.service";
 import { FC, useEffect } from "react";
-import { useSelector } from "react-redux";
 
 interface pageProps {}
 
 const ReviewPage: FC<pageProps> = ({}) => {
-  const loading = useSelector((state: RootState) => state.loading.loading);
-  
   useEffect(() => {
     const reviewsApis = new Reviews();
-    reviewsApis.getReviews()
+    reviewsApis.getReviews();
   }, []);
 
   return (
@@ -25,13 +21,9 @@ const ReviewPage: FC<pageProps> = ({}) => {
       </div>
 
       {/* report table */}
-      {loading ? (
-        <>loading</>
-      ) : (
-        <div className="flex px-6 w-full">
-          <ReviewsTable />
-        </div>
-      )}
+      <div className="flex px-6 w-full">
+        <ReviewsTable />
+      </div>
     </section>
   );
 };

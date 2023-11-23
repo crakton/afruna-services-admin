@@ -4,12 +4,9 @@ import { FC, useEffect} from "react";
 import ProvidersTable from "@/components/ProvidersTable";
 import { IoSearchOutline } from "react-icons/io5";
 import ItemPicker from "@/components/ItemPicker";
-import { Button } from "@/components/ui/button";
-import { BsPlus } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { RootState, store } from "@/redux/store";
 import Provider from "@/services/provider.service";
-import { tableStatus } from "@/types/tableStatus";
 import { setStatus } from "@/redux/features/app/table_status_slice";
 import { setProviders } from "@/redux/features/app/provider_slice";
 
@@ -23,6 +20,7 @@ const Providers_Tab = [
   "Delected",
 ];
 
+export type tableStatus = 'all' | 'pending' | 'verified' | 'rejected' | 'delected'
 const providersPage: FC<pageProps> = ({}) => {
   
   const currentStatus = useSelector((state: RootState) => state.tableStatus.status)
@@ -73,10 +71,6 @@ const providersPage: FC<pageProps> = ({}) => {
               triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
             />
           </fieldset>
-          <Button variant={'greenbutton'}>
-            {" "}
-            <BsPlus className="font-extrabold text-xl" /> Add Provider
-          </Button>
         </div>
       </div>
       <div className="flex flex-col gap-6 px-6 xl:pr-32 w-full">
@@ -101,7 +95,6 @@ const providersPage: FC<pageProps> = ({}) => {
           </div>
           <div className="bg-orange-200 w-full h-[2px] " />
         </div>
-
         <ProvidersTable />
       </div>
     </section>

@@ -1,14 +1,11 @@
 import React, {
-  HTMLProps,
   memo,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import * as ScrollArea from "@radix-ui/react-scroll-area";
 import {
-  // Column,
   ColumnDef,
   SortingState,
   flexRender,
@@ -16,38 +13,35 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  // Table,
   useReactTable,
 } from "@tanstack/react-table";
-import { MdDeleteOutline, MdRemoveRedEye } from "react-icons/md";
+import { MdRemoveRedEye } from "react-icons/md";
 import Image from "next/image";
 import { RxChevronDown, RxChevronUp } from "react-icons/rx";
-import { ProviderData } from "@/constants/data";
 import { T_Providers } from "@/types/providers";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { imgs } from "@/constants/images";
+import { ImSpinner3 } from "react-icons/im";
 
 const AllProviders = () => {
-  const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState<any[]>([]);
-  const [sorting, setSorting] = useState<SortingState>([]);
   const providers = useSelector((state: RootState) => state.provider.providers);
+  const loading = useSelector((state: RootState) => state.loading.loading);
 
+  const [rowSelection, setRowSelection] = useState({});
+  const [data, setData] = useState<T_Providers[]>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
   useEffect(() => {
-    setData(providers);
-  });
-
-  const columns = useMemo<ColumnDef<any>[]>(
+    setData(providers)
+  }, [providers])
+  
+  const columns = useMemo<ColumnDef<T_Providers>[]>(
     () => [
       {
         accessorKey: "id",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-4 items-center ml-8">
-            <span className=" text-slate-600 text-xs">
-              {row.original.customId}
-            </span>
+            <span className=" text-slate-600 text-xs">{row.original._id}</span>
           </div>
         ),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
@@ -56,13 +50,23 @@ const AllProviders = () => {
         accessorKey: "productName",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-4 items-center ml-8">
-            <div className="flex relative w-[40px] h-[40px] overflow-hidden justify-center items-center">
-              <Image
-                src={row.original.img || imgs.provider1}
-                alt={row.original.providerName}
-                fill
-                className="rounded"
-              />
+            <div className="flex relative rounded-full w-[40px] h-[40px] overflow-hidden justify-center items-center">
+              {row.original.avatar ? (
+                <Image
+                  src={row.original.avatar}
+                  alt={row.original.firstName}
+                  fill
+                  className="rounded"
+                />
+              ) : (
+                <div className=" h-full w-full bg-slate-300 flex justify-center items-center text-sm">
+                  {`${row.original.firstName
+                    .charAt(0)
+                    .toUpperCase()} ${row.original.lastName
+                    .charAt(0)
+                    .toUpperCase()}`}
+                </div>
+              )}
             </div>
             <div className="flex flex-col text-slate-600">
               <span className="">
@@ -92,7 +96,7 @@ const AllProviders = () => {
       {
         accessorKey: "status",
         cell: ({ row }) => {
-          switch (row.original.status) {
+          switch (row.original.online) {
             case "Pending":
               return (
                 <span className="flex justify-between items-center w-fit">
@@ -134,12 +138,27 @@ const AllProviders = () => {
       },
       {
         accessorKey: "dateListed",
-        cell: ({ row }) => (
-          <div className="flex flex-col justify-start items-start">
-            <span className="text-afruna-blue text-xs">01 Oct 2023</span>
-            <span className=" text-afruna-blue text-xs">11:29 am</span>
-          </div>
-        ),
+        cell: ({ row }) => {
+          const createdAtDate = new Date(row.original.createdAt);
+          const year = createdAtDate.getFullYear();
+          const day = createdAtDate.getDate();
+          const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
+          const month = new Date(year, monthIndex).toLocaleString("en-US", {
+            month: "short",
+          });
+
+          const timeString = createdAtDate.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          });
+          return (
+            <div className="flex flex-col justify-start ml-3 items-start">
+              <span className="text-afruna-blue text-xs">{`${day} ${month}, ${year}`}</span>
+              <span className=" text-afruna-blue text-xs">{timeString}</span>
+            </div>
+          );
+        },
         header: () => <span className="text-sm text-[#7C7C7C]">Date Date</span>,
       },
       {
@@ -152,7 +171,7 @@ const AllProviders = () => {
             >
               <MdRemoveRedEye size={24} />
             </Link>
-            <button
+            {/* <button
               className="hover:scale-90 border-none transition duration-300"
               onClick={() => {
                 const newData = data.filter((_, idx) => idx !== row.index);
@@ -160,7 +179,7 @@ const AllProviders = () => {
               }}
             >
               <MdDeleteOutline size={24} />
-            </button>
+            </button> */}
           </div>
         ),
         header: () => <span className="text-sm text-[#7C7C7C]">Action</span>,
@@ -188,8 +207,12 @@ const AllProviders = () => {
 
   return (
     <div className="mt-4 pb-12 w-full">
-      <ScrollArea.Root className="ScrollAreaRoot w-full h-[60vh] px-4 pb-2 bg-white overflow-auto rounded-xl border shadow-sm border-slate-300">
-        <ScrollArea.Viewport className="ScrollAreaViewport w-full h-full pb-6">
+      <div className="h-[67vh] px-4 bg-white relative w-full rounded-xl border shadow-sm border-slate-300">
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
+          </div>
+        ) : providers?.length > 0 ? (
           <table className="w-screen lg:w-full px-8 relative">
             <thead className="sticky top-0 bg-white">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -254,21 +277,12 @@ const AllProviders = () => {
               })}
             </tbody>
           </table>
-        </ScrollArea.Viewport>
-        <ScrollArea.Scrollbar
-          className="ScrollAreaScrollbar p-[2px] rounded-xl` mb-4 flex bg-slate-100 hover:bg-slate-200"
-          orientation="vertical"
-        >
-          <ScrollArea.Thumb className="relative flex-1 rounded-xl bg-slate-400" />
-        </ScrollArea.Scrollbar>
-        <ScrollArea.Scrollbar
-          className="ScrollAreaScrollbar p-[2px] rounded-xl` mb-4 flex bg-slate-100 hover:bg-slate-200 "
-          orientation="horizontal"
-        >
-          <ScrollArea.Thumb className="relative flex-1 rounded-xl bg-slate-400" />
-        </ScrollArea.Scrollbar>
-        <ScrollArea.Corner className="" />
-      </ScrollArea.Root>
+        ) : (
+          <h3 className="flex justify-center text-sm text-slate-500 h-full items-center">
+            Currently, there is no provider on the platform yet
+          </h3>
+        )}
+      </div>
     </div>
   );
 };

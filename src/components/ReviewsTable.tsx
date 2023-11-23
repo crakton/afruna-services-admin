@@ -1,7 +1,6 @@
 "use Client";
 
-import React, { memo, useMemo, useState } from "react";
-import * as ScrollArea from "@radix-ui/react-scroll-area";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
   SortingState,
@@ -14,18 +13,23 @@ import {
 } from "@tanstack/react-table";
 import Image from "next/image";
 import { RxChevronDown, RxChevronUp } from "react-icons/rx";
-import { reviewData } from "@/constants/data";
 import { imgs } from "@/constants/images";
-import { T_Review, T_Service_Review } from "@/types/review";
+import { T_Service_Review } from "@/types/review";
 import { BsStarFill } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { ImSpinner3 } from "react-icons/im";
 
 const ReviewTable = () => {
+  const loading = useSelector((state: RootState) => state.loading.loading);
   const reviews = useSelector((state: RootState) => state.reviews.reviews);
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([...reviews]);
+  const [data, setData] = useState<T_Service_Review[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  useEffect(() => {
+    setData(reviews)
+  }, [])
+  
 
   const columns = useMemo<ColumnDef<T_Service_Review>[]>(
     () => [
@@ -38,7 +42,8 @@ const ReviewTable = () => {
         accessorKey: "bookingdate",
         cell: ({ row }) => {
           const createdAtDate = new Date(row.original.createdAt);
-          const year = createdAtDate.getFullYear();const day = createdAtDate.getDate();
+          const year = createdAtDate.getFullYear();
+          const day = createdAtDate.getDate();
           const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
           const month = new Date(year, monthIndex).toLocaleString("en-US", {
             month: "short",
@@ -157,15 +162,19 @@ const ReviewTable = () => {
 
   return (
     <div className="mt-4 pb-12 w-full">
-      <ScrollArea.Root className="ScrollAreaRoot w-full h-[67vh] px-4 pb-2 bg-white overflow-auto rounded-xl border shadow-sm border-slate-300">
-        <ScrollArea.Viewport className="ScrollAreaViewport w-full h-full pb-6">
+      {loading ? (
+        <div className="flex justify-center items-center w-full h-[67vh] bg-white rounded-xl border shadow-sm border-slate-300">
+          <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
+        </div>
+      ) : (
+        <div className="h-[67vh] px-4 bg-white relative w-full rounded-xl border shadow-sm border-slate-300">
           <table className="w-screen lg:w-full px-8 relative">
             <thead className="sticky top-0 bg-white">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <th
-                      className="text-left  font-medium pt-3 text-[#7C7C7C] text-sm"
+                      className="text-left font-medium pt-3 text-[#7C7C7C] text-sm"
                       key={header.id}
                     >
                       {header.index > 0 && header.id !== "actions" ? (
@@ -223,23 +232,11 @@ const ReviewTable = () => {
               })}
             </tbody>
           </table>
-        </ScrollArea.Viewport>
-        <ScrollArea.Scrollbar
-          className="ScrollAreaScrollbar p-[2px] rounded-xl` mb-4 flex bg-slate-100 hover:bg-slate-200"
-          orientation="vertical"
-        >
-          <ScrollArea.Thumb className="relative flex-1 rounded-xl bg-slate-400" />
-        </ScrollArea.Scrollbar>
-        <ScrollArea.Scrollbar
-          className="ScrollAreaScrollbar p-[2px] rounded-xl` mb-4 flex bg-slate-100 hover:bg-slate-200 "
-          orientation="horizontal"
-        >
-          <ScrollArea.Thumb className="relative flex-1 rounded-xl bg-slate-400" />
-        </ScrollArea.Scrollbar>
-        <ScrollArea.Corner className="" />
-      </ScrollArea.Root>
+        </div>
+      )}
     </div>
   );
 };
 
 export default memo(ReviewTable);
+

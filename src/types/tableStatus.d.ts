@@ -1,1 +1,0 @@
-export type tableStatus = 'all' | 'pending' | 'active' | 'inactive' | 'deleted'

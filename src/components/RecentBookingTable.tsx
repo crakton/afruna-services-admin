@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import React, { memo, useMemo, useState } from "react";
+import React, { FC, memo, useMemo, useState } from "react";
 import {
   ColumnDef,
   SortingState,
@@ -18,9 +18,18 @@ import { imgs } from "@/constants/images";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { ImSpinner3 } from "react-icons/im";
 
-const RecentBookingTable = () => {
-  const recentBookings = useSelector((state: RootState) => state.booking.recentBookings)
+interface RecentBookingTableProps {
+  loadingRecentBookings: boolean;
+}
+
+const RecentBookingTable: FC<RecentBookingTableProps> = ({
+  loadingRecentBookings,
+}) => {
+  const recentBookings = useSelector(
+    (state: RootState) => state.booking.recentBookings
+  );
   console.log(recentBookings);
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState([...recentBookings]);
@@ -51,19 +60,15 @@ const RecentBookingTable = () => {
           <div key={row.id} className="flex gap-2 items-center ">
             <Image
               src={imgs.provider2}
-              alt={'pro'}
+              alt={"pro"}
               width={35}
               height={35}
               className="rounded"
             />
-            <span className=" text-slate-600 text-xs">
-            Lativari dress
-            </span>
+            <span className=" text-slate-600 text-xs">Lativari dress</span>
           </div>
         ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C] ">Provider</span>
-        ),
+        header: () => <span className="text-sm text-[#7C7C7C] ">Provider</span>,
       },
       {
         accessorKey: "user",
@@ -71,14 +76,12 @@ const RecentBookingTable = () => {
           <div key={row.id} className="flex gap-2 items-center ml-8">
             <Image
               src={imgs.provider1}
-              alt={'user'}
+              alt={"user"}
               width={35}
               height={35}
               className="rounded"
             />
-            <span className=" text-slate-500 text-xs">
-              Smith Lativari 
-            </span>
+            <span className=" text-slate-500 text-xs">Smith Lativari</span>
           </div>
         ),
         header: () => <span className="text-sm text-[#7C7C7C] ml-8">User</span>,
@@ -179,8 +182,12 @@ const RecentBookingTable = () => {
   });
 
   return (
-    // <div className="relative h-[75vh] pb-42">
-      <div className="h-[50vh] px-4 bg-white relative rounded-lg overflow-y-auto">
+    <div className="h-[50vh] px-4 bg-white relative rounded-lg overflow-y-auto">
+      {loadingRecentBookings ? (
+        <div className="flex justify-center items-center h-full">
+          <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
+        </div>
+      ) : recentBookings?.length > 0 ? (
         <table className=" w-screen lg:w-full px-4 relative">
           <thead className="sticky top-0 bg-white">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -247,10 +254,13 @@ const RecentBookingTable = () => {
             })}
           </tbody>
         </table>
-      </div>
-    // </div>
+      ) : (
+        <h3 className="flex justify-center text-sm text-slate-500 h-full items-center">
+          Currently, No Recent Bookings
+        </h3>
+      )}
+    </div>
   );
-  
 };
 
 export default memo(RecentBookingTable);
