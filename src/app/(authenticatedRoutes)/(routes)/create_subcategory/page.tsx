@@ -41,7 +41,7 @@ const CreateSubCategoryPage: FC<pageProps> = ({}) => {
       return
     }
 
-    serviceApis.createCategory(subCategoryForm, { setIsLoading })
+    serviceApis.createCategory(subCategoryForm)
       .then((data) => {
         toast.success('Category created')
         router.push('/category')

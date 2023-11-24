@@ -36,6 +36,14 @@ const ServicesTable: FC<ServicesTableProps> = () => {
     setData(services);
   }, [services]);
 
+  const handleBlockService = (serviceId: string) => {
+    // "6558a87fac38c3836470019a"
+    serviceApis
+      .blockService(serviceId)
+      .then((data) => console.log(data));
+    // serviceApis.getServices();
+  };
+
   const columns = useMemo<ColumnDef<IService>[]>(
     () => [
       {
@@ -51,13 +59,9 @@ const ServicesTable: FC<ServicesTableProps> = () => {
         accessorKey: "service",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 items-center ml-3 ">
-            <Image
-              src={imgs.provider2}
-              alt={"pro"}
-              width={35}
-              height={35}
-              className="rounded"
-            />
+            <div className="overflow-hidden w-[35px] h-[35px] rounded-md relative flex justify-center items-center">
+              <Image src={imgs.provider2} alt={"pro"} fill />
+            </div>
             <span className=" text-slate-600 text-xs">{row.original.name}</span>
           </div>
         ),
@@ -217,19 +221,11 @@ const ServicesTable: FC<ServicesTableProps> = () => {
           const blocked = row.original.blocked;
           const serviceId = row.original._id!;
 
-          const handleBlockService = () => {
-            serviceApis
-              .blockService(serviceId)
-              .then((data) => console.log(data));
-            serviceApis.getServices();
-          };
           return (
             <div className="ml-3">
               <Switch.Root
                 defaultChecked={!blocked}
-                onCheckedChange={() => {
-                  console.log("=== something ===");
-                }}
+                onCheckedChange={() => handleBlockService(serviceId)}
                 className={`${
                   blocked ? "data-[state=checked]:bg-rose-400" : "bg-gray-300"
                 } data-[state=checked]:bg-green-300 bg-gray-300 w-[50px] h-[23px] rounded-full relative outline-none cursor-pointer`}

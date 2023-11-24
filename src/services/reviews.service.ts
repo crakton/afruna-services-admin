@@ -20,7 +20,6 @@ export default class Reviews {
         try {
             const { data } = await axios.get<TSuccessResponse<T_Service_Review[]>>('/api/reviews/all', headers)
             store.dispatch(setReviews(data.data))
-            toast.success('Review fetched successfully')
             return data.data
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)

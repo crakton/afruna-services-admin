@@ -29,7 +29,7 @@ const statsDetails = [
 ];
 
 const ProviderDetailPage = ({ params: { providerId } }: Params) => {
-  const router = useRouter()
+  const router = useRouter();
   const providerApis = new Provider();
   const userConversations = useSelector(
     (state: RootState) => state.chat.conversations
@@ -73,7 +73,13 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
           <section className="max-w-[96%] lg:max-w-[86%] ml-6 xl:ml-[3.5rem] flex items-start gap-6">
             <aside className="px-5 py-8 bg-white font-semibold text-[#666363] rounded-xl flex max-w-[25%] w-full flex-col gap-2 justify-center items-center">
               <div className="w-[7rem] h-[7rem] rounded-full transition-all overflow-hidden relative flex justify-center items-center">
-                <Image src={imgs.provider3} alt="Your image" fill />
+                {provider?.avatar ? (
+                  <Image src={provider.avatar} alt="Your image" fill />
+                ) : (
+                  <div className="h-full w-full bg-slate-300 flex justify-center items-center text-sm">
+                    {provider.firstName.charAt(0).toUpperCase()} {provider.lastName.charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
               <div className="flex mb-3  gap-2 justify-center items-center">
                 <p className="text-sm font-semibold text-afruna-blue">
@@ -92,7 +98,11 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
               <span className="text-xs mt-3 font-semibold text-[#666363]">
                 {`State`}, {provider.country}
               </span>
-              <Button onClick={() => router.push(`/chat`)} variant={"deepgradientblue"} className="mt-3">
+              <Button
+                onClick={() => router.push(`/chat`)}
+                variant={"deepgradientblue"}
+                className="mt-3"
+              >
                 Chat Provider
               </Button>
               <Button variant={"afrunaOutline"} className="mt-1 ">

@@ -22,20 +22,40 @@ import { ImSpinner3 } from "react-icons/im";
 const CustomersTable = () => {
   const loading = useSelector((state: RootState) => state.loading.loading);
   const customers = useSelector((state: RootState) => state.customer.customers);
-  
+
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<ICustomerBio[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const assignUniqueIds = (data: ICustomerBio[]): ICustomerBio[] => {
+    // Create a new array to store the updated data
+    const updatedData: ICustomerBio[] = [];
+    // Assign unique IDs to each data object
+    let uniqueId = 1;
+    for (const customerBio of data) {
+      updatedData.push({
+        ...customerBio,
+        id: uniqueId++,
+      });
+    }
+    return updatedData;
+  };
+
   useEffect(() => {
-    setData(customers)
-  }, [] )
-  
+    const updatedDataWithIds = assignUniqueIds(customers);
+    setData(updatedDataWithIds);
+  }, [customers]);
 
   const columns = useMemo<ColumnDef<ICustomerBio>[]>(
     () => [
       {
-        accessorKey: "_id",
-        cell: (info) => info.getValue(),
+        accessorKey: "id",
+        cell: ({ row }) => {
+          return (
+            <span key={row.id} className=" text-slate-500 text-xs">
+              #{row.original.id}
+            </span>
+          );
+        },
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
       {

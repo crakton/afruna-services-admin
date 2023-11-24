@@ -28,7 +28,15 @@ export interface IService {
   blocked?: boolean;
 }
 
+export interface IDeleteCategory {
+  _id: string;
+  name: string;
+  children: [];
+  options: [];
+  __v: number;
+}
 export interface IServiceCategory {
+  id: number;
   _id: string;
   name: string;
   customId: string;

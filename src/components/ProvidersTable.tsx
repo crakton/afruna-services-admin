@@ -31,17 +31,34 @@ const AllProviders = () => {
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<T_Providers[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  useEffect(() => {
-    setData(providers)
-  }, [providers])
+  const assignUniqueIds = (
+    data: T_Providers[]
+  ): T_Providers[] => {
+    // Create a new array to store the updated data
+    const updatedData: T_Providers[] = [];
+    // Assign unique IDs to each data object
+    let uniqueId = 1;
+    for (const serviceCategory of data) {
+      updatedData.push({
+        ...serviceCategory,
+        id: uniqueId++,
+      });
+    }
+    return updatedData;
+  };
   
+  useEffect(() => {
+    const updatedDataWithIds = assignUniqueIds(providers);
+    setData(updatedDataWithIds);
+  }, [providers]);
+
   const columns = useMemo<ColumnDef<T_Providers>[]>(
     () => [
       {
         accessorKey: "id",
         cell: ({ row }) => (
-          <div key={row.id} className="flex gap-4 items-center ml-8">
-            <span className=" text-slate-600 text-xs">{row.original._id}</span>
+          <div key={row.id} className="flex gap-4 items-center">
+            <span className=" text-slate-600 text-xs">#{row.original.id}</span>
           </div>
         ),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,

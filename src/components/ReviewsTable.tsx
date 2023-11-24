@@ -1,6 +1,6 @@
 "use Client";
 
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { FC, memo, useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
   SortingState,
@@ -20,22 +20,49 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { ImSpinner3 } from "react-icons/im";
 
-const ReviewTable = () => {
+interface ReviewsTableProps {
+  reviews: T_Service_Review[]
+}
+
+const ReviewTable: FC<ReviewsTableProps> = ({
+  reviews
+})=> {
   const loading = useSelector((state: RootState) => state.loading.loading);
-  const reviews = useSelector((state: RootState) => state.reviews.reviews);
+  // const reviews = useSelector((state: RootState) => state.reviews.reviews);
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<T_Service_Review[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const assignUniqueIds = (data: T_Service_Review[]): T_Service_Review[] => {
+    // Create a new array to store the updated data
+    const updatedData: T_Service_Review[] = [];
+    // Assign unique IDs to each data object
+    let uniqueId = 1;
+    for (const review of data) {
+      updatedData.push({
+        ...review,
+        id: uniqueId++,
+      });
+    }
+    return updatedData;
+  };
+
   useEffect(() => {
-    setData(reviews)
-  }, [])
+    const updatedDataWithIds = assignUniqueIds(reviews);
+    setData(updatedDataWithIds);
+  }, [reviews]);
   
 
   const columns = useMemo<ColumnDef<T_Service_Review>[]>(
     () => [
       {
         accessorKey: "id",
-        cell: (info) => info.getValue(),
+        cell: ({ row }) => {
+          return (
+            <span key={row.id} className=" text-slate-500 text-xs">
+              #{row.original.id}
+            </span>
+          );
+        },
         header: () => <span className="text-xs text-[#7C7C7C]">ID</span>,
       },
       {

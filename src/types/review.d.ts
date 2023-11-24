@@ -1,11 +1,5 @@
-export type T_Review = {
-  id: string;
-  type: string;
-  ratings: number;
-  description: string;
-};
-
 export type T_Service_Review = {
+  id: number;
   _id: string;
   serviceId: {
     _id: string;

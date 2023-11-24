@@ -3,6 +3,7 @@
 import { FC, memo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  MdChat,
   MdHelp,
   MdMenu,
   MdOutlineLogout,
@@ -90,17 +91,22 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
           </Link>
           <ItemPicker
             mobileClassName="hidden md:flex lg:hidden xl:flex text-sm lg:text-base"
-            triggerClassName="flex gap-2 items-center"
+            triggerClassName="flex gap-4 items-center"
             contentClassName={
               "bg-white p-4 text-afruna-blue w-40 text-xs z-30 rounded-md"
             }
             getSelected={(val) => console.log(val)}
             leftTriggerIcon={
-              <div className="w-[1.6rem] h-[1.6rem] md:w-8 md:h-8 lg:w-10 lg:h-10  rounded-full transition-all hover:scale-90 ease-in-out duration-300 overflow-hidden relative flex justify-center items-center">
-                <Image src={imgs.seller1} alt="Your image" fill />
+              <div className=" relative bg-afruna-blue/60 ring-4 ring-slate-300 w-[1.6rem] h-[1.6rem] object-contain md:w-8 md:h-8 lg:w-10 lg:h-10  rounded-full transition-all hover:scale-90 ease-in-out duration-300 overflow-hidden flex justify-center items-center">
+                <Image
+                  src={imgs.afruna_2nd_logo}
+                  alt="Image"
+                  priority
+                  className=" w-full "
+                />
               </div>
             }
-            placeholder={`Akande Idris`}
+            placeholder={`Admin`}
             profileLinks={[
               {
                 name: "Profile",
@@ -108,9 +114,9 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
                 icon: <FaUser />,
               },
               {
-                name: "Favorite",
-                icon: <BsHeartFill />,
-                href: "/favorite",
+                name: "Chat",
+                icon: <MdChat />,
+                href: "/chat",
               },
             ]}
             extraComponent={

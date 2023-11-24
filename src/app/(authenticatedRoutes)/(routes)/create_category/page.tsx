@@ -3,46 +3,52 @@
 import { Button } from "@/components/ui/button";
 import { Dropzone, ExtFile, FileMosaic } from "@files-ui/react";
 import { Loader2 } from "lucide-react";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { GoTrash } from "react-icons/go";
 import { TbUpload } from "react-icons/tb";
 
 import Image from "next/image";
-import uploadIcon from '../../../../assests/imgs/upload.png'
+import uploadIcon from "../../../../assests/imgs/upload.png";
 import { toast } from "react-toastify";
 import Service from "@/services/service.service";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 interface pageProps {}
+type T_Cate_Form = {
+  name: string;
+  icon: ExtFile[] | undefined;
+};
 
 const CreateCategoryPage: FC<pageProps> = ({}) => {
+  const loading = useSelector((state: RootState) => state.loading.loading);
+  const [categoryForm, setCategoryForm] = useState<T_Cate_Form>({
+    name: "",
+    icon: undefined,
+  });
   const [files, setFiles] = useState<ExtFile[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [categoryForm, setCategoryForm] = useState({
-    name: '',
-    icon: ''
-  })
 
-  const serviceApis = new Service()
-  const router = useRouter()
+  const serviceApis = new Service();
+  const router = useRouter();
 
   const updateFiles = useCallback((incommingFiles: ExtFile[]) => {
-    if (incommingFiles.length <= 10) {
+    if (incommingFiles.length <= 1) {
       setFiles(
         incommingFiles.filter((file) => {
-          if ((file.size?.toFixed(3) as unknown as number) < 500 * 1024) {
+          if ((file.size as number) < 500 * 1024) {
             return file;
           } else {
-            alert(`The file size of ${file.name} is too large.`);
+            toast.warn(`The file size of ${file.name} is too large.`);
             return;
           }
         })
       );
+      setCategoryForm({ ...categoryForm, icon: files });
     } else {
-      alert("Maximum files reached!");
+      toast.warn("Maximum files reached!");
     }
   }, []);
-
   const removeFile = useCallback(
     (id: string | number | undefined) => {
       setFiles(files.filter((x: ExtFile) => x.id !== id));
@@ -50,36 +56,53 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
     [files]
   );
 
+  useEffect(() => {
+    console.log(categoryForm);
+  }, [categoryForm.name, categoryForm.icon]);
+
   const handleChange = (e: any) => {
     const { name, value } = e.target;
 
-    if (name == 'media') {
-      const file = e.target.files[0]
-      if (file) {
-        console.log(e.target.files[0])
-        setCategoryForm({...categoryForm, icon: file})
-      }
-    }
+    // if (name == "media") {
+    //   const file = e.target.files[0];
+    //   if (file) {
+    //     console.log(e.target.files[0]);
+    //     setCategoryForm({ ...categoryForm, icon: file });
+    //   }
+    // }
     setCategoryForm({ ...categoryForm, [name]: value });
   };
 
   const createCategory = (e: any) => {
-    e.preventDefault()
-    if (categoryForm.name == '') {
-      toast.error('Category name must be provided')
-      return
+    e.preventDefault();
+    if (categoryForm.name == "") {
+      toast.error("Category name must be provided");
+      return;
+    }
+    if (!files?.length) {
+      toast.warn("Please select image");
+      return;
     }
 
-    let formData = new FormData()
-    formData.append('name', categoryForm.name)
-    formData.append('icon', categoryForm.icon)
+    console.log(categoryForm.icon);
+    console.log(categoryForm.name);
+    let formData = new FormData();
+    formData.append("name", categoryForm.name);
+    // formData.append("icon", categoryForm.icon);
+    for (let i = 0; i < files.length; i++) {
+      formData.append("icon", files[i].file as Blob);
+    }
+    // console.log(formData);
+    console.log(categoryForm);
 
-    serviceApis.createCategory(formData, { setIsLoading })
+    serviceApis
+      .createCategory(formData)
       .then((data) => {
-        toast.success('Category created')
-        router.push('/category')
+        console.log(data);
+        toast.success("Category created");
       })
-  }
+      .finally(() => router.push("/category"));
+  };
 
   return (
     <section className="flex flex-col gap-6 pb-12 ">
@@ -89,10 +112,11 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
         </h1>
       </div>
       <div className="flex flex-col justify-start p-20 items-start max-w-[85%] ml-8 rounded-xl bg-white w-full">
-        <h2 className=" font-semibold text-black mb-6">
-          Category Creation
-        </h2>
-        <form onSubmit={createCategory} className="flex flex-col gap-4 max-w-[70%] w-full">
+        <h2 className=" font-semibold text-black mb-6">Category Creation</h2>
+        <form
+          onSubmit={createCategory}
+          className="flex flex-col gap-8 max-w-[70%] w-full"
+        >
           <fieldset className="w-full">
             <label
               htmlFor={"category_name"}
@@ -114,20 +138,33 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
               />
             </div>
           </fieldset>
-          <div className="form-control">
-              <div className="custom-upload-btn">
-                  <input type="file" hidden name="media" onChange={handleChange} id="media" />
-                  <label htmlFor="media" className="border-dashed border-[1px] rounded-[8px] cursor-pointer border-[#00AEEF] py-[30px] flex flex-col items-center justify-center">
-                      <span className="font-semibold text-lg mb-[11px]">Drag and drop files here</span>
-                      <span className="text-[#979797] text-sm mb-6">The file size limite is 1 MB per file</span>
-                      <span className="button flex items-center justify-center gap-2 bg-[#FED6AC] px-4 py-2 text-sm">
-                          <Image src={uploadIcon} alt="" />
-                          Browse
-                      </span>
-                  </label>
-              </div>
-          </div>
-          {/* <div className="mt-8 flex flex-col gap-4 w-full">
+          {/* <div className="form-control">
+            <div className="custom-upload-btn">
+              <input
+                type="file"
+                hidden
+                name="media"
+                onChange={handleChange}
+                id="media"
+              />
+              <label
+                htmlFor="media"
+                className="border-dashed border-[1px] rounded-[8px] cursor-pointer border-[#00AEEF] py-[30px] flex flex-col items-center justify-center"
+              >
+                <span className="font-semibold text-lg mb-[11px]">
+                  Drag and drop files here
+                </span>
+                <span className="text-[#979797] text-sm mb-6">
+                  The file size limite is 1 MB per file
+                </span>
+                <span className="button flex items-center justify-center gap-2 bg-[#FED6AC] px-4 py-2 text-sm">
+                  <Image src={uploadIcon} alt="" />
+                  Browse
+                </span>
+              </label>
+            </div>
+          </div> */}
+          <div className="mt-2 flex flex-col gap-4 w-full">
             <Dropzone
               value={files}
               onChange={updateFiles}
@@ -156,10 +193,9 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
               </div>
             </Dropzone>
             {files && files.length > 0 && (
-              <div className="mt-4 flex flex-wrap gap-4 w-full h-[40vh] overflow-y-auto">
+              <div className="mt-4 flex flex-wrap gap-4 w-full">
                 {files.map((file, id) => (
                   <div className=" relative" key={file.id}>
-                    
                     <FileMosaic {...file} preview />
                     <span
                       onClick={() => removeFile(file.id)}
@@ -174,13 +210,19 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
                 ))}
               </div>
             )}
-          </div> */}
-          <div className="flex justify-end mt-8">
-            {isLoading ?
-              <Loader2 className=" h-6 w-6 animate-spin text-white" />
-              : <Button type="submit" variant={"primary"}>
-              SUbmit
-            </Button>}
+          </div>
+          <div className="flex justify-end mt-6">
+            <Button
+              type="submit"
+              variant={"primary"}
+              className="w-[7rem] h-[2.5rem]"
+            >
+              {loading ? (
+                <Loader2 className=" h-6 w-6 animate-spin text-white" />
+              ) : (
+                "Submit"
+              )}
+            </Button>
           </div>
         </form>
       </div>

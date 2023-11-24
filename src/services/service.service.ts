@@ -1,5 +1,6 @@
 import { headers } from "@/constants/http_config";
 import {
+  IDeleteCategory,
   IService,
   IServiceCategory,
   IServiceSubCategory,
@@ -88,6 +89,18 @@ export default class Service {
       handleAuthErrors(error as AxiosError<TErrorResponse>);
     }
   }
+  async deleteCategory(_id:string) {
+    try {
+      const { data } = await axios.delete<TSuccessResponse<IDeleteCategory>>(
+        `/api/servicecategories/${_id}`,
+        headers
+      );
+      this.getCategories()
+      return data;
+    } catch (error) {
+      handleAuthErrors(error as AxiosError<TErrorResponse>);
+    }
+  }
 
   async getSubCategories(categoryId: string) {
     try {
@@ -101,12 +114,10 @@ export default class Service {
     }
   }
 
-  async createCategory(category: any, loading_opt: T_loading_provider) {
-    const { setIsLoading } = loading_opt;
-    setIsLoading && setIsLoading(true);
-
+  async createCategory(category: any) {
+    store.dispatch(setLoading(true));
     try {
-      const { data } = await axios.post<TSuccessResponse<IServiceCategory[]>>(
+      const { data } = await axios.post<TSuccessResponse<any>>(
         "/api/servicecategories",
         category,
         headers
@@ -115,7 +126,7 @@ export default class Service {
     } catch (error) {
       handleAuthErrors(error as AxiosError<TErrorResponse>);
     } finally {
-      setIsLoading && setIsLoading(false);
+      store.dispatch(setLoading(false));
     }
   }
 
