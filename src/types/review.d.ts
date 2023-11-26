@@ -8,10 +8,14 @@ export type T_Service_Review = {
       _id: string;
       firstName: string;
       lastName: string;
+      avatar: string;
     };
   };
   userId: {
     _id: string;
+    firstName: string;
+    lastName: string;
+    avatar: string;
   };
   __v: number;
   comment: string;

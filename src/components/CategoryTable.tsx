@@ -92,7 +92,7 @@ const CategoryTable = () => {
       {
         accessorKey: "serviceCategory",
         cell: ({ row }) => (
-          <div key={row.id} className="flex gap-2 items-center">
+          <div key={row.id} className="flex gap-2 items-center ml-48">
             <Image
               src={imgs.provider2}
               width={35}
@@ -104,20 +104,20 @@ const CategoryTable = () => {
           </div>
         ),
         header: () => (
-          <span className="text-sm text-[#7C7C7C] ml-3">Service Category</span>
+          <span className="text-sm text-[#7C7C7C] ml-48">Service Category</span>
         ),
       },
-      {
-        accessorKey: "categorySlug",
-        cell: ({ row }) => (
-          <span key={row.id} className=" text-slate-500 text-xs ml-3">
-            Computer
-          </span>
-        ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C] ml-3">Category Slug</span>
-        ),
-      },
+      // {
+      //   accessorKey: "categorySlug",
+      //   cell: ({ row }) => (
+      //     <span key={row.id} className=" text-slate-500 text-xs ml-3">
+      //       Computer
+      //     </span>
+      //   ),
+      //   header: () => (
+      //     <span className="text-sm text-[#7C7C7C] ml-3">Category Slug</span>
+      //   ),
+      // },
       // {
       //   accessorKey: "date",
       //   cell: ({ row }) => {
@@ -135,23 +135,23 @@ const CategoryTable = () => {
       //   header: () => <span className="text-sm text-[#7C7C7C] ml-3">Date</span>,
       // },
 
-      {
-        accessorKey: "featured",
-        cell: ({ cell, row }) => {
-          return (
-            <Switch.Root
-              defaultChecked={row.original.featured}
-              onCheckedChange={() => {
-                console.log("=== something ===");
-              }}
-              className="w-[50px] h-[23px] bg-gray-300 rounded-full relative data-[state=checked]:bg-green-300 outline-none cursor-pointer"
-            >
-              <Switch.Thumb className="block w-[18px] h-[18px] bg-white rounded-full transition-transform duration-300 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[30px]" />
-            </Switch.Root>
-          );
-        },
-        header: () => <span className="text-sm text-[#7C7C7C]">Featured</span>,
-      },
+      // {
+      //   accessorKey: "featured",
+      //   cell: ({ cell, row }) => {
+      //     return (
+      //       <Switch.Root
+      //         defaultChecked={row.original.featured}
+      //         onCheckedChange={() => {
+      //           console.log("=== something ===");
+      //         }}
+      //         className="w-[50px] h-[23px] bg-gray-300 rounded-full relative data-[state=checked]:bg-green-300 outline-none cursor-pointer"
+      //       >
+      //         <Switch.Thumb className="block w-[18px] h-[18px] bg-white rounded-full transition-transform duration-300 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[30px]" />
+      //       </Switch.Root>
+      //     );
+      //   },
+      //   header: () => <span className="text-sm text-[#7C7C7C]">Featured</span>,
+      // },
       {
         id: "actions",
         cell: ({ row }) => (
@@ -212,7 +212,7 @@ const CategoryTable = () => {
                       {header.index >= 1 &&
                       header.id !== "actions" &&
                       header.id !== "block" ? (
-                        <span className="flex justify-between items-center max-w-[12rem] w-full">
+                        <span className="flex justify-between items-center max-w-[24rem] w-full">
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext()

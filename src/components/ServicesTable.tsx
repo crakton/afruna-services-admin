@@ -228,7 +228,7 @@ const ServicesTable: FC<ServicesTableProps> = () => {
                 onCheckedChange={() => handleBlockService(serviceId)}
                 className={`${
                   blocked ? "data-[state=checked]:bg-rose-400" : "bg-gray-300"
-                } data-[state=checked]:bg-green-300 bg-gray-300 w-[50px] h-[23px] rounded-full relative outline-none cursor-pointer`}
+                } w-[50px] h-[23px] rounded-full relative outline-none cursor-pointer`}
               >
                 <Switch.Thumb className="block w-[18px] h-[18px]  bg-white rounded-full transition-transform duration-300 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[30px]" />
               </Switch.Root>

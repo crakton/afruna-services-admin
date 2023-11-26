@@ -39,7 +39,7 @@ export default class ChatService {
             const { data } = await axios.get<TSuccessResponse<IMessage[]>>(`/api/messages/${conversationId}`, headers)
             const messages: IMessage[] = data.data.slice().reverse();
             store.dispatch(setMessages(messages))
-            return data.data
+            return messages
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
         } 

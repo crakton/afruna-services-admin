@@ -73,7 +73,7 @@ export const UsersList: FC<UsersListProps> = ({ user }) => {
           activeUserConvo === user
             ? "bg-slate-200 hover:bg-slate-200"
             : "bg-white "
-        }  overflow-hidden p-4 rounded-md flex gap-5 justify-start items-center hover:bg-slate-100`}
+        }  overflow-hidden p-[0.7rem] rounded-md flex gap-5 justify-start items-center hover:bg-slate-100`}
       >
         <div className="flex justify-start items-center gap-4 w-full">
           <Avatar

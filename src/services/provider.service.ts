@@ -38,7 +38,7 @@ export default class Provider {
     async getProviderServices(providerId: string) {
         store.dispatch(setLoading(true))
         try {
-            const { data } = await axios.get<TSuccessResponse<any[]>>(`/api/servivces/${providerId}/provider`, headers)
+            const { data } = await axios.get<TSuccessResponse<any[]>>(`/api/services/${providerId}/provider`, headers)
             store.dispatch(setProviderServices(data.data))
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)

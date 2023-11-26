@@ -19,8 +19,10 @@ export default class Reviews {
         store.dispatch(setLoading(true))
         try {
             const { data } = await axios.get<TSuccessResponse<T_Service_Review[]>>('/api/reviews/all', headers)
-            store.dispatch(setReviews(data.data))
-            return data.data
+            const reviews = data.data.filter(review => review?.userId?._id !== '64c122efaf8034cccd0b0783') 
+            const reverseReviews = reviews.slice().reverse();
+            store.dispatch(setReviews(reverseReviews))
+            return reviews
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
         } finally {

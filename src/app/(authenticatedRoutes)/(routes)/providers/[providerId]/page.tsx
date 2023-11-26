@@ -44,8 +44,8 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
 
   useEffect(() => {
     providerApis.getProviders();
-    // providerApis.getProviderServices(providerId);
-    // providerApis.getProviderBookings(providerId);
+    providerApis.getProviderServices(providerId);
+    providerApis.getProviderBookings(providerId);
   }, [providerId]);
   const providers = useSelector((state: RootState) => state.provider.providers);
   const provider = providers.filter(

@@ -197,7 +197,7 @@ const ChatPage: FC<pageProps> = ({}) => {
                           user._id === userSelected?._id
                             ? "bg-slate-200"
                             : "bg-white"
-                        } p-4 w-full rounded-md flex gap-5 justify-start items-center hover:bg-slate-200`}
+                        } p-[0.7rem] w-full rounded-md flex gap-5 justify-start items-center hover:bg-slate-200`}
                       >
                         <div className="flex justify-start items-center gap-6">
                           <Avatar

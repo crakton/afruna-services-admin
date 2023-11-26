@@ -21,12 +21,10 @@ import { RootState } from "@/redux/store";
 import { ImSpinner3 } from "react-icons/im";
 
 interface ReviewsTableProps {
-  reviews: T_Service_Review[]
+  reviews: T_Service_Review[];
 }
 
-const ReviewTable: FC<ReviewsTableProps> = ({
-  reviews
-})=> {
+const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
   const loading = useSelector((state: RootState) => state.loading.loading);
   // const reviews = useSelector((state: RootState) => state.reviews.reviews);
   const [rowSelection, setRowSelection] = useState({});
@@ -50,7 +48,6 @@ const ReviewTable: FC<ReviewsTableProps> = ({
     const updatedDataWithIds = assignUniqueIds(reviews);
     setData(updatedDataWithIds);
   }, [reviews]);
-  
 
   const columns = useMemo<ColumnDef<T_Service_Review>[]>(
     () => [
@@ -96,13 +93,17 @@ const ReviewTable: FC<ReviewsTableProps> = ({
         accessorKey: "provider",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 items-center ml-4 ">
-            <Image
-              src={imgs.provider2}
-              alt={"pro"}
-              width={35}
-              height={35}
-              className="rounded"
-            />
+            <div className="w-[35px] h-[35px] relative overflow-hidden rounded-full flex justify-center items-center">
+              {row.original.serviceId?.providerId?.avatar ? (
+                <Image
+                  src={row.original.serviceId.providerId.avatar}
+                  alt={"pro"}
+                  fill
+                />
+              ) : (
+                <div className="w-full h-full bg-slate-300 text-xs flex justify-center items-center">{`${row.original.serviceId?.providerId?.firstName.charAt(0).toUpperCase()} ${row.original.serviceId?.providerId?.lastName.charAt(0).toUpperCase()}`}</div>
+              )}
+            </div>
             <span className=" text-slate-600 text-xs">{`${row.original.serviceId?.providerId?.firstName} ${row.original.serviceId?.providerId?.lastName}`}</span>
           </div>
         ),
@@ -113,15 +114,19 @@ const ReviewTable: FC<ReviewsTableProps> = ({
       {
         accessorKey: "user",
         cell: ({ row }) => (
-          <div key={row.id} className="flex gap-2 items-center ml-4 mr-">
-            <Image
-              src={imgs.provider3}
-              alt={"user"}
-              width={35}
-              height={35}
-              className="rounded"
-            />
-            <span className=" text-slate-500 text-xs">Lativari dress</span>
+          <div key={row.id} className="flex gap-2 items-center ml-4 ">
+            <div className="w-[35px] h-[35px] relative overflow-hidden rounded-full flex justify-center items-center">
+              {row.original.userId?.avatar ? (
+                <Image
+                  src={row.original.userId?.avatar}
+                  alt={"pro"}
+                  fill
+                />
+              ) : (
+                <div className="w-full h-full bg-slate-300 text-xs flex justify-center items-center">{`${row.original.userId?.firstName?.charAt(0).toUpperCase()} ${row.original.userId?.lastName?.charAt(0).toUpperCase()}`}</div>
+              )}
+            </div>
+            <span className=" text-slate-600 text-xs">{`${row.original.userId?.firstName} ${row.original.userId?.lastName}`}</span>
           </div>
         ),
         header: () => <span className="text-xs text-[#7C7C7C] ml-4">User</span>,
@@ -266,4 +271,3 @@ const ReviewTable: FC<ReviewsTableProps> = ({
 };
 
 export default memo(ReviewTable);
-

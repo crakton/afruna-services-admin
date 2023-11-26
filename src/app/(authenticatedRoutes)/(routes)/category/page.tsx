@@ -62,7 +62,7 @@ const Category: FC<pageProps> = ({ }) => {
           </Link>
         </div>
       </div>
-      <div className="flex flex-col gap-6 px-6 xl:pr-44 w-full">
+      <div className="flex flex-col gap-6 px-6 xl:pr-96 w-full">
         <CategoryTable />
       </div>
     </section>
