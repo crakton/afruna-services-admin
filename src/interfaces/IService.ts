@@ -5,8 +5,8 @@ export interface IService {
   country: string;
   customId?: string;
   desc: string;
-  insuranceCoverage?: [];
-  licenseAndCertification?: [];
+  insuranceCoverage: any[];
+  licenseAndCertification: any[];
   name: string;
   photos?: [];
   price: number;
