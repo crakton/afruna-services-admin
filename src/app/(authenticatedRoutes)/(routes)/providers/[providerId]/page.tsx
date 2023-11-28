@@ -8,7 +8,7 @@ import { imgs } from "@/constants/images";
 import { RootState, store } from "@/redux/store";
 import Provider from "@/services/provider.service";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BsStarHalf } from "react-icons/bs";
 import { IoMdCheckmark } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
@@ -16,6 +16,13 @@ import { useSelector } from "react-redux";
 import { LoadingProviderDetails } from "../../_components/LoadingProviderDetails";
 import { setConversations } from "@/redux/features/app/chat_slice";
 import { useRouter } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
+import location from '../../../../../assests/imgs/location.png'
+import star from '../../../../../assests/imgs/star.png'
+import axios, { AxiosError } from "axios";
+import { handleAuthErrors } from "@/utils/auth.util";
+import { TErrorResponse, TSuccessResponse } from "@/types/auth.types";
+import { headers } from "@/constants/http_config";
 
 type Params = {
   params: {
@@ -41,12 +48,28 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
     (state: RootState) => state.provider.providerBookings
   );
   const loading = useSelector((state: RootState) => state.loading.loading);
+  const [documents, setDocuments] = useState<any[]>([])
+  const [cards, setCards] = useState<any>()
+
+  const getCardInfo = async (pid: string) => {
+     try {
+        const { data } = await axios.get<TSuccessResponse<any>>(`/api/services/${pid}/cards`, headers)
+        setCards(data.data)
+      } catch (error) {
+        handleAuthErrors(error as AxiosError<TErrorResponse>)
+      } 
+  }
 
   useEffect(() => {
     providerApis.getProviders();
     providerApis.getProviderServices(providerId);
     providerApis.getProviderBookings(providerId);
+
+    getCardInfo(providerId)
+
+    // setDocuments([...providerServices[0]?.insuranceCoverage, ...providerServices[0]?.licenseAndCertification])
   }, [providerId]);
+  
   const providers = useSelector((state: RootState) => state.provider.providers);
   const provider = providers.filter(
     (provider) => provider._id === providerId
@@ -119,14 +142,18 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
                 <DocumentReviewTable />
               </div>
               <div className="flex flex-wrap gap-5 justify-start items-center">
-                {statsDetails.map(({ title, value }) => {
-                  return (
-                    <div className="border text-sm font-semibold text-afruna-blue flex flex-col gap-2 justify-start w-[14.6rem] pt-8 h-[8rem] overflow-hidden  pl-7 border-[#D5D5E6] relative rounded-xl bg-white ">
-                      <span className=" ">{value}</span>
-                      <p className="text-sm ">{title}</p>
-                    </div>
-                  );
-                })}
+                <div className="border text-sm font-semibold text-afruna-blue flex flex-col gap-2 justify-start w-[14.6rem] pt-8 h-[8rem] overflow-hidden  pl-7 border-[#D5D5E6] relative rounded-xl bg-white ">
+                  <span className=" ">{cards?.totalSales}</span>
+                  <p className="text-sm ">Total Sales</p>
+                </div>
+                <div className="border text-sm font-semibold text-afruna-blue flex flex-col gap-2 justify-start w-[14.6rem] pt-8 h-[8rem] overflow-hidden  pl-7 border-[#D5D5E6] relative rounded-xl bg-white ">
+                  <span className=" ">{cards?.totalServices}</span>
+                  <p className="text-sm ">Service by Vendor</p>
+                </div>
+                {/* <div className="border text-sm font-semibold text-afruna-blue flex flex-col gap-2 justify-start w-[14.6rem] pt-8 h-[8rem] overflow-hidden  pl-7 border-[#D5D5E6] relative rounded-xl bg-white ">
+                  <span className=" ">{Card.totalSales}</span>
+                  <p className="text-sm ">Total Sales</p>
+                </div> */}
               </div>
             </aside>
           </section>
@@ -135,7 +162,7 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
       {/* Services */}
       <div className="max-w-[96%] w-full ml-6 px-8  flex flex-col gap-6">
         <section className="flex flex-col lg:max-w-[95%] bg-white p-8 rounded-lg">
-          <div className="header flex justify-between items-center">
+          <div className="header flex justify-between mb-5 items-center">
             <h3 className="text-lg lg:pl-0 lg:text-lg leading-3 text-afruna-blue font-bold">
               Services
             </h3>
@@ -159,12 +186,66 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
               </fieldset>
             </div>
           </div>
-        </section>
 
+          <div className="services flex flex-col gap-5">
+            {providerServices.map(service => (
+              <div key={service._id} className="service">
+                  <Card className="w-full rounded-[8px] bg-[#FAFCFF] lg:py-[21px] lg:px-[22px]">
+                      <CardContent className="flex flex-col lg:flex lg:flex-row items-center justify-between">
+                          <div className="img-detail lg:flex lg:flex-row lg:items-center lg:justify-center">
+                              <Image className="lg:mr-[21px] mb-[25px] lg:mb-0 w-full lg:w-[231px]" src="" alt="" />
+                              <div className="details flex flex-col mx-[25px] mb-[30px] lg:mx-0 lg:mb-0 justify-between gap-5">
+                                  <div className="top flex items-center justify-between gap-[30px]">
+                                      <span className="text-base mr-10 font-bold px-[10px] py-[8px] text-[#2D36FF] bg-[#D8D9FF78] rounded-[2px]">{service.category.name}</span>
+                                      <span className="flex items-center gap-2">
+                                          {
+                                              service.ratings === 0 ? <span>Rating</span>
+                                              : [...Array(Math.floor(service.ratings))].map((v, i) => < Image key={v} src={star} alt="" />)
+                                          }
+                                          {service.ratings}
+                                      </span>
+                                  </div>
+                                  <span className="font-bold text-lg text-custom-blue">{service.name}</span>
+                                  <div className="location flex items-center gap-[10px]">
+                                      <Image src={location} alt="" />
+                                      <span className="text-[#707070] text-base font-semibold">{service.state} { service.country }</span>
+                                  </div>
+                              </div>
+                          </div>
+                      </CardContent>
+                  </Card>
+              </div>
+            ))}
+          </div>
+        </section>
         {/* services data */}
-        <section className="flex flex-col gap-2 lg:max-w-[95%]">
+        <section className="flex flex-col lg:max-w-[95%] bg-white p-8 rounded-lg">
+          <div className="header flex justify-between mb-5 items-center">
+            <h3 className="text-lg lg:pl-0 lg:text-lg leading-3 text-afruna-blue font-bold">
+              Bookings
+            </h3>
+            <div className="flex justify-end gap-5 items-center">
+              <fieldset className="flex">
+                <ItemPicker
+                  items={["A", "B"]}
+                  placeholder={"A-Z"}
+                  getSelected={(val) => console.log()}
+                  // contentClassName={"p-2 bg-white text-xs"}
+                  triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
+                />
+              </fieldset>
+              <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="w-full py-[0.6rem] text-xs text-slate-600"
+                />
+                <IoSearchOutline className="text-slate-300 text-2xl " />
+              </fieldset>
+            </div>
+          </div>
           {/* Booking */}
-          <div className="py-6 px-8 flex flex-col lg:gap-8 lg:flex-row justify-between w-full bg-white drop-shadow rounded-lg">
+          <div className="bookings flex flex-col gap-5">
             {providerBookings.map((booking) => (
               <div
                 key={booking.id}
@@ -207,7 +288,7 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
                       Location
                     </span>
                     <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
-                      :{booking.state}
+                      :{booking.state}, {booking.country}
                     </span>
                   </div>
                   <div className="flex justify-start items-center gap-2">
