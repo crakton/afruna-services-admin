@@ -1,10 +1,4 @@
 import { T_Providers_Tab } from "@/contexts/ProvidersContextProvider";
-import { StaticImageData } from "next/image";
-
-export type T_Providers_Context = {
-  providersTab: T_Providers_Tab;
-  handleTabSelect: (v: any) => void;
-};
 
 export type T_Providers = {
   id:number
@@ -31,4 +25,7 @@ export type T_Providers = {
   updatedAt: string;
   online: string;
   socketId: string;
+  fullName: string
+  bookings: number
+  booked: number
 };

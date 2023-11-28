@@ -176,7 +176,7 @@ const AllProviders = () => {
             </div>
           );
         },
-        header: () => <span className="text-sm text-[#7C7C7C]">Date Date</span>,
+        header: () => <span className="text-sm text-[#7C7C7C]">Reg Date</span>,
       },
       {
         id: "actions",

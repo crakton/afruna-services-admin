@@ -14,6 +14,7 @@ import {
   setCustomers,
 } from "@/redux/features/app/customer_slice";
 import { setLoading } from "@/redux/features/app/loading_slice";
+import { T_Bookings } from "@/types/bookings";
 
 export default class Customers {
   private store: TStore;
@@ -52,7 +53,7 @@ export default class Customers {
   async getCustomerBookings(customerId: string) {
     store.dispatch(setLoading(true));
     try {
-      const { data } = await axios.get<TSuccessResponse<any[]>>(
+      const { data } = await axios.get<TSuccessResponse<T_Bookings[]>>(
         `/api/admin/customers/${customerId}`,
         headers
       );

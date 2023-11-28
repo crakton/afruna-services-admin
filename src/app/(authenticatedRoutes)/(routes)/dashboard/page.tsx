@@ -7,11 +7,14 @@ import StatsDashboard from "@/components/StatsDashboard";
 import TopProviderTable from "@/components/TopProviderTable";
 import TopServiceTable from "@/components/TopServiceTable";
 import { buttonVariants } from "@/components/ui/button";
-import { DashboardStats } from "@/constants/data";
-import Booking from "@/services/booking.service";
+import Dashboard from "@/services/dashboard.service";
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
+import LoadingTopTable from "../_components/LoadingTopTable";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import LoadingCards from "../_components/LoadingCards";
 
 interface pageProps {}
 
@@ -104,14 +107,37 @@ const DashboardPage: FC<pageProps> = ({}) => {
     },
     // Add more data... background: linear-gradient(180deg, #817AF3 0%, #74B0FA 47.92%, #79D0F1 100%);
   ];
+  const loading = useSelector(
+    (state: RootState) => state.loading.loading
+  );
+  const [loadingCards, setLoadingCards] = useState<boolean>(true);
+  const [loadingTopSevices, setLoadingTopSevices] = useState<boolean>(true);
+  const [loadingTopProviders, setLoadingTopProviders] = useState<boolean>(true);
   const [loadingRecentBookings, setLoadingRecentBookings] =
     useState<boolean>(true);
-  const bookingApis = new Booking();
+  const dashboardApis = new Dashboard();
   useEffect(() => {
-    bookingApis
+    dashboardApis.getDashboardCards()
+    dashboardApis.getTopServices().finally(() => setLoadingTopSevices(false));
+    dashboardApis
+      .getTopProviders()
+      .finally(() => setLoadingTopProviders(false));
+    dashboardApis
       .getRecentBookings()
       .finally(() => setLoadingRecentBookings(false));
   }, []);
+
+  const topProviders = useSelector(
+    (state: RootState) => state.provider.topProviders
+  );
+  const topServices = useSelector(
+    (state: RootState) => state.service.topServices
+  );
+  const recentBookings = useSelector(
+    (state: RootState) => state.booking.recentBookings
+  );
+  const cards = useSelector((state: RootState) => state.cards.cards);
+
   return (
     <section className="flex flex-col gap-6 pb-12 ">
       <div className="flex justify-start items-center pl-4 lg:pl-6 bg-white w-full h-16">
@@ -120,20 +146,40 @@ const DashboardPage: FC<pageProps> = ({}) => {
         </h1>
       </div>
       <div className="flex flex-wrap gap-4 justify-start items-center px-6">
-        {DashboardStats.map((item) => {
-          return <StatsDashboard key={item.title} {...item} />;
-        })}
+        {loading ? (
+          <LoadingCards/>
+        ) : (
+          cards &&
+          [
+            {
+              title: "Income",
+              // desc: string,
+              number: `#${cards.totalEarnings}`,
+            },
+            {
+              title: "Users",
+              // desc: string,
+              number: `${cards.totalUsers}`,
+            },
+            {
+              title: "Providers",
+              // desc: string,
+              number: `${cards.totalProviders}`,
+            },
+            {
+              title: "Services",
+              // desc: string,
+              number: `${cards.totalServices}`,
+            }
+          ].map((item) => {
+            return <StatsDashboard key={item.title} {...item} />;
+          })
+        )}
       </div>
       <div className="flex justify-between gap-6 items-center lg:px-6 max-w-[93%] w-full">
         <div className="max-w-[60%] w-full bg-white rounded-xl border shadow-sm border-slate-300">
           <header className="flex justify-between w-full px-4 py-6 items-center">
             <h1 className="font-semibold text-slate-700">Booking Summary</h1>
-            {/* <Link
-              // className={buttonVariants('')}
-              href={""}
-            >
-              View all
-            </Link> */}
           </header>
           <Barchart bar_data={bar_data} />
         </div>
@@ -144,7 +190,7 @@ const DashboardPage: FC<pageProps> = ({}) => {
             </h1>
             <Link
               className={buttonVariants({ variant: "afrunaBlue" })}
-              href={""}
+              href={"/category"}
             >
               View all
             </Link>
@@ -157,7 +203,7 @@ const DashboardPage: FC<pageProps> = ({}) => {
           ) : null}
         </div>
       </div>
-      <div className=" flex justify-between gap-6 items-center lg:px-6 max-w-[93%] w-full">
+      <div className=" flex justify-between gap-6 items-center lg:px-6 max-w-[97%] w-full">
         <div className=" overflow-hidden w-full bg-white  max-w-[100%] rounded-xl border shadow-sm border-slate-300">
           <header className="flex justify-between items-center py-4 px-4 ">
             <h1 className="font-bold text-slate-700 text-lg">Top service</h1>
@@ -167,8 +213,18 @@ const DashboardPage: FC<pageProps> = ({}) => {
               </Link>
             </div>
           </header>
-          {/* top service */}
-          <TopServiceTable />
+          {loadingTopSevices ? (
+            <LoadingTopTable />
+          ) : topServices && topServices.length > 0 ? (
+            <>
+              {/* top service */}
+              <TopServiceTable topServices={topServices} />
+            </>
+          ) : (
+            <p className="text-xs text-center w-full flex justify-center items-center h-[50vh]">
+              Currently, there is no top services
+            </p>
+          )}
         </div>
         <div className=" overflow-hidden w-full bg-white  max-w-[100%] rounded-xl border shadow-sm border-slate-300">
           <header className="flex justify-between items-center py-4 px-4 ">
@@ -179,8 +235,18 @@ const DashboardPage: FC<pageProps> = ({}) => {
               </Link>
             </div>
           </header>
-          {/* top providers */}
-          <TopProviderTable />
+          {loadingTopProviders ? (
+            <LoadingTopTable />
+          ) : topProviders && topProviders.length > 0 ? (
+            <>
+              {/* top providers */}
+              <TopProviderTable topProviders={topProviders} />
+            </>
+          ) : (
+            <p className="text-xs text-center w-full flex justify-center items-center h-[50vh]">
+              Currently, there is no top providers
+            </p>
+          )}
         </div>
       </div>
       {/* recent bookings */}
@@ -196,7 +262,10 @@ const DashboardPage: FC<pageProps> = ({}) => {
             </Link>
           </div>
         </header>
-        <RecentBookingTable loadingRecentBookings={loadingRecentBookings} />
+        <RecentBookingTable
+          loadingRecentBookings={loadingRecentBookings}
+          recentBookings={recentBookings}
+        />
       </div>
     </section>
   );

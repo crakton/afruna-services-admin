@@ -15,6 +15,7 @@ export interface IService {
     _id: string;
     firstName: string;
     lastName: string;
+    avatar: string
   };
   ratedBy: number;
   ratings: number;
@@ -25,7 +26,7 @@ export interface IService {
   updatedAt: string;
   verified?: boolean;
   publish?: boolean;
-  blocked?: boolean;
+  blocked: boolean;
 }
 
 export interface IDeleteCategory {

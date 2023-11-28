@@ -63,12 +63,15 @@ const CustomersTable = () => {
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 ml-8 items-center ">
             <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
-              <Image
-                src={row.original.avatar || imgs.provider2}
-                alt={"pro"}
-                fill
-                className="rounded"
-              />
+              {row.original.avatar ? (
+                <Image
+                  src={row.original.avatar}
+                  alt={"pro"}
+                  fill
+                />
+              ) : (
+                <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original.firstName.charAt(0).toUpperCase()} ${row.original.lastName.charAt(0).toUpperCase()}`}</div>
+              )}
             </div>
             <div className="flex flex-col justify-start">
               <span className=" text-slate-600 text-xs">{`${row.original.firstName} ${row.original.lastName}`}</span>

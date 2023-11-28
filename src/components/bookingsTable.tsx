@@ -1,5 +1,4 @@
 import React, { FC, memo, useEffect, useMemo, useState } from "react";
-import * as ScrollArea from "@radix-ui/react-scroll-area";
 import {
   ColumnDef,
   SortingState,
@@ -26,32 +25,66 @@ interface BookingTableProps {
 const BookingsTable: FC<BookingTableProps> = () => {
   const loading = useSelector((state: RootState) => state.loading.loading);
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<T_Bookings[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const bookings = useSelector((state: RootState) => state.booking.bookings);
 
+  const assignUniqueIds = (
+    data: T_Bookings[]
+  ): T_Bookings[] => {
+    // Create a new array to store the updated data
+    const updatedData: T_Bookings[] = [];
+    // Assign unique IDs to each data object
+    let uniqueId = 1;
+    for (const serviceCategory of data) {
+      updatedData.push({
+        ...serviceCategory,
+        id: uniqueId++,
+      });
+    }
+    return updatedData;
+  };
+  
   useEffect(() => {
-    setData(bookings);
-  });
+    const updatedDataWithIds = assignUniqueIds(bookings);
+    setData(updatedDataWithIds);
+  }, [bookings]);
 
   const columns = useMemo<ColumnDef<T_Bookings>[]>(
     () => [
       {
         accessorKey: "id",
-        cell: (info) => info.getValue(),
+          cell: ({ row }) => (
+            <div key={row.id} className="flex gap-4 items-center">
+              <span className=" text-slate-800 text-xs">#{row.original.id}</span>
+            </div>
+          ),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
       {
         accessorKey: "bookingdate",
-        cell: ({ row }) => (
-          <div className="flex flex-col justify-start ml-3 items-start">
-            <span className="text-afruna-blue text-xs">01 Oct 2023</span>
-            <span className=" text-afruna-blue text-xs">11:29 am</span>
-          </div>
-        ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C] ml-3">Booking Date</span>
-        ),
+        cell: ({ row }) => {
+          const createdAtDate = new Date(row.original.createdAt);
+          const year = createdAtDate.getFullYear();
+          const day = createdAtDate.getDate();
+          const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
+          const month = new Date(year, monthIndex).toLocaleString("en-US", {
+            month: "short",
+          });
+
+          const timeString = createdAtDate.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          });
+          return (
+            <div className="flex flex-col justify-start ml-3 items-start">
+              <span className="text-afruna-blue text-xs">{`${day} ${month}, ${year}`}</span>
+              <span className=" text-afruna-blue text-xs">{timeString}</span>
+            </div>
+          );
+        },
+        header: () => <span className="text-sm text-[#7C7C7C]">Booking Date</span>,
       },
       {
         accessorKey: "provider",
@@ -135,7 +168,7 @@ const BookingsTable: FC<BookingTableProps> = () => {
       {
         accessorKey: "amount",
         cell: ({ row }) => (
-          <span className="text-afruna-blue text-xs">#2500</span>
+          <span className="text-afruna-blue text-xs">#{row.original.amount}</span>
         ),
         header: () => <span className="text-sm text-[#7C7C7C]">Amount</span>,
       },

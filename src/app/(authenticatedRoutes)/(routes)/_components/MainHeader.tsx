@@ -136,3 +136,5 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
 };
 
 export default memo(MainHeader);
+
+// images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.

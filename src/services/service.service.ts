@@ -9,8 +9,7 @@ import { setLoading } from "@/redux/features/app/loading_slice";
 import {
   createService,
   setCategories,
-  setServices,
-  setSubCategories,
+  setServices
 } from "@/redux/features/app/service_slice";
 import { TStore, store } from "@/redux/store";
 import { TErrorResponse, TSuccessResponse } from "@/types/auth.types";
@@ -26,6 +25,7 @@ export default class Service {
     this.store = store;
   }
 
+  
   async getServices() {
     store.dispatch(setLoading(true));
     try {
@@ -67,6 +67,7 @@ export default class Service {
       handleAuthErrors(error as AxiosError<TErrorResponse>);
     }
   }
+
   async blockService(serviceId: string) {
     try {
       const { data } = await axios.put<TSuccessResponse<IServiceCategory>>(
@@ -78,6 +79,7 @@ export default class Service {
       handleAuthErrors(error as AxiosError<TErrorResponse>);
     }
   }
+
   async getCategoriesforCreation() {
     try {
       const { data } = await axios.get<TSuccessResponse<IServiceCategory[]>>(
@@ -89,6 +91,7 @@ export default class Service {
       handleAuthErrors(error as AxiosError<TErrorResponse>);
     }
   }
+
   async deleteCategory(_id:string) {
     try {
       const { data } = await axios.delete<TSuccessResponse<IDeleteCategory>>(

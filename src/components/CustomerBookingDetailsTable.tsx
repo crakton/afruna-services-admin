@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, memo, useMemo, useState } from "react";
+import React, { FC, memo, useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
   SortingState,
@@ -17,25 +17,50 @@ import { imgs } from "@/constants/images";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { ImSpinner3 } from "react-icons/im";
+import { T_Bookings } from "@/types/bookings";
+import { T_booking_data } from "@/app/(authenticatedRoutes)/(routes)/dashboard/page";
 interface CustomerBookingDetailsTableProps {
   loadingBookings: boolean; 
+  customerBookings: T_Bookings[]
 }
 
 const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
-  loadingBookings,
+  loadingBookings,customerBookings
 }) => {
-  const customerBookings = useSelector(
-    (state: RootState) => state.customer.customerBookings
-  );
+ 
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([...customerBookings]);
+  const [data, setData] = useState<T_Bookings[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const assignUniqueIds = (
+    data: T_Bookings[]
+  ): T_Bookings[] => {
+    // Create a new array to store the updated data
+    const updatedData: T_Bookings[] = [];
+    // Assign unique IDs to each data object
+    let uniqueId = 1;
+    for (const serviceCategory of data) {
+      updatedData.push({
+        ...serviceCategory,
+        id: uniqueId++,
+      });
+    }
+    return updatedData;
+  };
+  
+  useEffect(() => {
+    const updatedDataWithIds = assignUniqueIds(customerBookings);
+    setData(updatedDataWithIds);
+  }, [customerBookings]);
 
-  const columns = useMemo<ColumnDef<any>[]>(
+  const columns = useMemo<ColumnDef<T_Bookings>[]>(
     () => [
       {
         accessorKey: "id",
-        cell: (info) => info.getValue(),
+          cell: ({ row }) => (
+            <div key={row.id} className="flex gap-4 items-center">
+              <span className=" text-slate-800 text-xs">#{row.original.id}</span>
+            </div>
+          ),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
       {
@@ -70,13 +95,13 @@ const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
           <div key={row.id} className="flex gap-2  items-center ">
             <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
               <Image
-                src={row.original.avatar || imgs.provider2}
+                src={imgs.provider2}
                 alt={"pro"}
                 fill
                 className="rounded"
               />
             </div>
-            <span className=" text-slate-600 text-xs">{`${row.original.firstName} ${row.original.lastName}`}</span>
+            <span className=" text-slate-600 text-xs">{`Akande Idris`}</span>
           </div>
         ),
         header: () => <span className="text-sm text-[#7C7C7C] ">Provider</span>,
@@ -120,7 +145,7 @@ const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
       {
         accessorKey: "amount",
         cell: ({ row }) => (
-          <span className=" text-slate-600 text-xs">#3500</span>
+          <span className=" text-slate-600 text-xs">#{row.original.amount}</span>
         ),
         header: () => <span className="text-sm text-[#7C7C7C]">Amount</span>,
       },
@@ -147,9 +172,9 @@ const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
 
   return (
     <div className="mt-4 pb-12 w-full max-w-[100%] md:max-w-[90%]">
-      <div className="h-[48vh] px-4 bg-white relative w-full flex justify-center items-center text-centers rounded-xl border shadow-sm border-slate-300">
+      <div className="h-[48vh] px-4 bg-white relative w-full rounded-xl border shadow-sm border-slate-300">
         {loadingBookings ? (
-          <div className="flex justify-center items-center text-center">
+          <div className="flex justify-center items-center text-center h-full">
             <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
           </div>
         ) : customerBookings.length > 0 ? (
@@ -218,7 +243,7 @@ const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
             </tbody>
           </table>
         ) : (
-          <h3 className="flex justify-center text-sm text-slate-500 items-center">
+          <h3 className="flex justify-center text-sm text-slate-500 items-center text-center h-full">
             This customer hasn't book for any service yet
           </h3>
         )}

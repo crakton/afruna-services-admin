@@ -14,7 +14,7 @@ interface SideBar {}
 
 const SideBar: FC<SideBar> = ({}) => {
   const accountRoutes = useRoute();
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   const [show, setShow] = useState<boolean>(false);
   const [showSubNav, setShowSubNav] = useState<boolean>(false);
@@ -42,7 +42,7 @@ const SideBar: FC<SideBar> = ({}) => {
                 return (
                   <>
                     {hasSubNav ? (
-                      <div className="flex flex-col justify-start">
+                      <div key={title} className="flex flex-col justify-start">
                         <button
                           onClick={toggleSubNav}
                           className={`${
@@ -68,6 +68,7 @@ const SideBar: FC<SideBar> = ({}) => {
                             {subNav.map(({ href, title }) => {
                               return (
                                 <Link
+                                  key={title}
                                   href={href}
                                   className={` ${
                                     pathname === href

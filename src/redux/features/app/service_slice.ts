@@ -6,6 +6,7 @@ import {
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  topServices: [] as IService[],
   services: [] as IService[],
   pendingServices: [] as IService[],
   blockedServices: [] as IService[],
@@ -20,6 +21,9 @@ const serviceSlice = createSlice({
   name: "Service_Slice",
   initialState,
   reducers: {
+    setTopServices: (state, action: PayloadAction<IService[]>) => {
+      state.topServices = action.payload;
+    },
     setServices: (state, action: PayloadAction<IService[]>) => {
       state.services = action.payload;
     },
@@ -49,6 +53,7 @@ const serviceSlice = createSlice({
 
 export const {
   setServices,
+  setTopServices,
   setCategories,
   setSubCategories,
   createService,

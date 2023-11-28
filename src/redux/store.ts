@@ -12,6 +12,7 @@ import loadingReeducer from "./features/app/loading_slice";
 import abuseReportsReducer from "./features/app/abuseReport_slice";
 import chatReducer from "./features/app/chat_slice";
 import transactionsReducer from "./features/app/transactions_slice";
+import cardsReducer from "./features/app/card_slice";
 
 export const store = configureStore({
     reducer: {
@@ -25,7 +26,8 @@ export const store = configureStore({
         loading: loadingReeducer,
         abuseReports: abuseReportsReducer,
         chat: chatReducer,
-        transaction: transactionsReducer
+        transaction: transactionsReducer,
+        cards: cardsReducer
     }
 })
 

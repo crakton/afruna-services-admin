@@ -17,7 +17,9 @@ type Params = {
 
 export default function CustomerPage({ params: { customerId } }: Params) {
   const loading = useSelector((state: RootState) => state.loading.loading);
-  const customerCard = useSelector((state:RootState) => state.customer.customerCard)
+  const customerCard = useSelector(
+    (state: RootState) => state.customer.customerCard
+  );
   const [loadingBookings, setLoadingBookings] = useState<boolean>(true);
   const customersApis = new Customers();
   useEffect(() => {
@@ -29,8 +31,11 @@ export default function CustomerPage({ params: { customerId } }: Params) {
       .finally(() => {
         setLoadingBookings(false);
       });
-      customersApis.getCustomersCard(customerId)
+    customersApis.getCustomersCard(customerId);
   }, []);
+  const customerBookings = useSelector(
+    (state: RootState) => state.customer.customerBookings
+  );
 
   const customers = useSelector((state: RootState) => state.customer.customers);
   const customer = customers.filter(
@@ -53,17 +58,20 @@ export default function CustomerPage({ params: { customerId } }: Params) {
         </h1>
       </div>
       {loading ? (
-        <LoadingUserDetails/>
+        <LoadingUserDetails />
       ) : (
         <>
           <div className="flex flex-col justify-start gap-2 px-4 md:px-10 xl:pr-32 w-full">
             <div className="w-[6rem] h-[6rem] overflow-hidden relative rounded-full">
-              <Image
-                src={customer?.avatar || imgs.provider3}
-                alt="provider"
-                priority
-                fill
-              />
+              {customer?.avatar ? (
+                <Image src={customer.avatar} alt="provider" priority fill />
+              ) : (
+                <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-sm">{`${customer?.firstName
+                  .charAt(0)
+                  .toUpperCase()} ${customer?.lastName
+                  .charAt(0)
+                  .toUpperCase()}`}</div>
+              )}
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-between items-start gap-4 w-full">
               <div className="flex flex-col gap-2 text-[#7C7C7C] text-xs font-semibold">
@@ -85,7 +93,9 @@ export default function CustomerPage({ params: { customerId } }: Params) {
           <div className="flex justify-start px-4 md:px-10 xl:pr-32 ">
             <div className="flex justify-start items-start gap-2">
               <div className="border w-[13rem] py-7 pl-7 border-[#D5D5E6] rounded-xl bg-white flex flex-col gap-2">
-                <span className="text-sm font-bold">#{customerCard?.totalSales}</span>
+                <span className="text-sm font-bold">
+                  #{customerCard?.totalSales}
+                </span>
                 <span className="text-sm font-bold">Total spent</span>
               </div>
               <div className="border w-[13rem] py-7 pl-7 border-[#D5D5E6] rounded-xl bg-white flex flex-col gap-2">
@@ -101,7 +111,7 @@ export default function CustomerPage({ params: { customerId } }: Params) {
         </>
       )}
       <div className="flex justify-start px-4 md:px-10 xl:pr-32 ">
-        <CustomerBookingDetailsTable loadingBookings={loadingBookings} />
+        <CustomerBookingDetailsTable loadingBookings={loadingBookings} customerBookings={customerBookings}  />
       </div>
     </section>
   );

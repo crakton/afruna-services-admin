@@ -36,13 +36,13 @@ const ServicesTable: FC<ServicesTableProps> = () => {
     setData(services);
   }, [services]);
 
-  const handleBlockService = (serviceId: string) => {
-    // "6558a87fac38c3836470019a"
-    serviceApis
-      .blockService(serviceId)
-      .then((data) => console.log(data));
-    // serviceApis.getServices();
-  };
+  // const handleBlockService = (serviceId: string) => {
+  //   // "6558a87fac38c3836470019a"
+  //   serviceApis
+  //     .blockService(serviceId)
+  //     .then((data) => console.log(data));
+  //   // serviceApis.getServices();
+  // };
 
   const columns = useMemo<ColumnDef<IService>[]>(
     () => [
@@ -219,18 +219,34 @@ const ServicesTable: FC<ServicesTableProps> = () => {
         accessorKey: "blocked",
         cell: ({ row }) => {
           const blocked = row.original.blocked;
-          const serviceId = row.original._id!;
+          const serviceId = row.original?._id;
+          // console.log(blocked);
+          const handleBlockService = (serviceId: string) => {
+            serviceApis
+              .blockService(serviceId)
+              .then((data) => console.log(data));
+            serviceApis.getServices();
+          };
 
           return (
             <div className="ml-3">
               <Switch.Root
-                defaultChecked={!blocked}
-                onCheckedChange={() => handleBlockService(serviceId)}
+                // defaultChecked={!blocked}
+                // onCheckedChange={() => handleBlockService(serviceId)}
+                onCheckedChange={async () => {
+                  const serviceApis = new Service();
+                  await serviceApis
+                    .blockService(serviceId)
+                    .then((data) => console.log(data))
+                    .finally(() => {
+                      toast.success("action successul.");
+                    });
+                }}
                 className={`${
-                  blocked ? "data-[state=checked]:bg-rose-400" : "bg-gray-300"
-                } w-[50px] h-[23px] rounded-full relative outline-none cursor-pointer`}
+                  blocked && "data-[state=checked]:bg-rose-400"
+                } bg-gray-300 w-[50px] h-[23px] rounded-full relative outline-none cursor-pointer`}
               >
-                <Switch.Thumb className="block w-[18px] h-[18px]  bg-white rounded-full transition-transform duration-300 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[30px]" />
+                <Switch.Thumb className="block w-[18px] h-[18px] bg-white rounded-full transition-transform duration-300 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[30px]" />
               </Switch.Root>
             </div>
           );
