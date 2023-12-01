@@ -26,7 +26,5 @@ export interface ICustomerBio {
 }
 
 export interface ICustomerCard {
-  totalSales: number;
-  totalWithdrawal: number;
-  totalServices: number;
+  totalSpent: number;
 }

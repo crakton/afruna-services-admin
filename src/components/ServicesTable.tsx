@@ -21,6 +21,7 @@ import { ImSpinner3 } from "react-icons/im";
 import Service from "@/services/service.service";
 import { toast } from "react-toastify";
 import * as Switch from "@radix-ui/react-switch";
+import useSearchService from "@/hooks/useSearchService";
 
 interface ServicesTableProps {}
 
@@ -31,10 +32,15 @@ const ServicesTable: FC<ServicesTableProps> = () => {
   const services = useSelector((state: RootState) => state.service.services);
   const loading = useSelector((state: RootState) => state.loading.loading);
   const serviceApis = new Service();
+  const {searchResult} = useSearchService({data: services })
+  
 
   useEffect(() => {
-    setData(services);
-  }, [services]);
+    setData(searchResult);
+    // Trigger table re-rendering to reflect filtered data
+    // table.dispatch('dataChange');
+    console.log(searchResult);
+  }, [searchResult]);
 
   // const handleBlockService = (serviceId: string) => {
   //   // "6558a87fac38c3836470019a"

@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { FC, memo, useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
   SortingState,
@@ -12,17 +12,18 @@ import {
 import { MdRemoveRedEye } from "react-icons/md";
 import Image from "next/image";
 import { RxChevronDown, RxChevronUp } from "react-icons/rx";
-import { imgs } from "@/constants/images";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { ICustomerBio } from "@/types/customer";
 import { ImSpinner3 } from "react-icons/im";
 
-const CustomersTable = () => {
-  const loading = useSelector((state: RootState) => state.loading.loading);
-  const customers = useSelector((state: RootState) => state.customer.customers);
+interface CustomersTableProps {
+  searchCustomerResult: ICustomerBio[]
+}
 
+const CustomersTable: FC<CustomersTableProps> = ({searchCustomerResult}) => {
+  const loading = useSelector((state: RootState) => state.loading.loading);
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<ICustomerBio[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -41,9 +42,9 @@ const CustomersTable = () => {
   };
 
   useEffect(() => {
-    const updatedDataWithIds = assignUniqueIds(customers);
+    const updatedDataWithIds = assignUniqueIds(searchCustomerResult);
     setData(updatedDataWithIds);
-  }, [customers]);
+  }, [searchCustomerResult]);
 
   const columns = useMemo<ColumnDef<ICustomerBio>[]>(
     () => [
@@ -64,13 +65,13 @@ const CustomersTable = () => {
           <div key={row.id} className="flex gap-2 ml-8 items-center ">
             <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
               {row.original.avatar ? (
-                <Image
-                  src={row.original.avatar}
-                  alt={"pro"}
-                  fill
-                />
+                <Image src={row.original.avatar} alt={"pro"} fill />
               ) : (
-                <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original.firstName.charAt(0).toUpperCase()} ${row.original.lastName.charAt(0).toUpperCase()}`}</div>
+                <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original.firstName
+                  .charAt(0)
+                  .toUpperCase()} ${row.original.lastName
+                  .charAt(0)
+                  .toUpperCase()}`}</div>
               )}
             </div>
             <div className="flex flex-col justify-start">
@@ -229,7 +230,7 @@ const CustomersTable = () => {
   return (
     <div className="mt-4 pb-12 w-full">
       {loading ? (
-        <div className="flex justify-center items-center w-full h-[67vh] bg-white rounded-xl border shadow-sm border-slate-300">
+        <div className="flex justify-center overflow-auto items-center w-full h-[67vh] bg-white rounded-xl border shadow-sm border-slate-300">
           <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
         </div>
       ) : (

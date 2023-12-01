@@ -41,7 +41,7 @@ export default class Customers {
   async getCustomersCard(customerId: string) {
     try {
       const { data } = await axios.get<TSuccessResponse<ICustomerCard>>(
-        `/api/services/${customerId}/cards`,
+        `/api/services/${customerId}/customer/cards`,
         headers
       );
       store.dispatch(setCustomerCard(data.data));

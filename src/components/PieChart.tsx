@@ -29,7 +29,7 @@ const Piechart: FC<PieChartProps> = ({ booking_statictics }) => {
     { name: "Group D", value: 200 },
   ];
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+  const COLORS = ["#14532d", "#1d4ed8", "#f97316", "#b91c1c"];
 
   const CustomizedLegend = (props: {
     payload: {
@@ -116,7 +116,7 @@ const Piechart: FC<PieChartProps> = ({ booking_statictics }) => {
           iconType="circle"
           iconSize={5}
           fontSizeAdjust={0.5}
-          className="text-sx"
+          className="text-xs"
         //   content={<CustomizedLegend payload={{
         //       value: ""
         //   }}/>}

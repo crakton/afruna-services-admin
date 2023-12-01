@@ -29,9 +29,7 @@ const BookingsTable: FC<BookingTableProps> = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const bookings = useSelector((state: RootState) => state.booking.bookings);
 
-  const assignUniqueIds = (
-    data: T_Bookings[]
-  ): T_Bookings[] => {
+  const assignUniqueIds = (data: T_Bookings[]): T_Bookings[] => {
     // Create a new array to store the updated data
     const updatedData: T_Bookings[] = [];
     // Assign unique IDs to each data object
@@ -44,7 +42,7 @@ const BookingsTable: FC<BookingTableProps> = () => {
     }
     return updatedData;
   };
-  
+
   useEffect(() => {
     const updatedDataWithIds = assignUniqueIds(bookings);
     setData(updatedDataWithIds);
@@ -54,11 +52,11 @@ const BookingsTable: FC<BookingTableProps> = () => {
     () => [
       {
         accessorKey: "id",
-          cell: ({ row }) => (
-            <div key={row.id} className="flex gap-4 items-center">
-              <span className=" text-slate-800 text-xs">#{row.original.id}</span>
-            </div>
-          ),
+        cell: ({ row }) => (
+          <div key={row.id} className="flex gap-4 items-center">
+            <span className=" text-slate-800 text-xs">#{row.original.id}</span>
+          </div>
+        ),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
       {
@@ -84,45 +82,57 @@ const BookingsTable: FC<BookingTableProps> = () => {
             </div>
           );
         },
-        header: () => <span className="text-sm text-[#7C7C7C]">Booking Date</span>,
+        header: () => (
+          <span className="text-sm text-[#7C7C7C]">Booking Date</span>
+        ),
       },
       {
         accessorKey: "provider",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 items-center ">
-            <Image
-              src={imgs.provider2}
-              alt={"pro"}
-              width={35}
-              height={35}
-              className="rounded"
-            />
-            <span className=" text-slate-600 text-xs">Lativari dress</span>
+            <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
+              {row.original?.providerId?.avatar ? (
+                <Image src={row.original.providerId.avatar} alt={"pro"} fill />
+              ) : (
+                <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original?.providerId?.firstName
+                  .charAt(0)
+                  .toUpperCase()} ${row.original.providerId.lastName
+                  .charAt(0)
+                  .toUpperCase()}`}</div>
+              )}
+            </div>
+            <span className=" text-slate-600 text-xs">{`${row.original?.providerId?.firstName} ${row.original?.providerId?.lastName}`}</span>
           </div>
         ),
         header: () => <span className="text-sm text-[#7C7C7C] ">Provider</span>,
       },
       {
-        accessorKey: "user",
+        accessorKey: "customer",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 items-center ml-8">
-            <Image
-              src={imgs.provider1}
-              alt={"user"}
-              width={35}
-              height={35}
-              className="rounded"
-            />
-            <span className=" text-slate-500 text-xs">Smith Lativari</span>
+            <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
+              {row.original?.customerId?.avatar ? (
+                <Image src={row.original.customerId.avatar} alt={"pro"} fill />
+              ) : (
+                <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original?.customerId?.firstName
+                  .charAt(0)
+                  .toUpperCase()} ${row.original.customerId.lastName
+                  .charAt(0)
+                  .toUpperCase()}`}</div>
+              )}
+            </div>
+            <span className=" text-slate-500 text-xs">{`${row.original?.customerId?.firstName} ${row.original?.customerId?.lastName}`}</span>
           </div>
         ),
-        header: () => <span className="text-sm text-[#7C7C7C] ml-8">User</span>,
+        header: () => (
+          <span className="text-sm text-[#7C7C7C] ml-8">Customer</span>
+        ),
       },
       {
         accessorKey: "service",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-4 items-center ml-8">
-            <span className=" text-slate-600 text-xs">Plumbing repair</span>
+            <span className=" text-slate-600 text-xs">{row.original?.serviceId?.name}</span>
           </div>
         ),
         header: () => (
@@ -133,32 +143,32 @@ const BookingsTable: FC<BookingTableProps> = () => {
         accessorKey: "status",
         cell: ({ cell }) => {
           switch (cell.getValue()) {
-            case "Pending":
+            case "pending":
               return (
                 <span className="flex justify-between items-center w-fit">
                   <span className="p-1 rounded-full bg-amber-500 mr-1" />
                   <span className="text-amber-500 text-xs">Pending</span>
                 </span>
               );
-            case "Inactive":
+            case "in progress":
               return (
                 <span className="flex justify-between items-center w-fit">
                   <span className="p-1 rounded-full bg-lime-600 mr-1" />
-                  <span className="text-lime-600 text-xs">Inactive</span>
+                  <span className="text-lime-600 text-xs">Processing</span>
                 </span>
               );
-            case "Deleted":
+            case "canceled":
               return (
                 <span className="flex justify-between items-center w-fit">
                   <span className="p-1 rounded-full bg-red-500 mr-1" />
-                  <span className="text-red-500 text-xs">Deleted</span>
+                  <span className="text-red-500 text-xs">Canceled</span>
                 </span>
               );
-            case "Active":
+            case "completed":
               return (
                 <span className="flex justify-between items-center w-fit">
                   <span className="p-1 rounded-full bg-blue-500 mr-1" />
-                  <span className="text-blue-500 text-xs">Active</span>
+                  <span className="text-blue-500 text-xs">Completed</span>
                 </span>
               );
           }
@@ -168,30 +178,32 @@ const BookingsTable: FC<BookingTableProps> = () => {
       {
         accessorKey: "amount",
         cell: ({ row }) => (
-          <span className="text-afruna-blue text-xs">#{row.original.amount}</span>
+          <span className="text-afruna-blue text-xs">
+            #{row.original.amount}
+          </span>
         ),
         header: () => <span className="text-sm text-[#7C7C7C]">Amount</span>,
       },
-      {
-        id: "actions",
-        cell: ({ row }) => (
-          <div className="flex justify-start gap-1 items-center">
-            <button className="hover:scale-90 border-none transition duration-300">
-              <MdRemoveRedEye size={24} />
-            </button>
-            <button
-              className="hover:scale-90 border-none transition duration-300"
-              onClick={() => {
-                const newData = data.filter((_, idx) => idx !== row.index);
-                setData(newData);
-              }}
-            >
-              <MdDeleteOutline size={24} />
-            </button>
-          </div>
-        ),
-        header: () => <span className="text-sm text-[#7C7C7C]">Action</span>,
-      },
+      // {
+      //   id: "actions",
+      //   cell: ({ row }) => (
+      //     <div className="flex justify-start gap-1 items-center">
+      //       <button className="hover:scale-90 border-none transition duration-300">
+      //         <MdRemoveRedEye size={24} />
+      //       </button>
+      //       <button
+      //         className="hover:scale-90 border-none transition duration-300"
+      //         onClick={() => {
+      //           const newData = data.filter((_, idx) => idx !== row.index);
+      //           setData(newData);
+      //         }}
+      //       >
+      //         <MdDeleteOutline size={24} />
+      //       </button>
+      //     </div>
+      //   ),
+      //   header: () => <span className="text-sm text-[#7C7C7C]">Action</span>,
+      // },
     ],
     [data]
   );
@@ -215,14 +227,14 @@ const BookingsTable: FC<BookingTableProps> = () => {
 
   return (
     <div className="mt-4 pb-12 w-full">
-      <div className="h-[65vh] px-4 bg-white relative w-full rounded-xl border shadow-sm border-slate-300">
+      <div className="h-[65vh] px-4 bg-white overflow-auto relative w-full rounded-xl border shadow-sm border-slate-300">
         {loading ? (
           <div className="flex justify-center items-center h-full">
             <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
           </div>
         ) : bookings?.length > 0 ? (
           <table className="w-screen lg:w-full px-8 relative">
-            <thead className="sticky top-0 bg-white">
+            <thead className="sticky z-20 top-0 bg-white">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (

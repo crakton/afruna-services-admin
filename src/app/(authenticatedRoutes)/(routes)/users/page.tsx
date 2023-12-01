@@ -1,10 +1,19 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import { ChangeEventHandler, FC, useCallback, useEffect } from "react";
 import CustomersTable from "@/components/CustomersTable";
 import { IoSearchOutline } from "react-icons/io5";
 import ItemPicker from "@/components/ItemPicker";
 import Customers from "@/services/customer.service";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import useSearchUsers from "@/hooks/useSearchUsers";
+import { ICustomerBio } from "@/types/customer";
+import * as Select from "@radix-ui/react-select";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+// import { SelectItem } from "@radix-ui/react-select";
+import { sortType } from "@/constants/data";
+import useSearchCustomer from "@/hooks/useSearchCustomer";
 
 interface pageProps {}
 
@@ -16,7 +25,7 @@ const CustomersPage: FC<pageProps> = ({}) => {
   //   (state: RootState) => state.customer?.customerStatus
   // );
   // const customers = useSelector((state: RootState) => state.customer.customers);
-  
+
   const customersApis = new Customers();
 
   // const handleTabSelect = (status: tableStatus) => {
@@ -54,12 +63,15 @@ const CustomersPage: FC<pageProps> = ({}) => {
   //   }
   // };
   useEffect(() => {
-    customersApis.getAllCustomers()
+    customersApis.getAllCustomers();
     // return () => {
     //   store.dispatch(setCustomerStatus('all'))
     // }
-  }, [])
-
+  }, []);
+  const customers = useSelector((state: RootState) => state.customer.customers);
+  const { searchCustomerInput,searchCustomerResult,setSearchCustomerInput } =
+    useSearchCustomer<ICustomerBio>({ data: customers });
+  
   return (
     <section className="flex flex-col gap-7 ">
       <div className="flex justify-between items-center pl-4 lg:pr-32 lg:pl-6 bg-white w-full h-16">
@@ -69,7 +81,10 @@ const CustomersPage: FC<pageProps> = ({}) => {
           </h1>
           <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
             <input
-              type="text"
+              value={searchCustomerInput}
+              onChange={(e) => setSearchCustomerInput(e.target.value)}
+              type="search"
+              // type="text"
               placeholder="Search..."
               className="w-full py-[0.6rem] text-xs text-slate-600"
             />
@@ -77,15 +92,43 @@ const CustomersPage: FC<pageProps> = ({}) => {
           </fieldset>
         </div>
         <div className="flex justify-end items-center gap-6">
-          <fieldset className="flex">
+           <fieldset className="flex">
             <ItemPicker
-              items={["A", "B"]}
-              placeholder={"A-Z"}
-              getSelected={(val) => console.log(val as string)}
+              items={["Ascending","Descending"]}
+              placeholder={"Sorting"}
+              getSelected={ (value) => {}
+                // setSortingType(value as "ascending" | "descending")
+              }
               // contentClassName={"p-2 bg-white text-xs"}
-              triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
+              triggerClassName="px-3 py-[0.59rem] rounded min-w-[12rem] w-full"
             />
           </fieldset>
+          {/* <Select.Root
+						onValueChange={
+							setSortingType as (value: string) => void
+						}
+					>
+						<Select.Trigger className="flex md:col-span-1 items-center gap-2 p-3 border rounded-lg">
+							<Select.Value placeholder={"Sorting"} />
+							<Select.Icon>
+								<ChevronDownIcon />
+							</Select.Icon>
+						</Select.Trigger>
+						<Select.Portal>
+							<Select.Content
+								className="p-2 bg-white gap-2"
+								position="popper"
+							>
+								<Select.Viewport>
+									{sortType.map((date) => (
+										<SelectItem key={date} value={date}>
+											{date}
+										</SelectItem>
+									))}
+								</Select.Viewport>
+							</Select.Content>
+						</Select.Portal>
+					</Select.Root> */}
         </div>
       </div>
       <div className="flex flex-col gap-6 px-6 xl:pr-32 w-full">
@@ -117,7 +160,7 @@ const CustomersPage: FC<pageProps> = ({}) => {
           <div className="bg-orange-100 w-full h-[2px] " />
         </div> */}
         {/* Bookings table */}
-        <CustomersTable />
+        <CustomersTable searchCustomerResult={searchCustomerResult}/>
       </div>
     </section>
   );

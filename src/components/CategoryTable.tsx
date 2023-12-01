@@ -194,7 +194,7 @@ const CategoryTable = () => {
 
   return (
     <>
-      <div className="h-[70vh] px-4 bg-white relative rounded-lg overflow-y-auto">
+      <div className="h-[70vh] px-4 bg-white relative rounded-lg overflow-auto">
         {loading ? (
           <div className="flex justify-center items-center h-full">
             <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />

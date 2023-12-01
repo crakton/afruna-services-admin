@@ -118,7 +118,7 @@ const SubCategoryTable = () => {
   });
 
   return (
-      <div className="h-[70vh] px-4 bg-white relative rounded-lg overflow-y-auto">
+      <div className="h-[70vh] px-4 bg-white relative rounded-lg overflow-auto">
         <table className=" w-screen lg:w-full px-4 relative">
           <thead className="sticky top-0 bg-white">
             {table.getHeaderGroups().map((headerGroup) => (

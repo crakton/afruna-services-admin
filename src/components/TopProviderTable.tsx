@@ -128,7 +128,7 @@ const TopProviderTable: FC<TopProviderTableProps> = ({ topProviders }) => {
 
   return (
     // <div className="relative h-[75vh] pb-42">
-    <div className="h-[40vh] px-4 bg-white relative rounded-lg overflow-y-auto">
+    <div className="h-[40vh] px-4 bg-white relative rounded-lg overflow-auto">
       <table className=" w-screen lg:w-full px-4 relative">
         <thead className="sticky top-0 bg-white">
           {table.getHeaderGroups().map((headerGroup) => (

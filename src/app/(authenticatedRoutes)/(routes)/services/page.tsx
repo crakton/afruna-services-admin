@@ -3,7 +3,7 @@
 import ItemPicker from "@/components/ItemPicker";
 import ServicesTable from "@/components/ServicesTable";
 import { IService } from "@/interfaces/IService";
-import { setBlockedServices, setPendingServices, setServices, setUnpublishedServices, setVerifiedServices } from "@/redux/features/app/service_slice";
+import { setBlockedServices, setPendingServices, setUnpublishedServices, setVerifiedServices } from "@/redux/features/app/service_slice";
 import { setStatus } from "@/redux/features/app/table_status_slice";
 import { RootState, store } from "@/redux/store";
 import Service from "@/services/service.service";
@@ -14,6 +14,7 @@ import PendingServiceTable from "../_components/PendingServiceTable";
 import BlockedServiceTable from "../_components/BlockedServiceTable";
 import VerifiedServicesTable from "../_components/VerifiedServicesTable";
 import UnPublishServicesTable from "../_components/UnPublishServicesTable";
+import useSearchService from "@/hooks/useSearchService";
 
 interface pageProps {}
 const Services_Tab = [
@@ -58,6 +59,8 @@ const page: FC<pageProps> = ({ }) => {
         break;
     }
   }
+  const {searchInput,searchResult,setSearchInput} = useSearchService({data: services })
+  
   const Component = useMemo(() => {
     switch (currentStatus) {
       case "pending":
@@ -71,8 +74,9 @@ const page: FC<pageProps> = ({ }) => {
       default:
         return <ServicesTable />
     }
-  }, [currentStatus]);
+  }, [currentStatus, searchInput]);
 
+  
   useEffect(() => {
     serviceApis.getServices()
 
@@ -89,12 +93,16 @@ const page: FC<pageProps> = ({ }) => {
             All Services
           </h1>
           <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full py-[0.6rem] text-xs text-slate-600"
-            />
-            <IoSearchOutline className="text-slate-300 text-2xl " />
+          <div className=" text-[#D2D2D2] flex justify-center items-center">
+                  <IoSearchOutline className="text-2xl" />
+                </div>
+                <input
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  type="search"
+                  placeholder="Search by name or last message..."
+                  className="w-full text-sm text-slate-500 placeholder:text-xs p-2 focus:outline-none placeholder:text-[#D2D2D2]"
+                />
           </fieldset>
         </div>
         <div className="flex justify-end items-center gap-6">
@@ -137,6 +145,12 @@ const page: FC<pageProps> = ({ }) => {
           </div>
           <div className="bg-orange-200 w-full h-[2px] " />
         </div>
+
+        {searchResult.map(ser => {
+          return(
+            <div className="text-xs">{ser.name}</div>
+          )
+        })}
 
         <Component.type />
       </div>

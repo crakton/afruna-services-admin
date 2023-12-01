@@ -1,7 +1,6 @@
 "use client";
 
 import CustomerBookingDetailsTable from "@/components/CustomerBookingDetailsTable";
-import { imgs } from "@/constants/images";
 import { RootState } from "@/redux/store";
 import Customers from "@/services/customer.service";
 import Image from "next/image";
@@ -20,17 +19,13 @@ export default function CustomerPage({ params: { customerId } }: Params) {
   const customerCard = useSelector(
     (state: RootState) => state.customer.customerCard
   );
+
   const [loadingBookings, setLoadingBookings] = useState<boolean>(true);
   const customersApis = new Customers();
   useEffect(() => {
-    customersApis
-      .getCustomerBookings(customerId)
-      .then((data) => {
-        console.log(data);
-      })
-      .finally(() => {
-        setLoadingBookings(false);
-      });
+    customersApis.getCustomerBookings(customerId).finally(() => {
+      setLoadingBookings(false);
+    });
     customersApis.getCustomersCard(customerId);
   }, []);
   const customerBookings = useSelector(
@@ -94,7 +89,7 @@ export default function CustomerPage({ params: { customerId } }: Params) {
             <div className="flex justify-start items-start gap-2">
               <div className="border w-[13rem] py-7 pl-7 border-[#D5D5E6] rounded-xl bg-white flex flex-col gap-2">
                 <span className="text-sm font-bold">
-                  #{customerCard?.totalSales}
+                  #{customerCard?.totalSpent}
                 </span>
                 <span className="text-sm font-bold">Total spent</span>
               </div>
@@ -111,7 +106,10 @@ export default function CustomerPage({ params: { customerId } }: Params) {
         </>
       )}
       <div className="flex justify-start px-4 md:px-10 xl:pr-32 ">
-        <CustomerBookingDetailsTable loadingBookings={loadingBookings} customerBookings={customerBookings}  />
+        <CustomerBookingDetailsTable
+          loadingBookings={loadingBookings}
+          customerBookings={customerBookings}
+        />
       </div>
     </section>
   );

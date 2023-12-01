@@ -1,5 +1,3 @@
-"use client";
-
 import React, { FC, memo, useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
@@ -13,28 +11,27 @@ import {
 } from "@tanstack/react-table";
 import { MdDeleteOutline, MdRemoveRedEye } from "react-icons/md";
 import Image from "next/image";
+import { RxChevronDown, RxChevronUp } from "react-icons/rx";
 import { T_Bookings } from "@/types/bookings";
 import { imgs } from "@/constants/images";
-import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { ImSpinner3 } from "react-icons/im";
 
-interface RecentBookingTableProps {
-  loadingRecentBookings: boolean;
-  recentBookings: any;
+interface CanceledBookingsTableProps {
+  // bookings: any[]
 }
 
-const RecentBookingTable: FC<RecentBookingTableProps> = ({
-  loadingRecentBookings,
-}) => {
-  const recentBookings = useSelector(
-    (state: RootState) => state.booking.recentBookings
-  );
+const CanceledBookingsTable: FC<CanceledBookingsTableProps> = () => {
+  const loading = useSelector((state: RootState) => state.loading.loading);
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<T_Bookings[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const assignUniqueIds = (data: T_Bookings[]): T_Bookings[] => {
+  const bookings = useSelector((state: RootState) => state.booking.canceledBookings);
+
+  const assignUniqueIds = (
+    data: T_Bookings[]
+  ): T_Bookings[] => {
     // Create a new array to store the updated data
     const updatedData: T_Bookings[] = [];
     // Assign unique IDs to each data object
@@ -47,21 +44,21 @@ const RecentBookingTable: FC<RecentBookingTableProps> = ({
     }
     return updatedData;
   };
-
+  
   useEffect(() => {
-    const updatedDataWithIds = assignUniqueIds(recentBookings);
+    const updatedDataWithIds = assignUniqueIds(bookings);
     setData(updatedDataWithIds);
-  }, [recentBookings]);
+  }, [bookings]);
 
   const columns = useMemo<ColumnDef<T_Bookings>[]>(
     () => [
       {
         accessorKey: "id",
-        cell: ({ row }) => (
-          <div key={row.id} className="flex gap-4 items-center">
-            <span className=" text-slate-800 text-xs">#{row.original.id}</span>
-          </div>
-        ),
+          cell: ({ row }) => (
+            <div key={row.id} className="flex gap-4 items-center">
+              <span className=" text-slate-800 text-xs">#{row.original.id}</span>
+            </div>
+          ),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
       {
@@ -81,15 +78,13 @@ const RecentBookingTable: FC<RecentBookingTableProps> = ({
             hour12: true,
           });
           return (
-            <div className="flex flex-col justify-start items-start">
+            <div className="flex flex-col justify-start ml-3 items-start">
               <span className="text-afruna-blue text-xs">{`${day} ${month}, ${year}`}</span>
               <span className=" text-afruna-blue text-xs">{timeString}</span>
             </div>
           );
         },
-        header: () => (
-          <span className="text-sm text-[#7C7C7C]">Booking Date</span>
-        ),
+        header: () => <span className="text-sm text-[#7C7C7C]">Booking Date</span>,
       },
       {
         accessorKey: "provider",
@@ -112,34 +107,26 @@ const RecentBookingTable: FC<RecentBookingTableProps> = ({
         header: () => <span className="text-sm text-[#7C7C7C] ">Provider</span>,
       },
       {
-        accessorKey: "customer",
+        accessorKey: "user",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 items-center ml-8">
-            <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
-              {row.original?.customerId?.avatar ? (
-                <Image src={row.original.customerId.avatar} alt={"pro"} fill />
-              ) : (
-                <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original?.customerId?.firstName
-                  .charAt(0)
-                  .toUpperCase()} ${row.original.customerId.lastName
-                  .charAt(0)
-                  .toUpperCase()}`}</div>
-              )}
-            </div>
-            <span className=" text-slate-500 text-xs">{`${row.original?.customerId?.firstName} ${row.original?.customerId?.lastName}`}</span>
+            <Image
+              src={imgs.provider1}
+              alt={"user"}
+              width={35}
+              height={35}
+              className="rounded"
+            />
+            <span className=" text-slate-500 text-xs">Smith Lativari</span>
           </div>
         ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C] ml-8">Customer</span>
-        ),
+        header: () => <span className="text-sm text-[#7C7C7C] ml-8">User</span>,
       },
       {
         accessorKey: "service",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-4 items-center ml-8">
-            <span className=" text-slate-600 text-xs">
-              {row.original?.serviceId?.name}
-            </span>
+            <span className=" text-slate-600 text-xs">Plumbing repair</span>
           </div>
         ),
         header: () => (
@@ -161,7 +148,7 @@ const RecentBookingTable: FC<RecentBookingTableProps> = ({
               return (
                 <span className="flex justify-between items-center w-fit">
                   <span className="p-1 rounded-full bg-lime-600 mr-1" />
-                  <span className="text-lime-600 text-xs">Processing</span>
+                  <span className="text-lime-600 text-xs">In progress</span>
                 </span>
               );
             case "canceled":
@@ -185,9 +172,7 @@ const RecentBookingTable: FC<RecentBookingTableProps> = ({
       {
         accessorKey: "amount",
         cell: ({ row }) => (
-          <span className="text-afruna-blue text-xs">
-            #{row.original.amount}
-          </span>
+          <span className="text-afruna-blue text-xs">#{row.original.amount}</span>
         ),
         header: () => <span className="text-sm text-[#7C7C7C]">Amount</span>,
       },
@@ -233,85 +218,85 @@ const RecentBookingTable: FC<RecentBookingTableProps> = ({
   });
 
   return (
-    <div className="h-[50vh] px-4 bg-white relative rounded-lg overflow-auto">
-      {loadingRecentBookings ? (
-        <div className="flex justify-center items-center h-full">
-          <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
-        </div>
-      ) : recentBookings?.length > 0 ? (
-        <table className=" w-screen lg:w-full px-4 relative">
-          <thead className="sticky top-0 bg-white z-20">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    className="text-left font-medium text-afruna-gray text-sm"
-                    key={header.id}
-                  >
-                    {header.index >= 1 &&
-                    header.id !== "actions" &&
-                    header.id !== "block" ? (
-                      <span className="flex justify-between items-center w-fit">
-                        {flexRender(
+    <div className="mt-4 pb-12 w-full">
+      <div className="h-[65vh] px-4 bg-white overflow-auto relative w-full rounded-xl border shadow-sm border-slate-300">
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
+          </div>
+        ) : bookings?.length > 0 ? (
+          <table className="w-screen lg:w-full px-8 relative">
+            <thead className="sticky top-0 bg-white">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      className="text-left font-medium pt-3 text-[#7C7C7C] text-sm"
+                      key={header.id}
+                    >
+                      {header.index > 0 && header.id !== "actions" ? (
+                        <span className="flex justify-between gap-2 items-center w-fit">
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          <span className="flex flex-col gap-[0.2rem]">
+                            <RxChevronUp
+                              onClick={header.column.getToggleSortingHandler()}
+                              size={19}
+                              className="relative top-2 text-slate-400"
+                            />
+                            <RxChevronDown
+                              onClick={header.column.getToggleSortingHandler()}
+                              size={19}
+                              className="relative -top-2"
+                            />
+                          </span>
+                        </span>
+                      ) : (
+                        flexRender(
                           header.column.columnDef.header,
                           header.getContext()
-                        )}
-                        <span className="flex flex-col ">
-                          <BiChevronUp
-                            onClick={header.column.getToggleSortingHandler()}
-                            size={24}
-                            className="relative top-2 text-slate-400"
-                          />
-                          <BiChevronDown
-                            onClick={header.column.getToggleSortingHandler()}
-                            size={24}
-                            className="relative -top-2"
-                          />
-                        </span>
-                      </span>
-                    ) : (
-                      flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody className="my-10">
-            {table.getRowModel().rows.map((row) => {
-              return (
-                <tr
-                  className="px-2 odd:border-y-[1px] odd:border-slate-300"
-                  key={row.id}
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <td
-                        className="py-4 font-semibold text-left text-xs"
-                        key={cell.id}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    );
-                  })}
+                        )
+                      )}
+                    </th>
+                  ))}
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      ) : (
-        <h3 className="flex justify-center text-sm text-slate-500 h-full items-center">
-          Currently, No Recent Bookings
-        </h3>
-      )}
+              ))}
+            </thead>
+            <tbody className="my-10">
+              {table.getRowModel().rows.map((row) => {
+                return (
+                  <tr
+                    className="px-2 odd:border-y-[1px] odd:border-slate-300"
+                    key={row.id}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <td
+                          className="py-4 font-semibold text-left text-[0.8rem]"
+                          key={cell.id}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        ) : (
+          <h3 className="flex justify-center text-sm text-slate-500 h-full items-center">
+            Currently, No canceled bookings yet
+          </h3>
+        )}
+      </div>
     </div>
   );
 };
 
-export default memo(RecentBookingTable);
+export default memo(CanceledBookingsTable);

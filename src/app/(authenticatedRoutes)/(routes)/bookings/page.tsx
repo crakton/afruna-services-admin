@@ -1,26 +1,30 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo} from "react";
 import BookingsTable from "@/components/bookingsTable";
 import ItemPicker from "@/components/ItemPicker";
 import { IoSearchOutline } from "react-icons/io5";
-import { IService } from "@/interfaces/IService";
 import { setStatus } from "@/redux/features/app/table_status_slice";
 import { RootState, store } from "@/redux/store";
-import { tableStatus } from "@/types/tableStatus";
 import { useSelector } from "react-redux";
 import Booking from "@/services/booking.service";
-import { setBookings } from "@/redux/features/app/booking_slice";
+import { setCanceledBookings, setCompletedBookings, setInProgreessBookings, setPendingBookings } from "@/redux/features/app/booking_slice";
+import { T_Bookings } from "@/types/bookings";
+import PendingBookingsTable from "@/components/PendingBookingsTable";
+import CanceledBookingsTable from "@/components/CanceledBookingsTable";
+import CompletedBookingsTable from "@/components/CompletedBookingsTable";
+import InProgressBookingsTable from "@/components/InProgressBookingsTable ";
 
 interface pageProps {}
 
 const bookings_Tab = [
   "All Bookings",
   "Pending",
-  "Active",
-  "Inactive",
-  "Delected",
+  "Processing",
+  "Completed",
+  "Canceled",
 ];
+export type tableStatus = 'all' | 'pending' | 'processing' | 'completed' | 'canceled' 
 
 const BookingsPage: FC<pageProps> = ({ }) => {
   
@@ -37,12 +41,39 @@ const BookingsPage: FC<pageProps> = ({ }) => {
         break;
       case 'pending':
         store.dispatch(setStatus('pending'))
-        store.dispatch(setBookings(bookings.filter((booking: any) => booking.status === 'pending')))
+        store.dispatch(setPendingBookings(bookings.filter((booking: T_Bookings) => booking.status === 'pending')))
+        break;
+      case 'processing':
+        store.dispatch(setStatus('processing'))
+        store.dispatch(setInProgreessBookings(bookings.filter((booking: T_Bookings) => booking.status === 'in progress')))
+        break;
+      case 'completed':
+        store.dispatch(setStatus('completed'))
+        store.dispatch(setCompletedBookings(bookings.filter((booking: T_Bookings) => booking.status === 'completed')))
+        break;
+      case 'canceled':
+        store.dispatch(setStatus('canceled'))
+        store.dispatch(setCanceledBookings(bookings.filter((booking: T_Bookings) => booking.status === 'canceled')))
         break;
       default:
         break;
     }
   }
+
+  const Component = useMemo(() => {
+    switch (currentStatus) {
+      case "pending":
+        return <PendingBookingsTable />;
+      case "processing":
+        return <InProgressBookingsTable />;
+      case "completed":
+        return <CompletedBookingsTable />;
+      case "canceled":
+        return <CanceledBookingsTable />;
+      default:
+        return <BookingsTable />
+    }
+  }, [currentStatus]);
   
   useEffect(() => {
     bookingApis.getBookings()
@@ -97,7 +128,7 @@ const BookingsPage: FC<pageProps> = ({ }) => {
           <div className="bg-orange-200 w-full h-[2px] " />
         </div>
         {/* Bookings table */}
-        <BookingsTable />
+        <Component.type />
       </div>
     </section>
   );

@@ -5,7 +5,6 @@ import { TStore, store } from "@/redux/store";
 import { TErrorResponse, TSuccessResponse } from "@/types/auth.types";
 import { handleAuthErrors } from "@/utils/auth.util";
 import axios, { AxiosError } from "axios";
-import { toast } from "react-toastify";
 
 export default class Transactions {
     private store: TStore;
@@ -17,9 +16,8 @@ export default class Transactions {
     async getOtherTransactions() {
         store.dispatch(setLoading(true))
         try {
-            const { data } = await axios.get<TSuccessResponse<any[]>>('/api/admin/reviews', headers)
+            const { data } = await axios.get<TSuccessResponse<any[]>>('/api/transactions', headers)
             store.dispatch(setOtherTransactions(data.data))
-            toast.success(`can't fetched OtherTransactions`)
             return data.data
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)
@@ -30,9 +28,8 @@ export default class Transactions {
     async getBookingsTransactions() {
         store.dispatch(setLoading(true))
         try {
-            const { data } = await axios.get<TSuccessResponse<any[]>>('/api/admin/reviews', headers)
+            const { data } = await axios.get<TSuccessResponse<any[]>>('/api/transactions', headers)
             store.dispatch(setBookingsTransactions(data.data))
-            toast.success(`can't fetched BookingsTransactions`)
             return data.data
         } catch (error) {
             handleAuthErrors(error as AxiosError<TErrorResponse>)

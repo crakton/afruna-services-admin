@@ -1,40 +1,43 @@
 "use client";
 
-import BookingsTransactionsTable from "@/components/BookingsTransactionsTable";
 import OtherTransactionstable from "@/components/OtherTransactionstable";
-import { Button } from "@/components/ui/button";
-import { imgs } from "@/constants/images";
+import { RootState } from "@/redux/store";
 import Transactions from "@/services/transactions.service";
-import Image from "next/image";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 interface pageProps {}
 export type tableStatus = "Other Transactions" | "Bookings Transactions";
 const transactions_tab = ["Other Transactions", "Bookings Transactions"];
 
 const TransactionsPage: FC<pageProps> = ({}) => {
-  const [transactionsTab, setTransactionsTab] =
-    useState<tableStatus>("Other Transactions");
-  const handleTabSelect = useCallback((tab: tableStatus) => {
-    const transactionApis = new Transactions();
-    if (tab === "Other Transactions") {
-      transactionApis.getOtherTransactions();
-      setTransactionsTab(tab);
-    } else {
-      transactionApis.getBookingsTransactions();
-      setTransactionsTab(tab);
-    }
+  // const [transactionsTab, setTransactionsTab] =
+  //   useState<tableStatus>("Other Transactions");
+  // const handleTabSelect = useCallback((tab: tableStatus) => {
+  //   const transactionApis = new Transactions();
+  //   if (tab === "Other Transactions") {
+  //     transactionApis.getOtherTransactions();
+  //     setTransactionsTab(tab);
+  //   } else {
+  //     transactionApis.getBookingsTransactions();
+  //     setTransactionsTab(tab);
+  //   }
+  // }, []);
+  // const Component = useMemo(() => {
+  //   const transactionApis = new Transactions();
+  //   switch (transactionsTab) {
+  //     case "Bookings Transactions":
+  //       return <BookingsTransactionsTable />;
+  //     default:
+  //       transactionApis.getOtherTransactions();
+  //       return <OtherTransactionstable />;
+  //   }
+  // }, [transactionsTab]);
+ const transactionApis = new Transactions()
+  useEffect(() => {
+    transactionApis.getOtherTransactions()
   }, []);
-  const Component = useMemo(() => {
-    const transactionApis = new Transactions();
-    switch (transactionsTab) {
-      case "Bookings Transactions":
-        return <BookingsTransactionsTable />;
-      default:
-        transactionApis.getOtherTransactions();
-        return <OtherTransactionstable />;
-    }
-  }, [transactionsTab]);
+  const transaction = useSelector((state:RootState) => state.transaction.other_transactions)
 
   return (
     <section className="flex flex-col gap-7 ">
@@ -43,7 +46,7 @@ const TransactionsPage: FC<pageProps> = ({}) => {
           Transaction
         </h1>
       </div>
-      <div className="flex flex-col gap-6 px-6 xl:pr-16 w-full">
+      {/* <div className="flex flex-col gap-6 px-6 xl:pr-16 w-full">
         <div className="flex flex-col lg:flex-row gap-8 w-full">
           <div className="border w-[25rem] py-6 px-6 border-[#D5D5E6] rounded-xl bg-white flex justify-between items-center gap-2">
             <div className="flex items-center justify-start gap-2">
@@ -70,10 +73,10 @@ const TransactionsPage: FC<pageProps> = ({}) => {
             </div>
           </div>
         </div>
-        {/* table */}
-      </div>
+      </div> */}
+      {/* table */}
       <div className="flex flex-col gap-6 px-6 xl:pr-4 w-full">
-        <div className="flex flex-col gap-1 w-full">
+        {/* <div className="flex flex-col gap-1 w-full">
           <div className="flex justify-start gap-8 items-center">
             {transactions_tab.map((item, idx) => (
               <button
@@ -93,9 +96,8 @@ const TransactionsPage: FC<pageProps> = ({}) => {
             ))}
           </div>
           <div className="bg-orange-200 w-full h-[2px] " />
-        </div>
-
-        <Component.type />
+        </div> */}
+        <OtherTransactionstable transaction={transaction} />
       </div>
     </section>
   );

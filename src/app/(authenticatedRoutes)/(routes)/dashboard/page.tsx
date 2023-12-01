@@ -15,6 +15,7 @@ import LoadingTopTable from "../_components/LoadingTopTable";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import LoadingCards from "../_components/LoadingCards";
+import LoadingChart from "../_components/LoadingChart";
 
 interface pageProps {}
 
@@ -27,97 +28,91 @@ export type T_bar_data = {
   name: string;
   booking: number;
   Income: number;
-  amt: number;
+  // amt: number;
 };
 
 const DashboardPage: FC<pageProps> = ({}) => {
-  const booking_statictics = [
-    { _id: "1", name: "Category A", value: 20 },
-    { _id: "2", name: "Category B", value: 15 },
-    { _id: "3", name: "Category C", value: 30 },
-    { _id: "4", name: "Category D", value: 50 },
-    // Add more data...
-  ];
   const bar_data = [
     {
       name: "Jan",
       booking: 4000,
       Income: 2400,
-      amt: 2400,
+      // amt: 2400,
     },
     {
       name: "Feb",
       booking: 3000,
       Income: 1398,
-      amt: 2210,
+      // amt: 2210,
     },
     {
       name: "Mar",
       booking: 2000,
       Income: 9800,
-      amt: 2290,
+      // amt: 2290,
     },
     {
       name: "Apr",
       booking: 2780,
       Income: 3908,
-      amt: 2000,
+      // amt: 2000,
     },
     {
       name: "May",
       booking: 1890,
       Income: 4800,
-      amt: 2181,
+      // amt: 2181,
     },
     {
       name: "Jul",
       booking: 2390,
       Income: 3800,
-      amt: 2500,
+      // amt: 2500,
     },
     {
       name: "Aug",
       booking: 2790,
       Income: 1000,
-      amt: 2500,
+      // amt: 2500,
     },
     {
       name: "Sep",
       booking: 2390,
       Income: 5800,
-      amt: 900,
+      // amt: 900,
     },
     {
       name: "Oct",
       booking: 4390,
       Income: 800,
-      amt: 500,
+      // amt: 500,
     },
     {
       name: "Nov",
       booking: 2090,
       Income: 1600,
-      amt: 500,
+      // amt: 500,
     },
     {
       name: "Dec",
       booking: 1390,
       Income: 1800,
-      amt: 2000,
+      // amt: 2000,
     },
     // Add more data... background: linear-gradient(180deg, #817AF3 0%, #74B0FA 47.92%, #79D0F1 100%);
   ];
-  const loading = useSelector(
-    (state: RootState) => state.loading.loading
-  );
-  const [loadingCards, setLoadingCards] = useState<boolean>(true);
+  const loading = useSelector((state: RootState) => state.loading.loading);
+  const [loadingSummary, setLoadingSummary] = useState<boolean>(true);
+  const [loadingStats, setLoadingStats] = useState<boolean>(true);
   const [loadingTopSevices, setLoadingTopSevices] = useState<boolean>(true);
   const [loadingTopProviders, setLoadingTopProviders] = useState<boolean>(true);
   const [loadingRecentBookings, setLoadingRecentBookings] =
     useState<boolean>(true);
   const dashboardApis = new Dashboard();
   useEffect(() => {
-    dashboardApis.getDashboardCards()
+    dashboardApis.getDashboardCards();
+    dashboardApis.getBookingsSummary().finally(() => setLoadingSummary(false));
+    dashboardApis.getDashboardStats().finally(() => setLoadingStats(false));
     dashboardApis.getTopServices().finally(() => setLoadingTopSevices(false));
     dashboardApis
       .getTopProviders()
@@ -127,6 +122,40 @@ const DashboardPage: FC<pageProps> = ({}) => {
       .finally(() => setLoadingRecentBookings(false));
   }, []);
 
+  const bookingsSummary = useSelector((state: RootState) => state.dashboard.bookingsSummary);
+  const stats = useSelector((state: RootState) => state.dashboard.statistics);
+  const pendingStats =
+    stats && stats.filter((stat) => stat.status === "pending")[0];
+  const completedStats =
+    stats && stats.filter((stat) => stat.status === "completed")[0];
+  const inProgressStats =
+    stats && stats.filter((stat) => stat.status === "in progress")[0];
+  const canceledStats =
+    stats && stats.filter((stat) => stat.status === "canceled")[0];
+  const booking_statictics = [
+    {
+      _id: completedStats?._id,
+      name: "Completed",
+      value: completedStats?.percentage,
+    },
+    {
+      _id: inProgressStats?._id,
+      name: "Processing",
+      value: inProgressStats?.percentage,
+    },
+    {
+      _id: pendingStats?._id,
+      name: "Pending",
+      value: pendingStats?.percentage,
+    },
+    {
+      _id: canceledStats?._id,
+      name: "Canceled",
+      value: canceledStats?.percentage,
+    },
+    // Add more data...
+  ];
+  const cards = useSelector((state: RootState) => state.dashboard.cards);
   const topProviders = useSelector(
     (state: RootState) => state.provider.topProviders
   );
@@ -136,7 +165,6 @@ const DashboardPage: FC<pageProps> = ({}) => {
   const recentBookings = useSelector(
     (state: RootState) => state.booking.recentBookings
   );
-  const cards = useSelector((state: RootState) => state.cards.cards);
 
   return (
     <section className="flex flex-col gap-6 pb-12 ">
@@ -147,30 +175,26 @@ const DashboardPage: FC<pageProps> = ({}) => {
       </div>
       <div className="flex flex-wrap gap-4 justify-start items-center px-6">
         {loading ? (
-          <LoadingCards/>
+          <LoadingCards />
         ) : (
           cards &&
           [
             {
               title: "Income",
-              // desc: string,
               number: `#${cards.totalEarnings}`,
             },
             {
               title: "Users",
-              // desc: string,
               number: `${cards.totalUsers}`,
             },
             {
               title: "Providers",
-              // desc: string,
               number: `${cards.totalProviders}`,
             },
             {
               title: "Services",
-              // desc: string,
               number: `${cards.totalServices}`,
-            }
+            },
           ].map((item) => {
             return <StatsDashboard key={item.title} {...item} />;
           })
@@ -181,26 +205,38 @@ const DashboardPage: FC<pageProps> = ({}) => {
           <header className="flex justify-between w-full px-4 py-6 items-center">
             <h1 className="font-semibold text-slate-700">Booking Summary</h1>
           </header>
-          <Barchart bar_data={bar_data} />
+          {loadingSummary ? (
+            <LoadingChart />
+          ) : bookingsSummary && bookingsSummary.length ? (
+            <Barchart bar_data={bar_data} />
+          ) : (
+            <div className="h-[300px] flex justify-center items-center bg-white shadow w-full">
+              Currently, there is no bookings summary 
+            </div>
+          )}
         </div>
         <div className="max-w-[40%] w-full bg-white rounded-xl border shadow-sm border-slate-300">
-          <header className="flex justify-between w-full px-4 py-6 items-center">
-            <h1 className="font-semibold text-slate-700">
-              Sales by categories
-            </h1>
-            <Link
+          <header className="flex justify-start w-full px-4 py-6 items-center">
+            <h1 className="font-semibold text-slate-700">Booking Statistics</h1>
+            {/* <Link
               className={buttonVariants({ variant: "afrunaBlue" })}
               href={"/category"}
             >
               View all
-            </Link>
+            </Link> */}
           </header>
           {/* <ResponsiveContainer> */}
           {/* </ResponsiveContainer> */}
           {/* <ResponsiveContainer width="100%" height="80%"> */}
-          {booking_statictics && booking_statictics.length ? (
+          {loadingStats ? (
+            <LoadingChart />
+          ) : booking_statictics && booking_statictics.length ? (
             <Piechart booking_statictics={booking_statictics} />
-          ) : null}
+          ) : (
+            <div className="h-[300px] flex justify-center items-center bg-white shadow w-full">
+              Currently, no bookings statistics info
+            </div>
+          )}
         </div>
       </div>
       <div className=" flex justify-between gap-6 items-center lg:px-6 max-w-[97%] w-full">

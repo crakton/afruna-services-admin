@@ -95,6 +95,25 @@ const providersPage: FC<pageProps> = ({}) => {
           </div>
           <div className="bg-orange-200 w-full h-[2px] " />
         </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         <ProvidersTable />
       </div>
     </section>

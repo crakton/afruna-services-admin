@@ -224,7 +224,7 @@ const AllProviders = () => {
 
   return (
     <div className="mt-4 pb-12 w-full">
-      <div className="h-[67vh] px-4 bg-white relative w-full rounded-xl border shadow-sm border-slate-300">
+      <div className="h-[67vh] px-4 bg-white overflow-auto relative w-full rounded-xl border shadow-sm border-slate-300">
         {loading ? (
           <div className="flex justify-center items-center h-full">
             <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />

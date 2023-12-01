@@ -199,7 +199,7 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
           <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
         </div>
       ) : (
-        <div className="h-[67vh] px-4 bg-white relative w-full rounded-xl border shadow-sm border-slate-300">
+        <div className="h-[67vh] px-4 bg-white overflow-auto relative w-full rounded-xl border shadow-sm border-slate-300">
           <table className="w-screen lg:w-full px-8 relative">
             <thead className="sticky top-0 bg-white">
               {table.getHeaderGroups().map((headerGroup) => (

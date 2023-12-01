@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import ChatService from "@/services/chat.service";
 import { ImSpinner3 } from "react-icons/im";
+import useSearchConvo from "@/hooks/useSearchConvo";
 
 interface pageProps {
   params: {
@@ -28,6 +29,10 @@ const ChatCovoPage: FC<pageProps> = ({ params: { userTOChatId } }) => {
   );
   const chatMessages = useSelector((state: RootState) => state.chat.messages);
   console.log(chatMessages);
+  const { searchConvoInput, searchConvoResult, setSearchConvoInput } =
+    useSearchConvo({
+      data: userConversations,
+    });
 
   useEffect(() => {
     const chatApis = new ChatService();
@@ -52,20 +57,22 @@ const ChatCovoPage: FC<pageProps> = ({ params: { userTOChatId } }) => {
           >
             Messages
           </h2>
-          <div className="ml-4 mr-6 bg-transparent flex items-center border border-[#D5D5E6] rounded-md overflow-hidden">
-            <input
-              type="text"
-              placeholder="Search Name, Id..."
-              className="w-full p-2 focus:outline-none placeholder:text-[#D2D2D2]"
-            />
-            <div className="w-14 text-[#D2D2D2]">
+          <div className="ml-4 mr-6 px-2 bg-transparent flex items-center border border-[#D5D5E6] rounded-md overflow-hidden">
+            <div className=" text-[#D2D2D2] flex justify-center items-center">
               <IoSearchOutline className="text-2xl" />
             </div>
+            <input
+              value={searchConvoInput}
+              onChange={(e) => setSearchConvoInput(e.target.value)}
+              type="search"
+              placeholder="Search by name or last message..."
+              className="w-full text-sm text-slate-500 placeholder:text-xs p-2 focus:outline-none placeholder:text-[#D2D2D2]"
+            />
           </div>
           <div className="mt-1 pt-1 h-[63vh] sm:h-[55vh] text-xl rounded-lg overflow-hidden overflow-y-auto">
             <div className="flex flex-col gap-1 p-4  pr-6 ">
               {userConversations && userConversations.length ? (
-                userConversations.map((user) => {
+                searchConvoResult.map((user) => {
                   return (
                     // <Suspense fallback={<>Loading...</>}>
                     <UsersList user={user} key={user._id} />
@@ -94,7 +101,6 @@ const ChatCovoPage: FC<pageProps> = ({ params: { userTOChatId } }) => {
                 {loading ? (
                   <div className="flex justify-center items-center h-full">
                     <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
-                    
                   </div>
                 ) : chatMessages && chatMessages.length > 0 ? (
                   <div className="flex h-full flex-col gap-1 px-4">
