@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react";
 import MainHeader from "./(routes)/_components/MainHeader";
-import SideBar from "./(routes)/_components/SideBar ";
+import SideBar from "./(routes)/_components/SideBar";
 
 interface layoutProps {
   children: ReactNode;

@@ -12,11 +12,11 @@ import { ICustomerBio } from "@/types/customer";
 import * as Select from "@radix-ui/react-select";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 // import { SelectItem } from "@radix-ui/react-select";
-import { sortType } from "@/constants/data";
 import useSearchCustomer from "@/hooks/useSearchCustomer";
 
 interface pageProps {}
 
+export const sortType = ["Ascending","Descending"]
 // const customers_Tab = ["All Customers", "Active", "Inactive", "Delected"];
 export type tableStatus = "all" | "active" | "inactive" | "deleted";
 

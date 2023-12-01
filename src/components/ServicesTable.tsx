@@ -23,9 +23,11 @@ import { toast } from "react-toastify";
 import * as Switch from "@radix-ui/react-switch";
 import useSearchService from "@/hooks/useSearchService";
 
-interface ServicesTableProps {}
+interface ServicesTableProps {
+  data: IService[]
+}
 
-const ServicesTable: FC<ServicesTableProps> = () => {
+const ServicesTable: FC<ServicesTableProps> = ({}) => {
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [data, setData] = useState<IService[]>([]);

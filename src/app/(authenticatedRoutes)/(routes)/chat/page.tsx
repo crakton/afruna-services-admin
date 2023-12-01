@@ -27,6 +27,7 @@ import { IoRemoveOutline } from "react-icons/io5";
 import { LoadingUser } from "../_components/LoadingUser";
 import useSearchUsers from "@/hooks/useSearchUsers";
 import useSearchConvo from "@/hooks/useSearchConvo";
+import ItemPicker from "@/components/ItemPicker";
 
 interface pageProps {}
 
@@ -86,9 +87,10 @@ const ChatPage: FC<pageProps> = ({}) => {
     useSearchConvo({
       data: userConversations,
     });
-  const { searchResult, searchInput, setSearchInput } = useSearchUsers({
-    data: usersToselect,
-  });
+  const { searchResult, searchInput, setSearchInput, setSortingType } =
+    useSearchUsers({
+      data: usersToselect,
+    });
 
   useEffect(() => {
     const chatApis = new ChatService();
@@ -198,6 +200,17 @@ const ChatPage: FC<pageProps> = ({}) => {
                 className="w-full py-[0.8rem] text-xs text-slate-600"
               />
             </fieldset>
+            {/* <fieldset className="flex">
+              <ItemPicker
+                items={["Ascending", "Descending"]}
+                placeholder={"Sorting"}
+                getSelected={(value) =>
+                  setSortingType(value as "ascending" | "descending")
+                }
+                contentClassName={"p-2 z-40 bg-white text-xs"}
+                triggerClassName="px-3 py-[0.59rem] rounded min-w-[12rem] w-full"
+              />
+            </fieldset> */}
 
             <div className=" h-[72vh] sm:h-[80vh] overflow-y-auto px-2 flex flex-col gap-1">
               {loadingUser ? (

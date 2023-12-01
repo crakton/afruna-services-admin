@@ -72,7 +72,7 @@ const page: FC<pageProps> = ({ }) => {
       case "unpublished":
         return <UnPublishServicesTable />;
       default:
-        return <ServicesTable />
+        return <ServicesTable data={searchResult}/>
     }
   }, [currentStatus, searchInput]);
 
@@ -146,11 +146,11 @@ const page: FC<pageProps> = ({ }) => {
           <div className="bg-orange-200 w-full h-[2px] " />
         </div>
 
-        {searchResult.map(ser => {
+        {/* {searchResult.map(ser => {
           return(
             <div className="text-xs">{ser.name}</div>
           )
-        })}
+        })} */}
 
         <Component.type />
       </div>

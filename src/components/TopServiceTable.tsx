@@ -33,17 +33,24 @@ const TopServiceTable: FC<TopServiceTableProps> = ({ topServices }) => {
         cell: (info) => info.getValue(),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
+      /**\
+       * <Image
+                 src={profile_data?.avatar?`https://${profile_data?.avatar}` :imgs.seller1}
+                alt="Your image"
+                fill
+              />
+       */
       {
         accessorKey: "service",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 ml-3 items-center ">
-            <Image
-              src={imgs.provider2}
-              alt={"pro"}
-              width={35}
-              height={35}
-              className="roun"
-            />
+            <div className=" w-[35px] h-[35px] relative overflow-hidden flex justify-center items-center">
+              <Image
+                src={imgs.provider1 ? imgs.provider1 : imgs.seller1}
+                alt="Your image"
+                fill
+              />
+            </div>
             <span className=" text-slate-600 text-xs">{row.original.name}</span>
           </div>
         ),
@@ -57,8 +64,18 @@ const TopServiceTable: FC<TopServiceTableProps> = ({ topServices }) => {
           <div className="flex justify-start items-center gap-1">
             <div className="relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
               {row.original.providerId?.avatar ? (
-                <Image src={row.original.providerId?.avatar} alt={"pro"} fill />
-              ) : <div className="w-full h-full flex justify-center items-center bg-slate-200 text-xs">{`${row.original.providerId.firstName.charAt(0).toUpperCase()} ${row.original.providerId?.lastName.charAt(0).toUpperCase()}`}</div>}
+                <Image
+                  src={`${row.original.providerId?.avatar}`}
+                  alt="Your image"
+                  fill
+                />
+              ) : (
+                <div className="w-full h-full flex justify-center items-center bg-slate-200 text-xs">{`${row.original.providerId.firstName
+                  .charAt(0)
+                  .toUpperCase()} ${row.original.providerId?.lastName
+                  .charAt(0)
+                  .toUpperCase()}`}</div>
+              )}
             </div>
 
             <span key={row.id} className=" text-slate-500 text-xs ml-3">
@@ -73,7 +90,9 @@ const TopServiceTable: FC<TopServiceTableProps> = ({ topServices }) => {
       {
         accessorKey: "price",
         cell: ({ row }) => (
-          <span className="text-afruna-blue text-xs">#{row.original.price}</span>
+          <span className="text-afruna-blue text-xs">
+            #{row.original.price}
+          </span>
         ),
         header: () => <span className="text-sm text-[#7C7C7C]">Amount</span>,
       },

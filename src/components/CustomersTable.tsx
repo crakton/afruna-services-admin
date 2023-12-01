@@ -63,9 +63,9 @@ const CustomersTable: FC<CustomersTableProps> = ({searchCustomerResult}) => {
         accessorKey: "customerName",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 ml-8 items-center ">
-            <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
+            <div className=" overflow-hidden rounded-full flex justify-center items-center">
               {row.original.avatar ? (
-                <Image src={row.original.avatar} alt={"pro"} fill />
+                <Image src={`https://${row.original.avatar}`} alt={"pro"} width={35} height={35} />
               ) : (
                 <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original.firstName
                   .charAt(0)
@@ -73,6 +73,9 @@ const CustomersTable: FC<CustomersTableProps> = ({searchCustomerResult}) => {
                   .charAt(0)
                   .toUpperCase()}`}</div>
               )}
+              {/* https://afruna-bucket.nyc3.digitaloceanspaces.com/1695214998012 
+                  nyc3.digitaloceanspaces.com/afruna-bucket/1701417858481
+              */}
             </div>
             <div className="flex flex-col justify-start">
               <span className=" text-slate-600 text-xs">{`${row.original.firstName} ${row.original.lastName}`}</span>
@@ -134,7 +137,7 @@ const CustomersTable: FC<CustomersTableProps> = ({searchCustomerResult}) => {
           return (
             <span className="flex justify-between items-center w-fit">
               <span
-                className={` ${
+                className={`${
                   row.original.online ? "bg-blue-500" : "bg-lime-600"
                 } p-1 rounded-full mr-1 `}
               />

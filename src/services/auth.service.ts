@@ -60,11 +60,12 @@ export default class Auth {
     }
 
     logout() {
-        toast.success("Logged Out.");
         sessionStorage.clear()
         Cookies.remove('Token')
 		this.store.dispatch(logout());
-		this.router?.push("/auth")
-			.finally(() => this.store.dispatch(updateUserBio({} as IUserBio)));
+        this.store.dispatch(updateUserBio({} as IUserBio))
+        toast.success(`Log out succesfully`)
+		this.router?.push("/")
+			
 	}
 }

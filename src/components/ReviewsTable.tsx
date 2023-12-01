@@ -63,7 +63,7 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
         header: () => <span className="text-xs text-[#7C7C7C]">ID</span>,
       },
       {
-        accessorKey: "bookingdate",
+        accessorKey: "date",
         cell: ({ row }) => {
           const createdAtDate = new Date(row.original.createdAt);
           const year = createdAtDate.getFullYear();
@@ -86,7 +86,7 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
           );
         },
         header: () => (
-          <span className="text-xs text-[#7C7C7C] ml-4">Booking Date</span>
+          <span className="text-xs text-[#7C7C7C] ml-4">Date</span>
         ),
       },
       {

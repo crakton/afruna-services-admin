@@ -8,7 +8,8 @@ import Link from "next/link";
 import { FC, useCallback, useState } from "react";
 import Image from "next/image";
 import { imgs } from "@/constants/images";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import Auth from "@/services/auth.service";
 
 interface SideBar {}
 
@@ -20,6 +21,11 @@ const SideBar: FC<SideBar> = ({}) => {
   const [showSubNav, setShowSubNav] = useState<boolean>(false);
   const toggleAccount = useCallback(() => setShow((prev) => !prev), []);
   const toggleSubNav = useCallback(() => setShowSubNav((prev) => !prev), []);
+  const router = useRouter();
+  const handleLogOut = useCallback(() => {
+    const authApis = new Auth(router);
+        authApis.logout()
+    }, []);
 
   return (
     <>
@@ -110,7 +116,7 @@ const SideBar: FC<SideBar> = ({}) => {
                 );
               }
             )}
-            <Button
+            <Button onClick={handleLogOut}
               className={`w-full relative group rounded-md h-8 pl-6 overflow-hidden gap-2 flex justify-start items-center font-medium text-xs text-[#A7B7DD] hover:text-slate-950 hover:font-extrabold bg-[#F4F5FF] hover:bg-slate-300 transition duration-300`}
             >
               <TbLogout className="text-xl" />
@@ -163,7 +169,7 @@ const SideBar: FC<SideBar> = ({}) => {
           <div className="border-b mt-2 border-slate-300 w-full h-[2px]" />
           <Button
             variant={"primary"}
-            // onClick={handleLogOut}
+            onClick={handleLogOut}
             className="flex mt-2 text-white hover:bg-[#FFF9F2] rounded-md hover:scale-105 transition-all duration-300 text-sm p-1 justify-center items-center gap-2"
           >
             <TbLogout className="text-xl" />
