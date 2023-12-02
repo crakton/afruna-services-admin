@@ -143,7 +143,7 @@ const OtherTransactionstable: FC<OtherTransactionstableProps> = ({
           </div>
         ) : transaction?.length > 0 ? (
           <table className="w-screen lg:w-full px-8 relative">
-            <thead className="sticky top-0 bg-white">
+            <thead className="sticky z-20 top-0 bg-white">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (

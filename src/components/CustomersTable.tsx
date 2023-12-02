@@ -248,7 +248,7 @@ const CustomersTable: FC<CustomersTableProps> = ({ searchCustomerResult }) => {
       ) : (
         <div className="h-[67vh] px-4 bg-white relative w-full rounded-xl border shadow-sm border-slate-300">
           <table className="w-screen lg:w-full px-8 relative">
-            <thead className="sticky top-0 bg-white">
+            <thead className="sticky top-0 z-20 bg-white">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (

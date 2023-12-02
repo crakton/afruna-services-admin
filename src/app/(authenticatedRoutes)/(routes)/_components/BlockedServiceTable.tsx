@@ -49,32 +49,57 @@ const BlockedServiceTable: FC<ServicesTableProps> = () => {
       },
       {
         accessorKey: "service",
-        cell: ({ row }) => (
-          <div key={row.id} className="flex gap-2 items-center ml-3 ">
-            <Image
-              src={imgs.provider2}
-              alt={"pro"}
-              width={35}
-              height={35}
-              className="rounded"
-            />
-            <span className=" text-slate-600 text-xs">{row.original.name}</span>
+        cell: ({ row }) => {
+          return (
+            <div key={row.id} className="flex gap-2 items-center ml-2">
+            <div className=" relative overflow-hidden rounded-md w-[35px] h-[35px] flex justify-center items-center">
+              {row.original?.photos?.length ? (
+                <Image
+                  src={
+                    row.original.photos[0].includes("https://")
+                      ? row.original.photos[0]
+                      : `https://${row.original.photos[0]}`
+                  }
+                  alt="Your image"
+                  fill
+                />
+              ) : (
+                <Image src={imgs.fallback_ser_img} alt="Your image" fill />
+              )}
+            </div>
+            <span className=" text-slate-600 text-xs">{`${row.original?.name}`}</span>
           </div>
-        ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C] ml-3">Service</span>
-        ),
+          )
+        },
+        header: () => <span className="text-sm text-[#7C7C7C] ml-2">Services</span>,
       },
       {
         accessorKey: "provider",
         cell: ({ row }) => (
-          <span key={row.id} className=" text-slate-500 text-xs ml-3">
-            {`${row.original.providerId?.firstName} ${row.original.providerId?.lastName}`}
-          </span>
+          <div key={row.id} className="flex gap-2 items-center">
+            <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
+              {row.original?.providerId?.avatar ? (
+                <Image
+                  src={
+                    row.original.providerId.avatar.includes("https://")
+                      ? row.original.providerId.avatar
+                      : `https://${row.original.providerId.avatar}`
+                  }
+                  alt="Your image"
+                  fill
+                />
+              ) : (
+                <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original?.providerId?.firstName
+                  .charAt(0)
+                  .toUpperCase()} ${row.original.providerId.lastName
+                  .charAt(0)
+                  .toUpperCase()}`}</div>
+              )}
+            </div>
+            <span className=" text-slate-600 text-xs">{`${row.original?.providerId?.firstName} ${row.original?.providerId?.lastName}`}</span>
+          </div>
         ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C] ml-3">Provider</span>
-        ),
+        header: () => <span className="text-sm text-[#7C7C7C] ">Provider</span>,
       },
       {
         accessorKey: "category",
@@ -211,29 +236,27 @@ const BlockedServiceTable: FC<ServicesTableProps> = () => {
           <span className="text-sm text-[#7C7C7C] ml-3">Verification</span>
         ),
       },
+      
       {
         accessorKey: "blocked",
         cell: ({ row }) => {
           const blocked = row.original.blocked;
-          const serviceId = row.original._id!;
-
-          const handleBlockService = () => {
-              serviceApis.blockService(serviceId)
+          const serviceId = row.original?._id;
+          const handleBlockService = (serviceId: string) => {
+            serviceApis
+              .blockService(serviceId)
               .then((data) => console.log(data));
-              serviceApis.getServices()
           };
           return (
             <div className="ml-3">
               <Switch.Root
-                defaultChecked={!blocked}
-                onCheckedChange={() => {
-                  console.log("=== something ===");
-                }}
+                // defaultChecked={!blocked}
+                onCheckedChange={() => handleBlockService(serviceId)}
                 className={`${
-                  blocked ? "data-[state=checked]:bg-rose-400" : "bg-gray-300"
-                } w-[50px] h-[23px] rounded-full relative outline-none cursor-pointer`}
+                  blocked && 'bg-red-200'
+                } bg-gray-300 w-[50px] h-[23px] rounded-full relative outline-none cursor-pointer`}
               >
-                <Switch.Thumb className="block w-[18px] h-[18px]  bg-white rounded-full transition-transform duration-300 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[30px]" />
+                <Switch.Thumb className="block w-[18px] h-[18px] bg-white rounded-full transition-transform duration-300 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[30px]" />
               </Switch.Root>
             </div>
           );

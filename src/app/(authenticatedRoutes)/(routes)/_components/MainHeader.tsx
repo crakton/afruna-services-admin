@@ -83,13 +83,13 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
         </div>
 
         <div className="flex justify-center items-center gap-2 lg:gap-3">
-          <Link href={"/"} className="relative">
+          {/* <Link href={"/"} className="relative">
             <IoIosNotifications className="text-[1.4rem] sm:text-[1.6rem]" />
             <span className="absolute top-0 right-0 text-white bg-rose-400 w-[0.75rem] h-[0.75rem] sm:w-[0.8rem] sm:h-[0.8rem] text-[8px] rounded-full flex justify-center items-center">
               {" "}
               3
             </span>
-          </Link>
+          </Link> */}
           <ItemPicker
             mobileClassName="hidden md:flex lg:hidden xl:flex text-sm lg:text-base"
             triggerClassName="flex gap-4 items-center"

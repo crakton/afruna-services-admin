@@ -125,7 +125,7 @@ const TopServiceTable: FC<TopServiceTableProps> = ({ topServices }) => {
   return (
     <div className="h-[40vh] px-4 bg-white relative rounded-lg overflow-auto">
       <table className="w-screen lg:w-full px- relative">
-        <thead className="sticky top-0 bg-white">
+        <thead className="sticky top-0 z-20 bg-white">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (

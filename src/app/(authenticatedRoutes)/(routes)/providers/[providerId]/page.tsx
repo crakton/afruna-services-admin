@@ -9,7 +9,7 @@ import { RootState, store } from "@/redux/store";
 import Provider from "@/services/provider.service";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { BsStarHalf } from "react-icons/bs";
+import { BsStar, BsStarFill, BsStarHalf } from "react-icons/bs";
 import { IoMdCheckmark } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
@@ -17,8 +17,8 @@ import { LoadingProviderDetails } from "../../_components/LoadingProviderDetails
 import { setConversations } from "@/redux/features/app/chat_slice";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import location from '../../../../../assests/imgs/location.png'
-import star from '../../../../../assests/imgs/star.png'
+import location from "../../../../../assests/imgs/location.png";
+import star from "../../../../../assests/imgs/star.png";
 import axios, { AxiosError } from "axios";
 import { handleAuthErrors } from "@/utils/auth.util";
 import { TErrorResponse, TSuccessResponse } from "@/types/auth.types";
@@ -48,28 +48,31 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
     (state: RootState) => state.provider.providerBookings
   );
   const loading = useSelector((state: RootState) => state.loading.loading);
-  const [documents, setDocuments] = useState<any[]>([])
-  const [cards, setCards] = useState<any>()
+  const [documents, setDocuments] = useState<any[]>([]);
+  const [cards, setCards] = useState<any>();
 
   const getCardInfo = async (pid: string) => {
-     try {
-        const { data } = await axios.get<TSuccessResponse<any>>(`/api/services/${pid}/cards`, headers)
-        setCards(data.data)
-      } catch (error) {
-        handleAuthErrors(error as AxiosError<TErrorResponse>)
-      } 
-  }
+    try {
+      const { data } = await axios.get<TSuccessResponse<any>>(
+        `/api/services/${pid}/cards`,
+        headers
+      );
+      setCards(data.data);
+    } catch (error) {
+      handleAuthErrors(error as AxiosError<TErrorResponse>);
+    }
+  };
 
   useEffect(() => {
     providerApis.getProviders();
     providerApis.getProviderServices(providerId);
     providerApis.getProviderBookings(providerId);
 
-    getCardInfo(providerId)
+    getCardInfo(providerId);
 
     // setDocuments([...providerServices[0]?.insuranceCoverage, ...providerServices[0]?.licenseAndCertification])
   }, [providerId]);
-  
+
   const providers = useSelector((state: RootState) => state.provider.providers);
   const provider = providers.filter(
     (provider) => provider._id === providerId
@@ -100,7 +103,8 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
                   <Image src={provider.avatar} alt="Your image" fill />
                 ) : (
                   <div className="h-full w-full bg-slate-300 flex justify-center items-center text-sm">
-                    {provider.firstName.charAt(0).toUpperCase()} {provider.lastName.charAt(0).toUpperCase()}
+                    {provider.firstName.charAt(0).toUpperCase()}{" "}
+                    {provider.lastName.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
@@ -124,13 +128,13 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
               <Button
                 onClick={() => router.push(`/chat`)}
                 variant={"deepgradientblue"}
-                className="mt-3"
+                className="mt-3 mb-12"
               >
                 Chat Provider
               </Button>
-              <Button variant={"afrunaOutline"} className="mt-1 ">
+              {/* <Button variant={"afrunaOutline"} className="mt-1 ">
                 Suspend Provider
-              </Button>
+              </Button> */}
             </aside>
             <aside className="flex flex-col gap-8 w-full">
               <div className=" overflow-hidden w-full bg-white  lg:px-6 rounded-xl border shadow-sm border-slate-300">
@@ -161,7 +165,7 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
       )}
       {/* Services */}
       <div className="max-w-[96%] w-full ml-6 px-8  flex flex-col gap-6">
-        <section className="flex flex-col lg:max-w-[95%] bg-white p-8 rounded-lg">
+        {/* <section className="flex flex-col lg:max-w-[95%] bg-white p-8 rounded-lg">
           <div className="header flex justify-between mb-5 items-center">
             <h3 className="text-lg lg:pl-0 lg:text-lg leading-3 text-afruna-blue font-bold">
               Services
@@ -172,7 +176,7 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
                   items={["A", "B"]}
                   placeholder={"A-Z"}
                   getSelected={(val) => console.log(val as string)}
-                  // contentClassName={"p-2 bg-white text-xs"}
+                  contentClassName={"p-2 bg-white text-xs"}
                   triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
                 />
               </fieldset>
@@ -188,49 +192,62 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
           </div>
 
           <div className="services flex flex-col gap-5">
-            {providerServices.map(service => (
+            {providerServices.map((service) => (
               <div key={service._id} className="service">
-                  <Card className="w-full rounded-[8px] bg-[#FAFCFF] lg:py-[21px] lg:px-[22px]">
-                      <CardContent className="flex flex-col lg:flex lg:flex-row items-center justify-between">
-                          <div className="img-detail lg:flex lg:flex-row lg:items-center lg:justify-center">
-                              <Image className="lg:mr-[21px] mb-[25px] lg:mb-0 w-full lg:w-[231px]" src="" alt="" />
-                              <div className="details flex flex-col mx-[25px] mb-[30px] lg:mx-0 lg:mb-0 justify-between gap-5">
-                                  <div className="top flex items-center justify-between gap-[30px]">
-                                      <span className="text-base mr-10 font-bold px-[10px] py-[8px] text-[#2D36FF] bg-[#D8D9FF78] rounded-[2px]">{service.category.name}</span>
-                                      <span className="flex items-center gap-2">
-                                          {
-                                              service.ratings === 0 ? <span>Rating</span>
-                                              : [...Array(Math.floor(service.ratings))].map((v, i) => < Image key={v} src={star} alt="" />)
-                                          }
-                                          {service.ratings}
-                                      </span>
-                                  </div>
-                                  <span className="font-bold text-lg text-custom-blue">{service.name}</span>
-                                  <div className="location flex items-center gap-[10px]">
-                                      <Image src={location} alt="" />
-                                      <span className="text-[#707070] text-base font-semibold">{service.state} { service.country }</span>
-                                  </div>
-                              </div>
-                          </div>
-                      </CardContent>
-                  </Card>
+                <Card className="w-full rounded-[8px] bg-[#FAFCFF] lg:py-[21px] lg:px-[22px]">
+                  <CardContent className="flex flex-col lg:flex lg:flex-row items-center justify-between">
+                    <div className="img-detail lg:flex lg:flex-row lg:items-center lg:justify-center">
+                      <Image
+                        className="lg:mr-[21px] mb-[25px] lg:mb-0 w-full lg:w-[231px]"
+                        src=""
+                        alt=""
+                      />
+                      <div className="details flex flex-col mx-[25px] mb-[30px] lg:mx-0 lg:mb-0 justify-between gap-5">
+                        <div className="top flex items-center justify-between gap-[30px]">
+                          <span className="text-base mr-10 font-bold px-[10px] py-[8px] text-[#2D36FF] bg-[#D8D9FF78] rounded-[2px]">
+                            {service.category.name}
+                          </span>
+                          <span className="flex items-center gap-2">
+                            {service.ratings === 0 ? (
+                              <span>Rating</span>
+                            ) : (
+                              [...Array(Math.floor(service.ratings))].map(
+                                (v, i) => <Image key={v} src={star} alt="" />
+                              )
+                            )}
+                            {service.ratings}
+                          </span>
+                        </div>
+                        <span className="font-bold text-lg text-custom-blue">
+                          {service.name}
+                        </span>
+                        <div className="location flex items-center gap-[7px]">
+                          <Image src={location} width={10} height={10} alt="" />
+                          <span className="text-[#707070] font-semibold text-sm">
+                            {service.state} {service.country}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             ))}
           </div>
-        </section>
+        </section> */}
         {/* services data */}
         <section className="flex flex-col lg:max-w-[95%] bg-white p-8 rounded-lg">
-          <div className="header flex justify-between mb-5 items-center">
+          <div className="header flex justify-start mb-12 items-center">
             <h3 className="text-lg lg:pl-0 lg:text-lg leading-3 text-afruna-blue font-bold">
-              Bookings
+              Provider Services
             </h3>
-            <div className="flex justify-end gap-5 items-center">
+            {/* <div className="flex justify-end gap-5 items-center">
               <fieldset className="flex">
                 <ItemPicker
                   items={["A", "B"]}
                   placeholder={"A-Z"}
                   getSelected={(val) => console.log()}
-                  // contentClassName={"p-2 bg-white text-xs"}
+                  contentClassName={"p-2 bg-white text-xs"}
                   triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
                 />
               </fieldset>
@@ -242,81 +259,122 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
                 />
                 <IoSearchOutline className="text-slate-300 text-2xl " />
               </fieldset>
-            </div>
+            </div> */}
           </div>
           {/* Booking */}
           <div className="bookings flex flex-col gap-5">
-            {providerBookings.map((booking) => (
-              <div
-                key={booking.id}
+            {providerServices && providerServices.length > 0 ?
+             providerServices.map((ser) => (
+              <div key={ser._id} className="w-full border p-4 rounded-lg">
+                <div
+                
                 className="flex flex-col items-center sm:flex-row lg:max-w-[80%] w-full gap-6"
               >
-                <div className="flex justify-center items-center w-full h-[12rem] sm:w-[15rem] sm:h-[9rem]">
-                  <div className="w-full h-full overflow-hidden relative rounded-md">
-                    <Image src={imgs.review1} alt="review" priority fill />
+                <div className="w-fit">
+                  <div className="flex justify-center items-center w-[18rem]  h-[12rem] sm:h-[14rem] ">
+                    <div className="w-full h-full overflow-hidden relative rounded-md">
+                      {ser.photos.length ? (
+                        <Image
+                          src={
+                            ser.photos[0].includes("https://")
+                              ? ser.photos[0]
+                              : `https://${ser.photos[0]}`
+                          }
+                          alt="Your image"
+                          fill
+                        />
+                      ) : (
+                        <Image
+                          src={imgs.fallback_ser_img}
+                          alt="Your image"
+                          fill
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-col justify-start gap-4  w-full">
+                <div className="flex flex-col justify-start gap-4 w-full">
                   <div className="flex justify-start items-center gap-2">
-                    <span className="lg:max-w-[27%] w-full text-black font-bold">
-                      {booking.name}
+                    <span className="lg:max-w-[35%] w-full text-black font-bold">
+                      Service name
                     </span>
-                    <span className="sm:text-sm flex justify-end lg:justify-start text-[0.65rem] lg:max-w-[73%] w-full text-afruna-gray">
+                    <span className="sm:text-sm flex justify-end lg:justify-start font-bold lg:max-w-[65%] w-full text-afruna-gray">
+                      
+                        {ser.name}
+                    </span>
+                  </div>
+                  <div className="flex justify-start items-center gap-2">
+                    <span className="lg:max-w-[35%] w-full text-black font-bold text-sm">
+                      Status
+                    </span>
+                    <span className="sm:text-sm flex justify-end lg:justify-start text-[0.65rem] lg:max-w-[65%] w-full text-afruna-gray">
                       <p className="bg-rose-100 text-red-700 px-2 py-1 w-fit ">
-                        {booking.status}
+                        {ser.status}
                       </p>
                     </span>
                   </div>
                   <div className="flex justify-start items-center gap-2">
-                    <span className="text-xs  lg:max-w-[27%] w-full text-black font-bold">
-                      Booking Date
+                    <span className="text-xs  lg:max-w-[35%] w-full text-black font-bold">
+                      Created on
                     </span>
-                    <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
-                      :January 23, 2023
+                    <span className="text-xs text-end lg:text-start lg:max-w-[65%] w-full text-slate-800">
+                      January 23, 2023
                     </span>
                   </div>
                   <div className="flex justify-start items-center gap-2">
-                    <span className="text-xs  lg:max-w-[27%] w-full text-black font-bold">
+                    <span className="text-xs  lg:max-w-[35%] w-full text-black font-bold">
                       Amount
                     </span>
-                    <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
-                      :#{booking.price}
+                    <span className="text-xs text-end lg:text-start lg:max-w-[65%] w-full text-slate-800">
+                      #{ser.price}
                     </span>
                   </div>
                   <div className="flex justify-start items-center gap-2">
-                    <span className="text-xs lg:max-w-[27%] w-full text-afruna-blue font-bold">
+                    <span className="text-xs  lg:max-w-[35%] w-full text-black font-bold">
+                      Rating
+                    </span>
+                    {/* <span className="text-xs  text-slate-800">
+                      #{ser.price}
+                    </span> */}
+                    <div className="flex justify-start items-center gap-1 text-[#FF9E3A] text-xs text-end lg:text-start lg:max-w-[65%] w-full">
+                      {Array(5)
+                        .fill("_")
+                        .map((star, index) => (
+                          <div
+                            className={`${
+                              index < ser.ratings
+                                ? "text-[#FF9E3A]"
+                                : "text-slate-500"
+                            }  text-sm md:text-xs cursor-pointer`}
+                            key={index}
+                          >
+                            {index < ser.ratings ? (
+                              index === Math.floor(ser.ratings) &&
+                              ser.ratings % 1 !== 0 ? (
+                                <BsStarHalf />
+                              ) : (
+                                <BsStarFill />
+                              )
+                            ) : (
+                              <BsStar />
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                  <div className="flex justify-start items-center gap-2">
+                    <span className="text-xs lg:max-w-[35%] w-full text-afruna-blue font-bold">
                       Location
                     </span>
-                    <span className="text-xs text-end lg:text-start lg:max-w-[73%] w-full text-[#787878]">
-                      :{booking.state}, {booking.country}
+                    <span className="text-xs text-end lg:text-start lg:max-w-[65%] w-full text-slate-800">
+                      {ser.state}, {ser.country}
                     </span>
-                  </div>
-                  <div className="flex justify-start items-center gap-2">
-                    <span className="lg:max-w-[27%] sm:text-xs w-full text-black font-bold">
-                      Provider
-                    </span>
-                    <div className="flex flex-col lg:flex-row gap-2 lg:items-center lg:justify-start justify-end items-end lg:text-start lg:max-w-[73%] w-full">
-                      <div className="flex items-center gap-1">
-                        <div className="w-[1.3rem] h-[1.3rem] sm:w-[2rem] sm:h-[2rem] overflow-hidden rounded-full relative flex justify-center items-center">
-                          <Image
-                            src={imgs.seller1}
-                            alt="review"
-                            priority
-                            fill
-                          />
-                        </div>
-                        <span className="sm:text-xs text-[0.65rem] text-slate-600">
-                          Jahimani Masilala
-                        </span>
-                      </div>
-                      <span className="sm:text-xs text-[0.65rem] text-[#787878]">
-                        jahimani@gmail.com
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
-            ))}
+              </div>
+            )) : <div className=" h-20 w-full flex justify-center items-center text-center font-bold">Currently, there is no service by this vendor</div>
+            }
           </div>
         </section>
       </div>

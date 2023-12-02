@@ -59,7 +59,7 @@ export default class Service {
   async verifyService(serviceId: string) {
     try {
       const { data } = await axios.put<TSuccessResponse<IServiceCategory>>(
-        `/api/services/${serviceId}/verify`,
+        `/api/services/${serviceId}/verify`,null,
         headers
       );
       return data.data;
@@ -71,9 +71,10 @@ export default class Service {
   async blockService(serviceId: string) {
     try {
       const { data } = await axios.put<TSuccessResponse<IServiceCategory>>(
-        `/api/admin/block/${serviceId}/service`,
+        `/api/admin/block/${serviceId}/service`,null,
         headers
       );
+      this.getServices()
       return data.data;
     } catch (error) {
       handleAuthErrors(error as AxiosError<TErrorResponse>);

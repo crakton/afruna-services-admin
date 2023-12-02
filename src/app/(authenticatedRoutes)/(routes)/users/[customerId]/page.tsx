@@ -83,7 +83,8 @@ export default function CustomerPage({ params: { customerId } }: Params) {
                 <span className=" ">
                   Joined since {`${day} ${month}, ${year}`}
                 </span>
-                <span className=" ">state, {customer?.country}</span>
+                {/* state,  */}
+                <span className=" ">{customer?.country}</span>
                 <span className=" ">{customer?.email}</span>
                 <div className="flex flex-col ">
                   <span className="text-sm text-black">

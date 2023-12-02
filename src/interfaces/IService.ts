@@ -8,7 +8,7 @@ export interface IService {
   insuranceCoverage: any[];
   licenseAndCertification: any[];
   name: string;
-  photos?: [];
+  photos: any;
   price: number;
   status: string;
   providerId: {

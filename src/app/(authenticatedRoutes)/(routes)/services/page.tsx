@@ -123,7 +123,7 @@ const Page: FC<pageProps> = ({ }) => {
           </Link> */}
         </div>
       </div>
-      <div className="flex flex-col gap-6 px-6 xl:pr-16 w-full">
+      <div className="flex flex-col gap-6 px-6 xl:pr-10 w-full">
         <div className="flex flex-col gap-1 w-full">
           <div className="flex justify-start gap-8 items-center">
             {Services_Tab.map((item, idx) => (
