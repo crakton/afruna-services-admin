@@ -97,9 +97,12 @@ const RecentBookingTable: FC<RecentBookingTableProps> = ({
           <div key={row.id} className="flex gap-2 items-center">
             <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
               {row.original?.providerId?.avatar ? (
-                // <Image src={row.original.providerId.avatar} alt={"pro"} fill />
                 <Image
-                  src={`${row.original.providerId.avatar}`}
+                  src={
+                    row.original.providerId.avatar.includes("https://")
+                      ? row.original.providerId.avatar
+                      : `https://${row.original.providerId.avatar}`
+                  }
                   alt="Your image"
                   fill
                 />

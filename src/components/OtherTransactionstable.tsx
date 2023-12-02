@@ -111,11 +111,11 @@ const OtherTransactionstable: FC<OtherTransactionstableProps> = ({
 
   return (
     <div className="mt-4 pb-12 overflow-hidden w-full bg-white px-4 max-w-[100%] md:max-w-[85%] rounded-xl border shadow-sm border-slate-300">
-      <header className="flex justify-between items-center py-2 mb-2 border-b border-slate-300">
+      <header className="flex justify-start items-center py-2 mb-2 border-b border-slate-300">
         <h1 className="font-bold text-slate-700 text-lg">
           Transactions history
         </h1>
-        <div className="flex justify-end items-center gap-3">
+        {/* <div className="flex justify-end items-center gap-3">
           <fieldset className="flex">
             <ItemPicker
               items={["A", "B"]}
@@ -134,7 +134,7 @@ const OtherTransactionstable: FC<OtherTransactionstableProps> = ({
               triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
             />
           </fieldset>
-        </div>
+        </div> */}
       </header>
       <div className="h-[48vh] px-4 bg-white relative rounded-lg overflow-auto">
         {loading ? (

@@ -59,7 +59,16 @@ export default function CustomerPage({ params: { customerId } }: Params) {
           <div className="flex flex-col justify-start gap-2 px-4 md:px-10 xl:pr-32 w-full">
             <div className="w-[6rem] h-[6rem] overflow-hidden relative rounded-full">
               {customer?.avatar ? (
-                <Image src={customer.avatar} alt="provider" priority fill />
+                <Image
+                  src={
+                    customer.avatar.includes("https://")
+                      ? customer.avatar
+                      : `https://${customer.avatar}`
+                  }
+                  alt="provider"
+                  priority
+                  fill
+                />
               ) : (
                 <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-sm">{`${customer?.firstName
                   .charAt(0)

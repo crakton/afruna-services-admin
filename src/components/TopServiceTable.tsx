@@ -44,13 +44,13 @@ const TopServiceTable: FC<TopServiceTableProps> = ({ topServices }) => {
         accessorKey: "service",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 ml-3 items-center ">
-            <div className=" w-[35px] h-[35px] relative overflow-hidden flex justify-center items-center">
+            {/* <div className=" w-[35px] h-[35px] relative overflow-hidden flex justify-center items-center">
               <Image
                 src={imgs.provider1 ? imgs.provider1 : imgs.seller1}
                 alt="Your image"
                 fill
               />
-            </div>
+            </div> */}
             <span className=" text-slate-600 text-xs">{row.original.name}</span>
           </div>
         ),
@@ -65,7 +65,12 @@ const TopServiceTable: FC<TopServiceTableProps> = ({ topServices }) => {
             <div className="relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
               {row.original.providerId?.avatar ? (
                 <Image
-                  src={`${row.original.providerId?.avatar}`}
+                  // src={`${row.original.providerId?.avatar}`}
+                  src={
+                    row.original.providerId.avatar.includes("https://")
+                      ? row.original.providerId.avatar
+                      : `https://${row.original.providerId.avatar}`
+                  }
                   alt="Your image"
                   fill
                 />

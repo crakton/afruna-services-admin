@@ -19,10 +19,10 @@ import { ICustomerBio } from "@/types/customer";
 import { ImSpinner3 } from "react-icons/im";
 
 interface CustomersTableProps {
-  searchCustomerResult: ICustomerBio[]
+  searchCustomerResult: ICustomerBio[];
 }
 
-const CustomersTable: FC<CustomersTableProps> = ({searchCustomerResult}) => {
+const CustomersTable: FC<CustomersTableProps> = ({ searchCustomerResult }) => {
   const loading = useSelector((state: RootState) => state.loading.loading);
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<ICustomerBio[]>([]);
@@ -65,7 +65,16 @@ const CustomersTable: FC<CustomersTableProps> = ({searchCustomerResult}) => {
           <div key={row.id} className="flex gap-2 ml-8 items-center ">
             <div className=" overflow-hidden rounded-full flex justify-center items-center">
               {row.original.avatar ? (
-                <Image src={`https://${row.original.avatar}`} alt={"pro"} width={35} height={35} />
+                <Image
+                  src={
+                    row.original.avatar.includes("https://")
+                      ? row.original.avatar
+                      : `https://${row.original.avatar}`
+                  }
+                  alt={"pro"}
+                  width={35}
+                  height={35}
+                />
               ) : (
                 <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original.firstName
                   .charAt(0)
