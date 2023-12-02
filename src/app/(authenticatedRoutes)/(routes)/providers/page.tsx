@@ -21,7 +21,7 @@ const Providers_Tab = [
 ];
 
 export type tableStatus = 'all' | 'pending' | 'verified' | 'rejected' | 'delected'
-const providersPage: FC<pageProps> = ({}) => {
+const ProvidersPage: FC<pageProps> = ({}) => {
   
   const currentStatus = useSelector((state: RootState) => state.tableStatus.status)
   let providers = useSelector((state: RootState) => state.provider.providers)
@@ -56,21 +56,21 @@ const providersPage: FC<pageProps> = ({}) => {
           <h1 className="text-lg lg:pl-0 lg:text-lg leading-3 text-afruna-blue font-bold">
             Providers
           </h1>
-          <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
+          {/* <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
             <input type="text" placeholder="Search..."  className="w-full py-[0.6rem] text-xs text-slate-600" />
             <IoSearchOutline className="text-slate-300 text-2xl " />
-          </fieldset>
+          </fieldset> */}
         </div>
         <div className="flex justify-end items-center gap-6">
-          <fieldset className="flex">
+          {/* <fieldset className="flex">
             <ItemPicker
               items={["A", "B"]}
               placeholder={"A-Z"}
               getSelected={(val) => console.log(val as string)}
-              // contentClassName={"p-2 bg-white text-xs"}
+              contentClassName={"p-2 bg-white text-xs"}
               triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
             />
-          </fieldset>
+          </fieldset> */}
         </div>
       </div>
       <div className="flex flex-col gap-6 px-6 xl:pr-32 w-full">
@@ -120,4 +120,4 @@ const providersPage: FC<pageProps> = ({}) => {
   );
 };
 
-export default providersPage;
+export default ProvidersPage;

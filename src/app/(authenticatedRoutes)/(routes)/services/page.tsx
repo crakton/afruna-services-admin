@@ -26,7 +26,7 @@ const Services_Tab = [
 ];
 export type tableStatus = 'all' | 'pending' | 'verified' | 'blocked' | 'unpublished'
 
-const page: FC<pageProps> = ({ }) => {
+const Page: FC<pageProps> = ({ }) => {
   const currentStatus = useSelector((state: RootState) => state.tableStatus.status)
   let services = useSelector((state: RootState) => state.service.services)
 
@@ -92,7 +92,7 @@ const page: FC<pageProps> = ({ }) => {
           <h1 className="text-lg lg:pl-0 lg:text-xl leading-3 text-afruna-blue font-bold">
             All Services
           </h1>
-          <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
+          {/* <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
           <div className=" text-[#D2D2D2] flex justify-center items-center">
                   <IoSearchOutline className="text-2xl" />
                 </div>
@@ -103,18 +103,18 @@ const page: FC<pageProps> = ({ }) => {
                   placeholder="Search by name or last message..."
                   className="w-full text-sm text-slate-500 placeholder:text-xs p-2 focus:outline-none placeholder:text-[#D2D2D2]"
                 />
-          </fieldset>
+          </fieldset> */}
         </div>
         <div className="flex justify-end items-center gap-6">
-          <fieldset className="flex">
+          {/* <fieldset className="flex">
             <ItemPicker
               items={["A", "B"]}
               placeholder={"A-Z"}
               getSelected={(val) => ''}
-              // contentClassName={"p-2 bg-white text-xs"}
+              contentClassName={"p-2 bg-white text-xs"}
               triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
             />
-          </fieldset>
+          </fieldset> */}
           {/* <Link
             href={"/create_service"}
             className={buttonVariants({ variant: "greenbutton" })}
@@ -158,4 +158,4 @@ const page: FC<pageProps> = ({ }) => {
   );
 };
 
-export default page;
+export default Page;

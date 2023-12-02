@@ -85,9 +85,7 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
             </div>
           );
         },
-        header: () => (
-          <span className="text-xs text-[#7C7C7C] ml-4">Date</span>
-        ),
+        header: () => <span className="text-xs text-[#7C7C7C] ml-4">Date</span>,
       },
       {
         accessorKey: "provider",
@@ -96,12 +94,22 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
             <div className="w-[35px] h-[35px] relative overflow-hidden rounded-full flex justify-center items-center">
               {row.original.serviceId?.providerId?.avatar ? (
                 <Image
-                  src={row.original.serviceId.providerId.avatar}
+                  src={
+                    row.original.serviceId.providerId.avatar.includes(
+                      "https://"
+                    )
+                      ? row.original.serviceId.providerId.avatar
+                      : `https://${row.original.serviceId.providerId.avatar}`
+                  }
                   alt={"pro"}
                   fill
                 />
               ) : (
-                <div className="w-full h-full bg-slate-300 text-xs flex justify-center items-center">{`${row.original.serviceId?.providerId?.firstName.charAt(0).toUpperCase()} ${row.original.serviceId?.providerId?.lastName.charAt(0).toUpperCase()}`}</div>
+                <div className="w-full h-full bg-slate-300 text-xs flex justify-center items-center">{`${row.original.serviceId?.providerId?.firstName
+                  .charAt(0)
+                  .toUpperCase()} ${row.original.serviceId?.providerId?.lastName
+                  .charAt(0)
+                  .toUpperCase()}`}</div>
               )}
             </div>
             <span className=" text-slate-600 text-xs">{`${row.original.serviceId?.providerId?.firstName} ${row.original.serviceId?.providerId?.lastName}`}</span>
@@ -118,12 +126,20 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
             <div className="w-[35px] h-[35px] relative overflow-hidden rounded-full flex justify-center items-center">
               {row.original.userId?.avatar ? (
                 <Image
-                  src={row.original.userId?.avatar}
+                  src={
+                    row.original.userId.avatar.includes("https://")
+                      ? row.original.userId.avatar
+                      : `https://${row.original.userId.avatar}`
+                  }
                   alt={"pro"}
                   fill
                 />
               ) : (
-                <div className="w-full h-full bg-slate-300 text-xs flex justify-center items-center">{`${row.original.userId?.firstName?.charAt(0).toUpperCase()} ${row.original.userId?.lastName?.charAt(0).toUpperCase()}`}</div>
+                <div className="w-full h-full bg-slate-300 text-xs flex justify-center items-center">{`${row.original.userId?.firstName
+                  ?.charAt(0)
+                  .toUpperCase()} ${row.original.userId?.lastName
+                  ?.charAt(0)
+                  .toUpperCase()}`}</div>
               )}
             </div>
             <span className=" text-slate-600 text-xs">{`${row.original.userId?.firstName} ${row.original.userId?.lastName}`}</span>

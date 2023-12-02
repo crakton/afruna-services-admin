@@ -20,20 +20,18 @@ import { ImSpinner3 } from "react-icons/im";
 import { T_Bookings } from "@/types/bookings";
 import { T_booking_data } from "@/app/(authenticatedRoutes)/(routes)/dashboard/page";
 interface CustomerBookingDetailsTableProps {
-  loadingBookings: boolean; 
-  customerBookings: T_Bookings[]
+  loadingBookings: boolean;
+  customerBookings: T_Bookings[];
 }
 
 const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
-  loadingBookings,customerBookings
+  loadingBookings,
+  customerBookings,
 }) => {
- 
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<T_Bookings[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const assignUniqueIds = (
-    data: T_Bookings[]
-  ): T_Bookings[] => {
+  const assignUniqueIds = (data: T_Bookings[]): T_Bookings[] => {
     // Create a new array to store the updated data
     const updatedData: T_Bookings[] = [];
     // Assign unique IDs to each data object
@@ -46,7 +44,7 @@ const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
     }
     return updatedData;
   };
-  
+
   useEffect(() => {
     const updatedDataWithIds = assignUniqueIds(customerBookings);
     setData(updatedDataWithIds);
@@ -56,11 +54,11 @@ const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
     () => [
       {
         accessorKey: "id",
-          cell: ({ row }) => (
-            <div key={row.id} className="flex gap-4 items-center">
-              <span className=" text-slate-800 text-xs">#{row.original.id}</span>
-            </div>
-          ),
+        cell: ({ row }) => (
+          <div key={row.id} className="flex gap-4 items-center">
+            <span className=" text-slate-800 text-xs">#{row.original.id}</span>
+          </div>
+        ),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
       {
@@ -95,7 +93,15 @@ const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
           <div key={row.id} className="flex gap-2 items-center ">
             <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
               {row.original?.providerId?.avatar ? (
-                <Image src={row.original.providerId.avatar} alt={"pro"} fill />
+                <Image
+                  src={
+                    row.original.providerId.avatar.includes("https://")
+                      ? row.original.providerId.avatar
+                      : `https://${row.original.providerId.avatar}`
+                  }
+                  alt={"pro"}
+                  fill
+                />
               ) : (
                 <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original?.providerId?.firstName
                   .charAt(0)
@@ -115,7 +121,15 @@ const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
           <div key={row.id} className="flex gap-2 items-center ml-8">
             <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
               {row.original?.customerId?.avatar ? (
-                <Image src={row.original.customerId.avatar} alt={"pro"} fill />
+                <Image
+                  src={
+                    row.original.customerId.avatar.includes("https://")
+                      ? row.original.customerId.avatar
+                      : `https://${row.original.customerId.avatar}`
+                  }
+                  alt={"pro"}
+                  fill
+                />
               ) : (
                 <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original?.customerId?.firstName
                   .charAt(0)
@@ -284,7 +298,7 @@ const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
           </table>
         ) : (
           <h3 className="flex justify-center text-sm text-slate-500 items-center text-center h-full">
-            This customer hasn't book for any service yet
+            This customer is yet to book for any service
           </h3>
         )}
       </div>

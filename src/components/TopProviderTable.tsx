@@ -60,7 +60,11 @@ const TopProviderTable: FC<TopProviderTableProps> = ({ topProviders }) => {
             <div className="relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
               {row.original.avatar ? (
                 <Image
-                  src={`${row.original.avatar}`}
+                  src={
+                    row.original.avatar.includes("https://")
+                      ? row.original.avatar
+                      : `https://${row.original.avatar}`
+                  }
                   alt="Your image"
                   fill
                 />

@@ -79,7 +79,7 @@ const CustomersPage: FC<pageProps> = ({}) => {
           <h1 className="text-lg lg:pl-0 lg:text-2xl leading-3 text-afruna-blue font-bold">
             Customers
           </h1>
-          <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
+          {/* <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
             <input
               value={searchCustomerInput}
               onChange={(e) => setSearchCustomerInput(e.target.value)}
@@ -89,20 +89,20 @@ const CustomersPage: FC<pageProps> = ({}) => {
               className="w-full py-[0.6rem] text-xs text-slate-600"
             />
             <IoSearchOutline className="text-slate-300 text-2xl " />
-          </fieldset>
+          </fieldset> */}
         </div>
         <div className="flex justify-end items-center gap-6">
-           <fieldset className="flex">
+           {/* <fieldset className="flex">
             <ItemPicker
               items={["Ascending","Descending"]}
               placeholder={"Sorting"}
               getSelected={ (value) => {}
-                // setSortingType(value as "ascending" | "descending")
+                setSortingType(value as "ascending" | "descending")
               }
-              // contentClassName={"p-2 bg-white text-xs"}
+              contentClassName={"p-2 bg-white text-xs"}
               triggerClassName="px-3 py-[0.59rem] rounded min-w-[12rem] w-full"
             />
-          </fieldset>
+          </fieldset> */}
           {/* <Select.Root
 						onValueChange={
 							setSortingType as (value: string) => void

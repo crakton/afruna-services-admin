@@ -85,17 +85,17 @@ const BookingsPage: FC<pageProps> = ({ }) => {
 
   return (
     <section className="flex flex-col gap-7 ">
-      <div className="flex justify-between items-center px-4 pr-32 lg:pl-6 bg-white w-full h-16">
+      <div className="flex justify-start items-center px-4 pr-32 lg:pl-6 bg-white w-full h-16">
         <div className="flex items-center justify-start gap-16">
           <h1 className="text-lg lg:pl-0 lg:text-2xl leading-3 text-afruna-blue font-bold">
             Bookings
           </h1>
-          <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
+          {/* <fieldset className="flex items-center gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
             <input type="text" placeholder="Search..." className="w-full py-[0.6rem] text-xs text-slate-600" />
             <IoSearchOutline className="text-slate-300 text-2xl " />
-          </fieldset>
+          </fieldset> */}
         </div>
-        <fieldset className="flex">
+        {/* <fieldset className="flex">
           <ItemPicker
             items={["A", "B"]}
             placeholder={"A-Z"}
@@ -103,7 +103,7 @@ const BookingsPage: FC<pageProps> = ({ }) => {
             // contentClassName={"p-2 bg-white text-xs"}
             triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
           />
-        </fieldset>
+        </fieldset> */}
       </div>
       <div className="flex flex-col gap-6 px-6 xl:pr-32 w-full">
         <div className="flex flex-col gap-1 w-full">

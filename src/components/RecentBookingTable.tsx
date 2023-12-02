@@ -97,15 +97,15 @@ const RecentBookingTable: FC<RecentBookingTableProps> = ({
           <div key={row.id} className="flex gap-2 items-center">
             <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
               {row.original?.providerId?.avatar ? (
-                // <Image src={row.original.providerId.avatar} alt={"pro"} fill />
                 <Image
-                src={ `${row.original.providerId.avatar}`
-                    
-                }
-                alt="Your image"
-                fill
-              />
-                
+                  src={
+                    row.original.providerId.avatar.includes("https://")
+                      ? row.original.providerId.avatar
+                      : `https://${row.original.providerId.avatar}`
+                  }
+                  alt="Your image"
+                  fill
+                />
               ) : (
                 <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original?.providerId?.firstName
                   .charAt(0)
@@ -125,7 +125,15 @@ const RecentBookingTable: FC<RecentBookingTableProps> = ({
           <div key={row.id} className="flex gap-2 items-center ml-8">
             <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
               {row.original?.customerId?.avatar ? (
-                <Image src={`https://${row.original.customerId.avatar}`} alt={"pro"} fill />
+                <Image
+                  src={
+                    row.original.customerId.avatar.includes("https://")
+                      ? row.original.customerId.avatar
+                      : `https://${row.original.customerId.avatar}`
+                  }
+                  alt={"pro"}
+                  fill
+                />
               ) : (
                 <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original?.customerId?.firstName
                   .charAt(0)

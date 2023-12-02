@@ -110,49 +110,49 @@ const AllProviders = () => {
           <span className="text-sm text-[#7C7C7C]">Mobile Number</span>
         ),
       },
-      {
-        accessorKey: "status",
-        cell: ({ row }) => {
-          switch (row.original.online) {
-            case "Pending":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-amber-500 mr-1" />
-                  <span className="text-amber-500">Pending</span>
-                </span>
-              );
-            case "Verified":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-lime-600 mr-1" />
-                  <span className="text-lime-600">Verified</span>
-                </span>
-              );
-            case "Rejected":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-red-200 mr-1" />
-                  <span className="text-purple-400">Rejected</span>
-                </span>
-              );
-            case "Deleted":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-red-500 mr-1" />
-                  <span className="text-red-500">Deleted</span>
-                </span>
-              );
-            case "Under review":
-              return (
-                <span className="flex justify-between items-center w-fit">
-                  <span className="p-1 rounded-full bg-blue-500 mr-1" />
-                  <span className="text-blue-500">Under review</span>
-                </span>
-              );
-          }
-        },
-        header: () => <span className="">Status</span>,
-      },
+      // {
+      //   accessorKey: "status",
+      //   cell: ({ row }) => {
+      //     switch (row.original.online) {
+      //       case "Pending":
+      //         return (
+      //           <span className="flex justify-between items-center w-fit">
+      //             <span className="p-1 rounded-full bg-amber-500 mr-1" />
+      //             <span className="text-amber-500">Pending</span>
+      //           </span>
+      //         );
+      //       case "Verified":
+      //         return (
+      //           <span className="flex justify-between items-center w-fit">
+      //             <span className="p-1 rounded-full bg-lime-600 mr-1" />
+      //             <span className="text-lime-600">Verified</span>
+      //           </span>
+      //         );
+      //       case "Rejected":
+      //         return (
+      //           <span className="flex justify-between items-center w-fit">
+      //             <span className="p-1 rounded-full bg-red-200 mr-1" />
+      //             <span className="text-purple-400">Rejected</span>
+      //           </span>
+      //         );
+      //       case "Deleted":
+      //         return (
+      //           <span className="flex justify-between items-center w-fit">
+      //             <span className="p-1 rounded-full bg-red-500 mr-1" />
+      //             <span className="text-red-500">Deleted</span>
+      //           </span>
+      //         );
+      //       case "Under review":
+      //         return (
+      //           <span className="flex justify-between items-center w-fit">
+      //             <span className="p-1 rounded-full bg-blue-500 mr-1" />
+      //             <span className="text-blue-500">Under review</span>
+      //           </span>
+      //         );
+      //     }
+      //   },
+      //   header: () => <span className="">Status</span>,
+      // },
       {
         accessorKey: "dateListed",
         cell: ({ row }) => {
