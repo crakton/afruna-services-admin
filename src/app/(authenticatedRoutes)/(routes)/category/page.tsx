@@ -3,20 +3,31 @@
 import CategoryTable from "@/components/CategoryTable";
 import ItemPicker from "@/components/ItemPicker";
 import { buttonVariants } from "@/components/ui/button";
+import { RootState } from "@/redux/store";
 import Service from "@/services/service.service";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { FC, useEffect } from "react";
 import { BsPlus } from "react-icons/bs";
 import { IoSearchOutline } from "react-icons/io5";
+import { useSelector } from "react-redux";
+import Pagination from "../_components/Pagination";
 
 interface pageProps {}
 
-const Category: FC<pageProps> = ({}) => {
+const Category: FC<pageProps> = () => {
   const serviceApis = new Service();
+  const totalPages = useSelector((state: RootState) => state.util.totalPages);
+
+  const searchParams = useSearchParams();
+  let page = searchParams.get("page") as string;
+  console.log(page);
+
+  if (page === null) page = "1";
 
   useEffect(() => {
-    serviceApis.getCategories();
-  }, []);
+    serviceApis.getCategories(Number(page));
+  }, [page]);
   return (
     <section className="flex flex-col gap-7 pb-12">
       <div className="flex justify-between items-center pl-4 lg:pr-16 lg:pl-6 bg-white w-full h-16">
@@ -64,6 +75,7 @@ const Category: FC<pageProps> = ({}) => {
       </div>
       <div className="flex flex-col gap-6 px-6 xl:pr-96 w-full">
         <CategoryTable />
+        <Pagination page={page} totalPages={totalPages} />
       </div>
     </section>
   );

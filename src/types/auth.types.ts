@@ -1,6 +1,7 @@
 export type TSuccessResponse<X> = {
 success: boolean;
 message: string;
+totalPages: number;
 data: X;
 };
 

@@ -3,7 +3,12 @@
 import ItemPicker from "@/components/ItemPicker";
 import ServicesTable from "@/components/ServicesTable";
 import { IService } from "@/interfaces/IService";
-import { setBlockedServices, setPendingServices, setUnpublishedServices, setVerifiedServices } from "@/redux/features/app/service_slice";
+import {
+  setBlockedServices,
+  setPendingServices,
+  setUnpublishedServices,
+  setVerifiedServices,
+} from "@/redux/features/app/service_slice";
 import { setStatus } from "@/redux/features/app/table_status_slice";
 import { RootState, store } from "@/redux/store";
 import Service from "@/services/service.service";
@@ -15,6 +20,9 @@ import BlockedServiceTable from "../_components/BlockedServiceTable";
 import VerifiedServicesTable from "../_components/VerifiedServicesTable";
 import UnPublishServicesTable from "../_components/UnPublishServicesTable";
 import useSearchService from "@/hooks/useSearchService";
+import { pages } from "next/dist/build/templates/app-page";
+import { useSearchParams } from "next/navigation";
+import Pagination from "../_components/Pagination";
 
 interface pageProps {}
 const Services_Tab = [
@@ -24,43 +32,88 @@ const Services_Tab = [
   "Unpublished Services",
   "Blocked Services",
 ];
-export type tableStatus = 'all' | 'pending' | 'verified' | 'blocked' | 'unpublished'
+export type tableStatus =
+  | "all"
+  | "pending"
+  | "verified"
+  | "blocked"
+  | "unpublished";
 
-const Page: FC<pageProps> = ({ }) => {
-  const currentStatus = useSelector((state: RootState) => state.tableStatus.status)
-  let services = useSelector((state: RootState) => state.service.services)
+const Page: FC<pageProps> = ({}) => {
+  const totalPages = useSelector((state: RootState) => state.util.totalPages);
 
-  const serviceApis = new Service()
+  const searchParams = useSearchParams();
+  let page = searchParams.get("page") as string;
+  console.log(page);
+
+  if (page === null) page = "1";
+
+  const currentStatus = useSelector(
+    (state: RootState) => state.tableStatus.status
+  );
+  let services = useSelector((state: RootState) => state.service.services);
+
+  const serviceApis = new Service();
 
   const handleTabSelect = (status: tableStatus) => {
     switch (status) {
-      case 'all':
-        store.dispatch(setStatus('all'))
-        serviceApis.getServices()
+      case "all":
+        store.dispatch(setStatus("all"));
+        serviceApis.getServices();
         break;
-      case 'pending':
-        store.dispatch(setStatus('pending'))
-        store.dispatch(setPendingServices(services.filter((service: IService) => service.verified === false || service.verified === undefined  || service.blocked === true)))
-        
+      case "pending":
+        store.dispatch(setStatus("pending"));
+        store.dispatch(
+          setPendingServices(
+            services.filter(
+              (service: IService) =>
+                service.verified === false ||
+                service.verified === undefined ||
+                service.blocked === true
+            )
+          )
+        );
+
         break;
-      case 'blocked':
-        store.dispatch(setStatus('blocked'))
-        store.dispatch(setBlockedServices(services.filter((service: IService) => service.blocked === true)))
+      case "blocked":
+        store.dispatch(setStatus("blocked"));
+        store.dispatch(
+          setBlockedServices(
+            services.filter((service: IService) => service.blocked === true)
+          )
+        );
         break;
-      case 'verified':
-        store.dispatch(setStatus('verified'))
-        store.dispatch(setVerifiedServices(services.filter((service: IService) =>service.verified === true || service.blocked === false && service.blocked === undefined)))
+      case "verified":
+        store.dispatch(setStatus("verified"));
+        store.dispatch(
+          setVerifiedServices(
+            services.filter(
+              (service: IService) =>
+                service.verified === true ||
+                (service.blocked === false && service.blocked === undefined)
+            )
+          )
+        );
         break;
-      case 'unpublished':
-        store.dispatch(setStatus('unpublished'))
-        store.dispatch(setUnpublishedServices(services.filter((service: IService) => service.publish === false || service.publish=== undefined )))
+      case "unpublished":
+        store.dispatch(setStatus("unpublished"));
+        store.dispatch(
+          setUnpublishedServices(
+            services.filter(
+              (service: IService) =>
+                service.publish === false || service.publish === undefined
+            )
+          )
+        );
         break;
       default:
         break;
     }
-  }
-  const {searchInput,searchResult,setSearchInput} = useSearchService({data: services })
-  
+  };
+  const { searchInput, searchResult, setSearchInput } = useSearchService({
+    data: services,
+  });
+
   const Component = useMemo(() => {
     switch (currentStatus) {
       case "pending":
@@ -72,19 +125,18 @@ const Page: FC<pageProps> = ({ }) => {
       case "unpublished":
         return <UnPublishServicesTable />;
       default:
-        return <ServicesTable data={searchResult}/>
+        return <ServicesTable data={searchResult} />;
     }
   }, [currentStatus, searchInput]);
 
-  
   useEffect(() => {
-    serviceApis.getServices()
+    serviceApis.getServices(Number(page));
 
     return () => {
-      store.dispatch(setStatus('all'))
-    }
-  }, [])
-  
+      store.dispatch(setStatus("all"));
+    };
+  }, []);
+
   return (
     <section className="flex flex-col gap-7 pb-12">
       <div className="flex justify-between items-center pl-4 lg:pr-16 lg:pl-6 bg-white w-full h-16">
@@ -129,15 +181,21 @@ const Page: FC<pageProps> = ({ }) => {
             {Services_Tab.map((item, idx) => (
               <button
                 className={`${
-                  currentStatus === item.split(' ')[0].toLowerCase() && " text-sky-500"
+                  currentStatus === item.split(" ")[0].toLowerCase() &&
+                  " text-sky-500"
                 } text-afruna-blue text-sm md:text-base font-bold relative flex flex-col `}
                 key={idx}
-                onClick={() => handleTabSelect(item.split(' ')[0].toLowerCase() as tableStatus)}
+                onClick={() =>
+                  handleTabSelect(
+                    item.split(" ")[0].toLowerCase() as tableStatus
+                  )
+                }
               >
                 {item}
                 <div
                   className={`${
-                    currentStatus === item.split(' ')[0].toLowerCase() && "bg-sky-500"
+                    currentStatus === item.split(" ")[0].toLowerCase() &&
+                    "bg-sky-500"
                   } w-full h-[2px] absolute -bottom-[0.35rem]`}
                 />
               </button>
@@ -153,6 +211,7 @@ const Page: FC<pageProps> = ({ }) => {
         })} */}
 
         <Component.type />
+        <Pagination page={page} totalPages={totalPages} />
       </div>
     </section>
   );

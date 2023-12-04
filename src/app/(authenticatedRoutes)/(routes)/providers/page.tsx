@@ -5,52 +5,31 @@ import ProvidersTable from "@/components/ProvidersTable";
 import { IoSearchOutline } from "react-icons/io5";
 import ItemPicker from "@/components/ItemPicker";
 import { useSelector } from "react-redux";
-import { RootState, store } from "@/redux/store";
+import { RootState } from "@/redux/store";
 import Provider from "@/services/provider.service";
-import { setStatus } from "@/redux/features/app/table_status_slice";
-import { setProviders } from "@/redux/features/app/provider_slice";
+import { useSearchParams } from "next/navigation";
+import Pagination from "../_components/Pagination";
 
 interface pageProps {}
 
-const Providers_Tab = [
-  "All Providers",
-  "Pending",
-  "Verified",
-  "Rejected",
-  "Delected",
-];
-
 export type tableStatus = 'all' | 'pending' | 'verified' | 'rejected' | 'delected'
 const ProvidersPage: FC<pageProps> = ({}) => {
-  
-  const currentStatus = useSelector((state: RootState) => state.tableStatus.status)
-  let providers = useSelector((state: RootState) => state.provider.providers)
+  const totalPages = useSelector((state: RootState) => state.util.totalPages);
+
+  const searchParams = useSearchParams();
+  let page = searchParams.get("page") as string;
+  console.log(page);
+
+  if (page === null) page = "1";
+
   const providerApis = new Provider()
 
-  const handleTabSelect = (status: tableStatus) => {
-    switch (status) {
-      case 'all':
-        store.dispatch(setStatus('all'))
-        providerApis.getProviders()
-        break;
-      case 'pending':
-        store.dispatch(setStatus('pending'))
-        store.dispatch(setProviders(providers.filter((provider: any) => provider.status === 'pending')))
-        break;
-      default:
-        break;
-    }
-  }
-
   useEffect(() => {
-    providerApis.getProviders()
-    return () => {
-      store.dispatch(setStatus('all'))
-    }
-  }, [])
+    providerApis.getProviders(Number(page))
+  }, [page])
 
   return (
-    <section className="flex flex-col gap-7 ">
+    <section className="flex flex-col gap-7 pb-12 ">
       <div className="flex justify-between items-center pl-4 lg:pr-32 lg:pl-6 bg-white w-full h-16">
         <div className="flex items-center justify-start gap-16">
           <h1 className="text-lg lg:pl-0 lg:text-lg leading-3 text-afruna-blue font-bold">
@@ -73,48 +52,9 @@ const ProvidersPage: FC<pageProps> = ({}) => {
           </fieldset> */}
         </div>
       </div>
-      <div className="flex flex-col gap-6 px-6 xl:pr-32 w-full">
-        <div className="flex flex-col gap-1 w-full">
-          <div className="flex justify-start gap-8 items-center">
-            {Providers_Tab.map((item, idx) => (
-              <button
-                className={`${
-                  currentStatus === item.split(' ')[0].toLowerCase() && " text-sky-500"
-                } text-afruna-blue text-sm md:text-base font-bold relative flex flex-col `}
-                key={idx}
-                onClick={() => handleTabSelect(item.split(' ')[0].toLowerCase() as tableStatus)}
-              >
-                {item}
-                <div
-                  className={`${
-                    currentStatus === item.split(' ')[0].toLowerCase() && "bg-sky-500"
-                  } w-full h-[2px] absolute -bottom-[0.35rem]`}
-                />
-              </button>
-            ))}
-          </div>
-          <div className="bg-orange-200 w-full h-[2px] " />
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
+      <div className="flex flex-col px-6 xl:pr-32 w-full">
         <ProvidersTable />
+        <Pagination page={page} totalPages={totalPages} />
       </div>
     </section>
   );
