@@ -1,7 +1,6 @@
 "use client";
 
 import { FC, memo, useMemo, useState } from "react";
-import * as ScrollArea from "@radix-ui/react-scroll-area";
 import {
   ColumnDef,
   SortingState,
@@ -12,22 +11,27 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { MdDeleteOutline, MdRemoveRedEye } from "react-icons/md";
 import { RxChevronDown, RxChevronUp } from "react-icons/rx";
 import { OtherTransactionsData } from "@/constants/data";
-import Link from "next/link";
 import { T_Other_Transactions_data } from "@/types/transactions";
-import { FaArrowRight } from "react-icons/fa";
 import ItemPicker from "./ItemPicker";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { ImSpinner3 } from "react-icons/im";
 
-interface OtherTransactionstableProps {}
+interface OtherTransactionstableProps {
+  transaction: any;
+}
 
-const OtherTransactionstable: FC<OtherTransactionstableProps> = ({}) => {
+const OtherTransactionstable: FC<OtherTransactionstableProps> = ({
+  transaction,
+}) => {
+  const loading = useSelector((state: RootState) => state.loading.loading);
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState([...OtherTransactionsData]);
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = useMemo<ColumnDef<T_Other_Transactions_data>[]>(
+  const columns = useMemo<ColumnDef<any>[]>(
     () => [
       {
         accessorKey: "transactionId",
@@ -84,29 +88,6 @@ const OtherTransactionstable: FC<OtherTransactionstableProps> = ({}) => {
         ),
         header: () => <span className="text-sm text-[#7C7C7C]">Amount</span>,
       },
-      {
-        id: "actions",
-        cell: ({ row }) => (
-          <div className="flex justify-start gap-1 items-center">
-            <Link
-              href={`/users/gdshjskjjk`}
-              className="hover:scale-90 border-none transition duration-300"
-            >
-              <MdRemoveRedEye size={24} />
-            </Link>
-            <button
-              className="hover:scale-90 border-none transition duration-300"
-              onClick={() => {
-                const newData = data.filter((_, idx) => idx !== row.index);
-                setData(newData);
-              }}
-            >
-              <MdDeleteOutline size={24} />
-            </button>
-          </div>
-        ),
-        header: () => <span className="text-sm text-[#7C7C7C]">Action</span>,
-      },
     ],
     [data]
   );
@@ -130,12 +111,12 @@ const OtherTransactionstable: FC<OtherTransactionstableProps> = ({}) => {
 
   return (
     <div className="mt-4 pb-12 overflow-hidden w-full bg-white px-4 max-w-[100%] md:max-w-[85%] rounded-xl border shadow-sm border-slate-300">
-      <header className="flex justify-between items-center py-2 mb-2 border-b border-slate-300">
+      <header className="flex justify-start items-center py-2 mb-2 border-b border-slate-300">
         <h1 className="font-bold text-slate-700 text-lg">
           Transactions history
         </h1>
-        <div className="flex justify-end items-center gap-3">
-        <fieldset className="flex">
+        {/* <div className="flex justify-end items-center gap-3">
+          <fieldset className="flex">
             <ItemPicker
               items={["A", "B"]}
               placeholder={"All"}
@@ -153,12 +134,16 @@ const OtherTransactionstable: FC<OtherTransactionstableProps> = ({}) => {
               triggerClassName="px-3 py-[0.59rem] rounded min-w-[8rem] w-full"
             />
           </fieldset>
-        </div>
+        </div> */}
       </header>
-      <ScrollArea.Root className="ScrollAreaRoot w-full h-[48vh]  pb-2 overflow-auto">
-        <ScrollArea.Viewport className="ScrollAreaViewport w-full h-full pb-6">
+      <div className="h-[48vh] px-4 bg-white relative rounded-lg overflow-auto">
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
+          </div>
+        ) : transaction?.length > 0 ? (
           <table className="w-screen lg:w-full px-8 relative">
-            <thead className="sticky top-0 bg-white">
+            <thead className="sticky z-20 top-0 bg-white">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -221,21 +206,12 @@ const OtherTransactionstable: FC<OtherTransactionstableProps> = ({}) => {
               })}
             </tbody>
           </table>
-        </ScrollArea.Viewport>
-        <ScrollArea.Scrollbar
-          className="ScrollAreaScrollbar p-[2px] rounded-xl` mb-4 flex bg-slate-100 hover:bg-slate-200"
-          orientation="vertical"
-        >
-          <ScrollArea.Thumb className="relative flex-1 rounded-xl bg-slate-400" />
-        </ScrollArea.Scrollbar>
-        <ScrollArea.Scrollbar
-          className="ScrollAreaScrollbar p-[2px] rounded-xl` mb-4 flex bg-slate-100 hover:bg-slate-200 "
-          orientation="horizontal"
-        >
-          <ScrollArea.Thumb className="relative flex-1 rounded-xl bg-slate-400" />
-        </ScrollArea.Scrollbar>
-        <ScrollArea.Corner className="" />
-      </ScrollArea.Root>
+        ) : (
+          <h3 className="flex justify-center text-sm text-slate-500 h-full items-center">
+            Currently, No transaction as drop on the platform 
+          </h3>
+        )}
+      </div>
     </div>
   );
 };

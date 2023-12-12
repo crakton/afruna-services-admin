@@ -3,9 +3,10 @@ import {
   IServiceCategory,
   IServiceSubCategory,
 } from "@/interfaces/IService";
+import { ExtFile } from "@files-ui/react";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
 const initialState = {
+  topServices: [] as IService[],
   services: [] as IService[],
   pendingServices: [] as IService[],
   blockedServices: [] as IService[],
@@ -14,12 +15,27 @@ const initialState = {
   service: {} as IService,
   serviceCategories: [] as IServiceCategory[],
   subCategories: [] as IServiceSubCategory[],
+  catId: "" as string,
+  catName: "" as string,
+  catIcon: [] as any[] | [],
 };
 
 const serviceSlice = createSlice({
   name: "Service_Slice",
   initialState,
   reducers: {
+    setCatId: (state, action: PayloadAction<string>) => {
+      state.catId = action.payload;
+    },
+    setCatName: (state, action: PayloadAction<string>) => {
+      state.catName = action.payload;
+    },
+    setCatIcon: (state, action: PayloadAction<ExtFile[] | []>) => {
+      state.catIcon = action.payload;
+    },
+    setTopServices: (state, action: PayloadAction<IService[]>) => {
+      state.topServices = action.payload;
+    },
     setServices: (state, action: PayloadAction<IService[]>) => {
       state.services = action.payload;
     },
@@ -48,7 +64,11 @@ const serviceSlice = createSlice({
 });
 
 export const {
+  setCatId,
+  setCatIcon,
+  setCatName,
   setServices,
+  setTopServices,
   setCategories,
   setSubCategories,
   createService,

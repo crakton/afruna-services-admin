@@ -21,28 +21,35 @@ import { ImSpinner3 } from "react-icons/im";
 import Service from "@/services/service.service";
 import { toast } from "react-toastify";
 import * as Switch from "@radix-ui/react-switch";
+import useSearchService from "@/hooks/useSearchService";
 
-interface ServicesTableProps {}
+interface ServicesTableProps {
+  data: IService[];
+}
 
-const ServicesTable: FC<ServicesTableProps> = () => {
+const ServicesTable: FC<ServicesTableProps> = ({}) => {
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [data, setData] = useState<IService[]>([]);
   const services = useSelector((state: RootState) => state.service.services);
   const loading = useSelector((state: RootState) => state.loading.loading);
   const serviceApis = new Service();
+  const { searchResult } = useSearchService({ data: services });
 
   useEffect(() => {
-    setData(services);
-  }, [services]);
+    setData(searchResult);
+    // Trigger table re-rendering to reflect filtered data
+    // table.dispatch('dataChange');
+    console.log(searchResult);
+  }, [searchResult]);
 
-  const handleBlockService = (serviceId: string) => {
-    // "6558a87fac38c3836470019a"
-    serviceApis
-      .blockService(serviceId)
-      .then((data) => console.log(data));
-    // serviceApis.getServices();
-  };
+  // const handleBlockService = (serviceId: string) => {
+  //   // "6558a87fac38c3836470019a"
+  //   serviceApis
+  //     .blockService(serviceId)
+  //     .then((data) => console.log(data));
+  //   // serviceApis.getServices();
+  // };
 
   const columns = useMemo<ColumnDef<IService>[]>(
     () => [
@@ -57,28 +64,57 @@ const ServicesTable: FC<ServicesTableProps> = () => {
       },
       {
         accessorKey: "service",
-        cell: ({ row }) => (
-          <div key={row.id} className="flex gap-2 items-center ml-3 ">
-            <div className="overflow-hidden w-[35px] h-[35px] rounded-md relative flex justify-center items-center">
-              <Image src={imgs.provider2} alt={"pro"} fill />
+        cell: ({ row }) => {
+          return (
+            <div key={row.id} className="flex gap-2 items-center ml-2">
+            <div className=" relative overflow-hidden rounded-md w-[35px] h-[35px] flex justify-center items-center">
+              {row.original?.photos?.length ? (
+                <Image
+                  src={
+                    row.original.photos[0].includes("https://")
+                      ? row.original.photos[0]
+                      : `https://${row.original.photos[0]}`
+                  }
+                  alt="Your image"
+                  fill
+                />
+              ) : (
+                <Image src={imgs.fallback_ser_img} alt="Your image" fill />
+              )}
             </div>
-            <span className=" text-slate-600 text-xs">{row.original.name}</span>
+            <span className=" text-slate-600 text-xs">{`${row.original?.name}`}</span>
           </div>
-        ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C] ml-3">Service</span>
-        ),
+          )
+        },
+        header: () => <span className="text-sm text-[#7C7C7C] ml-2">Services</span>,
       },
       {
         accessorKey: "provider",
         cell: ({ row }) => (
-          <span key={row.id} className=" text-slate-500 text-xs ml-3">
-            {`${row.original.providerId?.firstName} ${row.original.providerId?.lastName}`}
-          </span>
+          <div key={row.id} className="flex gap-2 items-center">
+            <div className=" relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
+              {row.original?.providerId?.avatar ? (
+                <Image
+                  src={
+                    row.original.providerId.avatar.includes("https://")
+                      ? row.original.providerId.avatar
+                      : `https://${row.original.providerId.avatar}`
+                  }
+                  alt="Your image"
+                  fill
+                />
+              ) : (
+                <div className=" w-full h-full bg-slate-300 flex justify-center items-center text-xs">{`${row.original?.providerId?.firstName
+                  .charAt(0)
+                  .toUpperCase()} ${row.original.providerId.lastName
+                  .charAt(0)
+                  .toUpperCase()}`}</div>
+              )}
+            </div>
+            <span className=" text-slate-600 text-xs">{`${row.original?.providerId?.firstName} ${row.original?.providerId?.lastName}`}</span>
+          </div>
         ),
-        header: () => (
-          <span className="text-sm text-[#7C7C7C] ml-3">Provider</span>
-        ),
+        header: () => <span className="text-sm text-[#7C7C7C] ">Provider</span>,
       },
       {
         accessorKey: "category",
@@ -219,18 +255,22 @@ const ServicesTable: FC<ServicesTableProps> = () => {
         accessorKey: "blocked",
         cell: ({ row }) => {
           const blocked = row.original.blocked;
-          const serviceId = row.original._id!;
-
+          const serviceId = row.original?._id;
+          const handleBlockService = (serviceId: string) => {
+            serviceApis
+              .blockService(serviceId)
+              .then((data) => console.log(data));
+          };
           return (
             <div className="ml-3">
               <Switch.Root
-                defaultChecked={!blocked}
+                // defaultChecked={!blocked}
                 onCheckedChange={() => handleBlockService(serviceId)}
                 className={`${
-                  blocked ? "data-[state=checked]:bg-rose-400" : "bg-gray-300"
-                } w-[50px] h-[23px] rounded-full relative outline-none cursor-pointer`}
+                  blocked && 'bg-red-200'
+                } bg-gray-300 w-[50px] h-[23px] rounded-full relative outline-none cursor-pointer`}
               >
-                <Switch.Thumb className="block w-[18px] h-[18px]  bg-white rounded-full transition-transform duration-300 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[30px]" />
+                <Switch.Thumb className="block w-[18px] h-[18px] bg-white rounded-full transition-transform duration-300 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[30px]" />
               </Switch.Root>
             </div>
           );
@@ -285,7 +325,7 @@ const ServicesTable: FC<ServicesTableProps> = () => {
         </div>
       ) : services?.length > 0 ? (
         <table className=" w-screen lg:w-full px-4 relative">
-          <thead className="sticky top-0 bg-white">
+          <thead className="sticky top-0 z-20 bg-white">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

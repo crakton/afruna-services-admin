@@ -11,6 +11,7 @@ import stats1 from "@/assests/imgs/stats1.png";
 import stats2 from "@/assests/imgs/stats2.png";
 import leftimg from "@/assests/imgs/leftimg.png"
 import review1 from "@/assests/imgs/review1.png"
+import fallback_ser_img from "@/assests/imgs/detail2.png"
 
 export const imgs = {
   afruna_logo,
@@ -26,4 +27,5 @@ export const imgs = {
   stats2,
   leftimg,
   review1,
+  fallback_ser_img
 };

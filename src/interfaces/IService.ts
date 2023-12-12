@@ -8,13 +8,14 @@ export interface IService {
   insuranceCoverage: any[];
   licenseAndCertification: any[];
   name: string;
-  photos?: [];
+  photos: any;
   price: number;
   status: string;
   providerId: {
     _id: string;
     firstName: string;
     lastName: string;
+    avatar: string
   };
   ratedBy: number;
   ratings: number;
@@ -25,7 +26,7 @@ export interface IService {
   updatedAt: string;
   verified?: boolean;
   publish?: boolean;
-  blocked?: boolean;
+  blocked: boolean;
 }
 
 export interface IDeleteCategory {

@@ -1,6 +1,14 @@
 "use client";
 
-import { FC, ReactNode, memo, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  FC,
+  ReactNode,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { UsersList } from "@/components/UsersList";
 import EmptyState from "@/components/EmptyState";
@@ -17,7 +25,9 @@ import { LuMessageSquarePlus } from "react-icons/lu";
 import { toast } from "react-toastify";
 import { IoRemoveOutline } from "react-icons/io5";
 import { LoadingUser } from "../_components/LoadingUser";
+import useSearchUsers from "@/hooks/useSearchUsers";
 import useSearchConvo from "@/hooks/useSearchConvo";
+import ItemPicker from "@/components/ItemPicker";
 
 interface pageProps {}
 
@@ -73,24 +83,20 @@ const ChatPage: FC<pageProps> = ({}) => {
       onClose();
     }
   };
+  const { searchConvoInput, searchConvoResult, setSearchConvoInput } =
+    useSearchConvo({
+      data: userConversations,
+    });
+  const { searchResult, searchInput, setSearchInput, setSortingType } =
+    useSearchUsers({
+      data: usersToselect,
+    });
+
   useEffect(() => {
     const chatApis = new ChatService();
     setLoadingConvo(true);
     chatApis.getConversations().finally(() => setLoadingConvo(false));
   }, []);
-
-  const { searchResult, setSearchInput } = useSearchConvo({
-    data: userConversations,
-  });
-
-    
-    // const [convo, setConvo] = useState<IConversation[]>([])
-    
-  // useMemo(() => {
-	// 	setConvo(searchResult)
-  //   console.log(convo);
-    
-	// }, [searchResult, convo]);
 
   return (
     <>
@@ -109,23 +115,24 @@ const ChatPage: FC<pageProps> = ({}) => {
               <h2 className="ml-4 text-[1.2rem] text-[#0C0E3B] font-medium tracking-normal">
                 Messages
               </h2>
-              <div className="ml-4 mr-6 bg-white flex items-center border border-[#D5D5E6] rounded-md overflow-hidden">
-                <input
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  type="search"
-                  placeholder="Search Name"
-                  className="w-full p-2 focus:outline-none placeholder:text-[#D2D2D2]"
-                />
-                <div className="w-14 text-[#D2D2D2]">
+              <div className="ml-4 mr-6 bg-white flex justify-start px-2 border border-[#D5D5E6] rounded-md overflow-hidden">
+                <div className=" text-[#D2D2D2] flex justify-center items-center">
                   <IoSearchOutline className="text-2xl" />
                 </div>
+                <input
+                  value={searchConvoInput}
+                  onChange={(e) => setSearchConvoInput(e.target.value)}
+                  type="search"
+                  placeholder="Search by name or last message..."
+                  className="w-full text-sm text-slate-500 placeholder:text-xs p-2 focus:outline-none placeholder:text-[#D2D2D2]"
+                />
               </div>
               <div className=" mt-1 pt-1 h-[63vh] sm:h-[55vh] text-xl rounded-lg overflow-hidden overflow-y-auto">
                 <div className="flex flex-col gap-2 p-4 ">
                   {loadingConvo ? (
                     <LoadingUser />
                   ) : userConversations && userConversations.length ? (
-                    userConversations.map((user) => {
+                    searchConvoResult.map((user) => {
                       return (
                         // <Suspense fallback={<>Loading...</>}>
                         <UsersList user={user} key={user._id} />
@@ -139,7 +146,7 @@ const ChatPage: FC<pageProps> = ({}) => {
                   )}
                 </div>
               </div>
-              <div className="absolute right-4 bottom-8">
+              <div className="absolute right-4 bottom-4">
                 <button
                   type="button"
                   onClick={handleFetchUsers}
@@ -182,11 +189,34 @@ const ChatPage: FC<pageProps> = ({}) => {
               <IoRemoveOutline className="text-lg" />
             </button>
 
-            <div className=" h-[72vh] sm:h-[82vh] overflow-y-auto px-2 flex flex-col gap-1">
+            <fieldset className="flex items-center max-w-[80%] mb-6 w-full mx-auto gap-1 px-2 border border-slate-300 rounded-md overflow-hidden">
+              <IoSearchOutline className="text-slate-300 text-2xl " />
+              <input
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                type="search"
+                // type="text"
+                placeholder="Search by name or role..."
+                className="w-full py-[0.8rem] text-xs text-slate-600"
+              />
+            </fieldset>
+            {/* <fieldset className="flex">
+              <ItemPicker
+                items={["Ascending", "Descending"]}
+                placeholder={"Sorting"}
+                getSelected={(value) =>
+                  setSortingType(value as "ascending" | "descending")
+                }
+                contentClassName={"p-2 z-40 bg-white text-xs"}
+                triggerClassName="px-3 py-[0.59rem] rounded min-w-[12rem] w-full"
+              />
+            </fieldset> */}
+
+            <div className=" h-[72vh] sm:h-[80vh] overflow-y-auto px-2 flex flex-col gap-1">
               {loadingUser ? (
                 <LoadingUser />
               ) : (
-                usersToselect
+                searchResult
                   .filter((_) => _.blocked === false)
                   .map((user) => {
                     return (

@@ -1,7 +1,6 @@
 "use client";
 
-import React, { memo, useMemo, useState } from "react";
-import * as ScrollArea from "@radix-ui/react-scroll-area";
+import React, { FC, memo, useMemo, useState } from "react";
 import {
   ColumnDef,
   SortingState,
@@ -13,36 +12,46 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import Image from "next/image";
-import { RxChevronDown, RxChevronUp } from "react-icons/rx";
-import { TopService } from "@/constants/data";
 import { imgs } from "@/constants/images";
-import { T_Top_Service } from "@/types/services";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
+import { IService } from "@/interfaces/IService";
 
-const TopServiceTable = () => {
+interface TopServiceTableProps {
+  topServices: IService[];
+}
+
+const TopServiceTable: FC<TopServiceTableProps> = ({ topServices }) => {
   const [rowSelection, setRowSelection] = useState({});
-  const [data, setData] = useState([...TopService]);
+  const iterableTopServices = topServices || []; //Default to an empty array if topServices is undefined
+  const [data, setData] = useState([...iterableTopServices]);
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = useMemo<ColumnDef<T_Top_Service>[]>(
+  const columns = useMemo<ColumnDef<IService>[]>(
     () => [
       {
-        accessorKey: "id",
+        accessorKey: "customId",
         cell: (info) => info.getValue(),
         header: () => <span className="text-sm text-[#7C7C7C]">ID</span>,
       },
+      /**\
+       * <Image
+                 src={profile_data?.avatar?`https://${profile_data?.avatar}` :imgs.seller1}
+                alt="Your image"
+                fill
+              />
+       */
       {
         accessorKey: "service",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 ml-3 items-center ">
-            <Image
-              src={imgs.provider2}
-              alt={"pro"}
-              width={35}
-              height={35}
-              className="roun"
-            />
-            <span className=" text-slate-600 text-xs">Plumbing repair</span>
+            {/* <div className=" w-[35px] h-[35px] relative overflow-hidden flex justify-center items-center">
+              <Image
+                src={imgs.provider1 ? imgs.provider1 : imgs.seller1}
+                alt="Your image"
+                fill
+              />
+            </div> */}
+            <span className=" text-slate-600 text-xs">{row.original.name}</span>
           </div>
         ),
         header: () => (
@@ -50,17 +59,44 @@ const TopServiceTable = () => {
         ),
       },
       {
-        accessorKey: "category",
+        accessorKey: "provider",
         cell: ({ row }) => (
-          <span className="text-afruna-blue text-xs">Home</span>
+          <div className="flex justify-start items-center gap-1">
+            <div className="relative overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
+              {row.original.providerId?.avatar ? (
+                <Image
+                  // src={`${row.original.providerId?.avatar}`}
+                  src={
+                    row.original.providerId.avatar.includes("https://")
+                      ? row.original.providerId.avatar
+                      : `https://${row.original.providerId.avatar}`
+                  }
+                  alt="Your image"
+                  fill
+                />
+              ) : (
+                <div className="w-full h-full flex justify-center items-center bg-slate-200 text-xs">{`${row.original.providerId.firstName
+                  .charAt(0)
+                  .toUpperCase()} ${row.original.providerId?.lastName
+                  .charAt(0)
+                  .toUpperCase()}`}</div>
+              )}
+            </div>
+
+            <span key={row.id} className=" text-slate-500 text-xs ml-3">
+              {`${row.original.providerId?.firstName} ${row.original.providerId?.lastName}`}
+            </span>
+          </div>
         ),
-        header: () => <span className="text-sm text-[#7C7C7C]">Category</span>,
+        header: () => (
+          <span className="text-sm text-[#7C7C7C] ml-3">Service Provider</span>
+        ),
       },
       {
-        accessorKey: "amount",
+        accessorKey: "price",
         cell: ({ row }) => (
           <span className="text-afruna-blue text-xs">
-            {row.original.amount}
+            #{row.original.price}
           </span>
         ),
         header: () => <span className="text-sm text-[#7C7C7C]">Amount</span>,
@@ -87,9 +123,9 @@ const TopServiceTable = () => {
   });
 
   return (
-    <div className="h-[40vh] px-4 bg-white relative rounded-lg overflow-y-auto">
+    <div className="h-[40vh] px-4 bg-white relative rounded-lg overflow-auto">
       <table className="w-screen lg:w-full px- relative">
-        <thead className="sticky top-0 bg-white">
+        <thead className="sticky top-0 z-20 bg-white">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -104,16 +140,16 @@ const TopServiceTable = () => {
                         header.getContext()
                       )}
                       <span className="flex flex-col">
-                      <BiChevronUp
-                            onClick={header.column.getToggleSortingHandler()}
-                            size={24}
-                            className="relative top-2 text-slate-400"
-                          />
-                          <BiChevronDown
-                            onClick={header.column.getToggleSortingHandler()}
-                            size={24}
-                            className="relative -top-2"
-                          />
+                        <BiChevronUp
+                          onClick={header.column.getToggleSortingHandler()}
+                          size={24}
+                          className="relative top-2 text-slate-400"
+                        />
+                        <BiChevronDown
+                          onClick={header.column.getToggleSortingHandler()}
+                          size={24}
+                          className="relative -top-2"
+                        />
                       </span>
                     </span>
                   ) : (

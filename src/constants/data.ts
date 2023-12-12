@@ -1,5 +1,6 @@
 import { imgs } from "./images";
 
+export const sortType = ["Ascending","Descending"]
 export const users = [
   {
     id: "1",

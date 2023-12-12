@@ -6,14 +6,16 @@ import { Loader2 } from "lucide-react";
 import { FC, useCallback, useEffect, useState } from "react";
 import { GoTrash } from "react-icons/go";
 import { TbUpload } from "react-icons/tb";
-
-import Image from "next/image";
-import uploadIcon from "../../../../assests/imgs/upload.png";
 import { toast } from "react-toastify";
 import Service from "@/services/service.service";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { RootState, store } from "@/redux/store";
+import {
+  setCatIcon,
+  setCatId,
+  setCatName,
+} from "@/redux/features/app/service_slice";
 
 interface pageProps {}
 type T_Cate_Form = {
@@ -22,12 +24,15 @@ type T_Cate_Form = {
 };
 
 const CreateCategoryPage: FC<pageProps> = ({}) => {
+  const cat_id = useSelector((state: RootState) => state.service.catId);
+  const cat_name = useSelector((state: RootState) => state.service.catName);
+  const cat_icon = useSelector((state: RootState) => state.service.catIcon);
   const loading = useSelector((state: RootState) => state.loading.loading);
   const [categoryForm, setCategoryForm] = useState<T_Cate_Form>({
-    name: "",
-    icon: undefined,
+    name: cat_id === "" ? "" : cat_name,
+    icon: cat_id === "" ? [] : cat_icon,
   });
-  const [files, setFiles] = useState<ExtFile[]>([]);
+  const [files, setFiles] = useState<ExtFile[]>(cat_id === "" ? [] : cat_icon);
 
   const serviceApis = new Service();
   const router = useRouter();
@@ -62,59 +67,77 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-
-    // if (name == "media") {
-    //   const file = e.target.files[0];
-    //   if (file) {
-    //     console.log(e.target.files[0]);
-    //     setCategoryForm({ ...categoryForm, icon: file });
-    //   }
-    // }
     setCategoryForm({ ...categoryForm, [name]: value });
   };
 
-  const createCategory = (e: any) => {
+  const submitCategory = (e: any) => {
     e.preventDefault();
     if (categoryForm.name == "") {
       toast.error("Category name must be provided");
       return;
     }
-    if (!files?.length) {
-      toast.warn("Please select image");
-      return;
+    if (cat_id === "") {
+      if (!files?.length) {
+        toast.warn("Please select image");
+        return;
+      }
     }
 
-    console.log(categoryForm.icon);
-    console.log(categoryForm.name);
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append("name", categoryForm.name);
-    // formData.append("icon", categoryForm.icon);
     for (let i = 0; i < files.length; i++) {
       formData.append("icon", files[i].file as Blob);
     }
     // console.log(formData);
     console.log(categoryForm);
 
-    serviceApis
-      .createCategory(formData)
-      .then((data) => {
-        console.log(data);
-        toast.success("Category created");
-      })
-      .finally(() => router.push("/category"));
+    if (cat_id === "") {
+      serviceApis
+        .createCategory(formData)
+        .then((data) => {
+          console.log(data);
+          toast.success("Category created");
+        })
+        .finally(() => {
+          setCategoryForm({ ...categoryForm, [categoryForm.name]: "" });
+          router.push("/category");
+        });
+    } else {
+      serviceApis
+        .editCategory(formData, cat_id)
+        .then((data) => {
+          console.log(data);
+          toast.success("Edition is successfull");
+        })
+        .finally(() => {
+          store.dispatch(setCatId(""));
+          store.dispatch(setCatName(""));
+          store.dispatch(setCatIcon([]));
+          router.push("/category");
+        });
+    }
   };
+
+  const backToCategoryPage = () => {
+    store.dispatch(setCatId(""));
+    store.dispatch(setCatName(""));
+    store.dispatch(setCatIcon([]));
+    router.push("/category");
+  }
 
   return (
     <section className="flex flex-col gap-6 pb-12 ">
       <div className="flex justify-start items-center pl-4 lg:pl-6 bg-white w-full h-16">
         <h1 className="text-lg lg:pl-0 lg:text-lg leading-3 text-afruna-blue font-bold">
-          Create Category
+          {cat_id === "" ? "Create Category" : "Edit Category"}
         </h1>
       </div>
       <div className="flex flex-col justify-start p-20 items-start max-w-[85%] ml-8 rounded-xl bg-white w-full">
-        <h2 className=" font-semibold text-black mb-6">Category Creation</h2>
+        <h2 className=" font-semibold text-black mb-6">
+          {cat_id === "" ? "Category creation" : "Edit the Category"}
+        </h2>
         <form
-          onSubmit={createCategory}
+          onSubmit={submitCategory}
           className="flex flex-col gap-8 max-w-[70%] w-full"
         >
           <fieldset className="w-full">
@@ -199,19 +222,21 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
                     <FileMosaic {...file} preview />
                     <span
                       onClick={() => removeFile(file.id)}
-                      className="absolute cursor-pointer top-2 right-2 z-20 text-white"
+                      className="absolute cursor-pointer font-bold text-lg top-2 right-2 z-20 text-afruna-blue"
                     >
-                      <GoTrash
-                        size={25}
-                        className="hover:text-rose-500 duration-300 transition-all"
-                      />
+                      <GoTrash className="hover:text-rose-500 duration-300 transition-all" />
                     </span>
                   </div>
                 ))}
               </div>
             )}
           </div>
-          <div className="flex justify-end mt-6">
+          <div className="flex justify-end items-center gap-4 mt-6">
+            {cat_id !== "" ? (
+              <div onClick={backToCategoryPage} className="max-w-[7rem] cursor-pointer text-sm w-full py-[0.6rem] text-center rounded-md text-white bg-gradient-to-b from-purple-400 to-purple-900 hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-800 transition duration-500">
+                Go back
+              </div>
+            ) : null}{" "}
             <Button
               type="submit"
               variant={"primary"}
@@ -219,8 +244,10 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
             >
               {loading ? (
                 <Loader2 className=" h-6 w-6 animate-spin text-white" />
-              ) : (
+              ) : cat_id === "" ? (
                 "Submit"
+              ) : (
+                "Edit category"
               )}
             </Button>
           </div>

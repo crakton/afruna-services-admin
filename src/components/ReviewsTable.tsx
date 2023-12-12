@@ -63,7 +63,7 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
         header: () => <span className="text-xs text-[#7C7C7C]">ID</span>,
       },
       {
-        accessorKey: "bookingdate",
+        accessorKey: "date",
         cell: ({ row }) => {
           const createdAtDate = new Date(row.original.createdAt);
           const year = createdAtDate.getFullYear();
@@ -85,9 +85,7 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
             </div>
           );
         },
-        header: () => (
-          <span className="text-xs text-[#7C7C7C] ml-4">Booking Date</span>
-        ),
+        header: () => <span className="text-xs text-[#7C7C7C] ml-4">Date</span>,
       },
       {
         accessorKey: "provider",
@@ -96,12 +94,22 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
             <div className="w-[35px] h-[35px] relative overflow-hidden rounded-full flex justify-center items-center">
               {row.original.serviceId?.providerId?.avatar ? (
                 <Image
-                  src={row.original.serviceId.providerId.avatar}
+                  src={
+                    row.original.serviceId.providerId.avatar.includes(
+                      "https://"
+                    )
+                      ? row.original.serviceId.providerId.avatar
+                      : `https://${row.original.serviceId.providerId.avatar}`
+                  }
                   alt={"pro"}
                   fill
                 />
               ) : (
-                <div className="w-full h-full bg-slate-300 text-xs flex justify-center items-center">{`${row.original.serviceId?.providerId?.firstName.charAt(0).toUpperCase()} ${row.original.serviceId?.providerId?.lastName.charAt(0).toUpperCase()}`}</div>
+                <div className="w-full h-full bg-slate-300 text-xs flex justify-center items-center">{`${row.original.serviceId?.providerId?.firstName
+                  .charAt(0)
+                  .toUpperCase()} ${row.original.serviceId?.providerId?.lastName
+                  .charAt(0)
+                  .toUpperCase()}`}</div>
               )}
             </div>
             <span className=" text-slate-600 text-xs">{`${row.original.serviceId?.providerId?.firstName} ${row.original.serviceId?.providerId?.lastName}`}</span>
@@ -118,12 +126,20 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
             <div className="w-[35px] h-[35px] relative overflow-hidden rounded-full flex justify-center items-center">
               {row.original.userId?.avatar ? (
                 <Image
-                  src={row.original.userId?.avatar}
+                  src={
+                    row.original.userId.avatar.includes("https://")
+                      ? row.original.userId.avatar
+                      : `https://${row.original.userId.avatar}`
+                  }
                   alt={"pro"}
                   fill
                 />
               ) : (
-                <div className="w-full h-full bg-slate-300 text-xs flex justify-center items-center">{`${row.original.userId?.firstName?.charAt(0).toUpperCase()} ${row.original.userId?.lastName?.charAt(0).toUpperCase()}`}</div>
+                <div className="w-full h-full bg-slate-300 text-xs flex justify-center items-center">{`${row.original.userId?.firstName
+                  ?.charAt(0)
+                  .toUpperCase()} ${row.original.userId?.lastName
+                  ?.charAt(0)
+                  .toUpperCase()}`}</div>
               )}
             </div>
             <span className=" text-slate-600 text-xs">{`${row.original.userId?.firstName} ${row.original.userId?.lastName}`}</span>
@@ -199,9 +215,9 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
           <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />
         </div>
       ) : (
-        <div className="h-[67vh] px-4 bg-white relative w-full rounded-xl border shadow-sm border-slate-300">
+        <div className="h-[67vh] px-4 bg-white overflow-auto relative w-full rounded-xl border shadow-sm border-slate-300">
           <table className="w-screen lg:w-full px-8 relative">
-            <thead className="sticky top-0 bg-white">
+            <thead className="sticky top-0 z-20 bg-white">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (

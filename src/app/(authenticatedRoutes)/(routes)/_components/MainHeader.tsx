@@ -21,6 +21,7 @@ import { FaUser } from "react-icons/fa";
 import { BsFillChatLeftTextFill, BsHeartFill } from "react-icons/bs";
 import { ItemPicker } from "@/lib/utils/ItemPicker";
 import { AiFillAccountBook } from "react-icons/ai";
+import Auth from "@/services/auth.service";
 
 interface MainHeaderProps {}
 
@@ -55,8 +56,8 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
   }, []);
 
   const handleLogOut = useCallback(() => {
-    //   const authService = new Auth10(router);
-    //   authService.handleLogout();
+  const authApis = new Auth(router);
+      authApis.logout()
   }, []);
   const [show, setShow] = useState<boolean>(true);
   return (
@@ -74,21 +75,21 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
               className="block md:hidden text-2xl sm:text-3xl cursor-pointer text-afruna-blue"
             />
           )}
-          <Link href={"/"} className="flex justify-center items-center">
+          <div className="flex justify-center items-center">
             <div className="w-[9rem] sm:w-[10rem] h-[2rem] md:w-[12rem] md:h-[2.5rem] lg:w-[13rem] lg:h-[3rem] overflow-hidden relative">
               <Image src={imgs.afruna_logo} alt="logo" priority fill />
             </div>
-          </Link>
+          </div>
         </div>
 
         <div className="flex justify-center items-center gap-2 lg:gap-3">
-          <Link href={"/"} className="relative">
+          {/* <Link href={"/"} className="relative">
             <IoIosNotifications className="text-[1.4rem] sm:text-[1.6rem]" />
             <span className="absolute top-0 right-0 text-white bg-rose-400 w-[0.75rem] h-[0.75rem] sm:w-[0.8rem] sm:h-[0.8rem] text-[8px] rounded-full flex justify-center items-center">
               {" "}
               3
             </span>
-          </Link>
+          </Link> */}
           <ItemPicker
             mobileClassName="hidden md:flex lg:hidden xl:flex text-sm lg:text-base"
             triggerClassName="flex gap-4 items-center"
@@ -136,3 +137,5 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
 };
 
 export default memo(MainHeader);
+
+// images.domains" configuration is deprecated. Please use "images.remotePatterns" configuration instead.

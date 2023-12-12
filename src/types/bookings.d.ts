@@ -1,12 +1,16 @@
-import { T_Bookings_Tab } from "@/contexts/BookingsContextProvider";
-import { StaticImageData } from "next/image";
-
-export type T_Bookings_Context = {
-  bookingsTab: T_Bookings_Tab;
-  handleTabSelect: (v: any) => void;
-};
+import { IService } from "@/interfaces/IService";
+import { ICustomerBio } from "./customer";
+import { T_Providers } from "./providers";
 
 export type T_Bookings = {
-  id: string;
+  _id: string;
+  serviceId: IService
+  customerId: ICustomerBio
+  providerId: T_Providers
+  amount: string;
+  location: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
+  id: number
 };

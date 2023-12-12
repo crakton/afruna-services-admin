@@ -24,14 +24,22 @@ import { imgs } from "@/constants/images";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 import * as Switch from "@radix-ui/react-switch";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { RootState, store } from "@/redux/store";
 import { IServiceCategory } from "@/interfaces/IService";
 import { ImSpinner3 } from "react-icons/im";
 import { IoRemoveOutline } from "react-icons/io5";
 import { FaTimes } from "react-icons/fa";
 import Service from "@/services/service.service";
+import {
+  setCatIcon,
+  setCatId,
+  setCatName,
+} from "@/redux/features/app/service_slice";
+import { useRouter } from "next/navigation";
+import { MdEditSquare } from "react-icons/md";
 
 const CategoryTable = () => {
+  const router = useRouter();
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<IServiceCategory[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -69,6 +77,13 @@ const CategoryTable = () => {
       .deleteCategory(categoryId)
       .then((data) => console.log(data))
       .finally(() => onClose());
+  };
+
+  const handleEditOption = (value: { catId: string; catName: string }) => {
+    store.dispatch(setCatId(value.catId))  
+    store.dispatch(setCatName(value.catName))
+    store.dispatch(setCatIcon([]))
+    router.push('/create_category')
   };
 
   useEffect(() => {
@@ -135,38 +150,31 @@ const CategoryTable = () => {
       //   header: () => <span className="text-sm text-[#7C7C7C] ml-3">Date</span>,
       // },
 
-      // {
-      //   accessorKey: "featured",
-      //   cell: ({ cell, row }) => {
-      //     return (
-      //       <Switch.Root
-      //         defaultChecked={row.original.featured}
-      //         onCheckedChange={() => {
-      //           console.log("=== something ===");
-      //         }}
-      //         className="w-[50px] h-[23px] bg-gray-300 rounded-full relative data-[state=checked]:bg-green-300 outline-none cursor-pointer"
-      //       >
-      //         <Switch.Thumb className="block w-[18px] h-[18px] bg-white rounded-full transition-transform duration-300 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[30px]" />
-      //       </Switch.Root>
-      //     );
-      //   },
-      //   header: () => <span className="text-sm text-[#7C7C7C]">Featured</span>,
-      // },
       {
         id: "actions",
-        cell: ({ row }) => (
-          <div className="flex justify-start gap-1 items-center ml-6">
-            {/* <button className="hover:scale-90 border-none transition duration-300">
-              <MdRemoveRedEye size={24} />
-            </button> */}
-            <button
-              className="hover:scale-90 border-none transition duration-300"
-              onClick={() => handleOpenDeleteOption(row.original._id)}
+        cell: ({ row }) => {
+          const catId = row.original._id;
+          const catName = row.original.name;
+          const value = {
+            catId,
+            catName,
+          };
+          return (
+            <div
+              className="flex justify-start gap-2 items-center ml-6"
             >
-              <MdDeleteOutline size={24} />
-            </button>
-          </div>
-        ),
+              <button onClick={() => handleEditOption(value)} className="hover:scale-90 border-none transition duration-300">
+                <MdEditSquare size={22} />
+              </button>
+              <button
+                className="hover:scale-90 border-none transition duration-300"
+                onClick={() => handleOpenDeleteOption(row.original._id)}
+              >
+                <MdDeleteOutline size={24} />
+              </button>
+            </div>
+          );
+        },
         header: () => (
           <span className="text-sm text-[#7C7C7C] ml-3">Action</span>
         ),
@@ -194,7 +202,7 @@ const CategoryTable = () => {
 
   return (
     <>
-      <div className="h-[70vh] px-4 bg-white relative rounded-lg overflow-y-auto">
+      <div className="h-[70vh] px-4 bg-white relative rounded-lg overflow-auto">
         {loading ? (
           <div className="flex justify-center items-center h-full">
             <ImSpinner3 className="h-10 w-10 animate-spin text-slate-400" />

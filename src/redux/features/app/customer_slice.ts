@@ -1,3 +1,4 @@
+import { T_Bookings } from "@/types/bookings";
 import { ICustomerBio, ICustomerCard } from "@/types/customer";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
@@ -5,7 +6,7 @@ const initialState = {
   customers: [] as ICustomerBio[],
   customer: {} as ICustomerBio,
   customerCard: {} as ICustomerCard,
-  customerBookings: [] as any[],
+  customerBookings: [] as T_Bookings[],
   customerStatus: "all",
 };
 
@@ -22,7 +23,7 @@ const customer_slice = createSlice({
     setCustomerCard: (state, action: PayloadAction<ICustomerCard>) => {
       state.customerCard = action.payload;
     },
-    setCustomerBookings: (state, action: PayloadAction<any[]>) => {
+    setCustomerBookings: (state, action: PayloadAction<T_Bookings[]>) => {
       state.customerBookings = action.payload;
     },
     setCustomerStatus: (state, action: PayloadAction<string>) => {
