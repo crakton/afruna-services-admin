@@ -105,7 +105,7 @@ export default class Service {
   async getSubCategories(categoryId: string) {
     try {
       const { data } = await axios.get<TSuccessResponse<IServiceSubCategory[]>>(
-        `/api/servicecategories/${categoryId}/nested`,
+        `/api/servicecategories/${categoryId}/sub`,
         headers
       );
       return data;

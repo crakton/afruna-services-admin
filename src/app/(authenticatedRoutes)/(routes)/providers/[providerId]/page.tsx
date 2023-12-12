@@ -67,7 +67,7 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
 
     getCardInfo(providerId)
 
-    // setDocuments([...providerServices[0]?.insuranceCoverage, ...providerServices[0]?.licenseAndCertification])
+    // setDocuments([providerServices[0]?.insuranceCoverage, providerServices[0]?.licenseAndCertification])
   }, [providerId]);
   
   const providers = useSelector((state: RootState) => state.provider.providers);
@@ -139,7 +139,7 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
                     Uploaded Document
                   </h1>
                 </header>
-                <DocumentReviewTable />
+                <DocumentReviewTable documents={providerServices[0]} />
               </div>
               <div className="flex flex-wrap gap-5 justify-start items-center">
                 <div className="border text-sm font-semibold text-afruna-blue flex flex-col gap-2 justify-start w-[14.6rem] pt-8 h-[8rem] overflow-hidden  pl-7 border-[#D5D5E6] relative rounded-xl bg-white ">
