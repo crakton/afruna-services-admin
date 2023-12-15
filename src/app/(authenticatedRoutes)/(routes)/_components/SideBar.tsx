@@ -25,7 +25,7 @@ const SideBar: FC<SideBar> = ({}) => {
   const handleLogOut = useCallback(() => {
     const authApis = new Auth(router);
         authApis.logout()
-    }, []);
+    }, [router]);
 
   return (
     <>

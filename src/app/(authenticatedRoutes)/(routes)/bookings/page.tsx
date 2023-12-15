@@ -52,9 +52,9 @@ const BookingsPage: FC<pageProps> = ({}) => {
   );
   let bookings = useSelector((state: RootState) => state.booking.bookings);
 
-  const bookingApis = new Booking();
 
   const handleTabSelect = (status: tableStatus) => {
+    const bookingApis = new Booking();
     switch (status) {
       case "all":
         store.dispatch(setStatus("all"));
@@ -121,11 +121,12 @@ const BookingsPage: FC<pageProps> = ({}) => {
   }, [currentStatus]);
 
   useEffect(() => {
+    const bookingApis = new Booking();
     bookingApis.getBookings(Number(page));
     return () => {
       store.dispatch(setStatus('all'))
     }
-  }, []);
+  }, [ page]);
 
   return (
     <section className="flex flex-col gap-6 pb-12">

@@ -62,11 +62,18 @@ export const useRoute = () => {
         href: "/providers",
         hasSubNav: false,
       },
+      // {
+      //   title: "Users",
+      //   icon: MdGroups2,
+      //   active: pathname === "/users" || !!customerId,
+      //   href: "/users",
+      //   hasSubNav: false,
+      // },
       {
-        title: "Users",
+        title: "Customers",
         icon: MdGroups2,
-        active: pathname === "/users" || !!customerId,
-        href: "/users",
+        active: pathname === "/customers" || !!customerId,
+        href: "/customers",
         hasSubNav: false,
       },
       {
@@ -90,13 +97,6 @@ export const useRoute = () => {
         href: "/review",
         hasSubNav: false,
       },
-      // {
-      //   title: "Abuse Reports",
-      //   icon: TbReportAnalytics,
-      //   active: pathname === "/abuse_reports",
-      //   href: "/abuse_reports",
-      //   hasSubNav: false,
-      // },
       {
         title: "Profile",
         icon: MdSettings,
@@ -104,7 +104,7 @@ export const useRoute = () => {
         href: "/profile",
       },
     ],
-    [pathname, userTOChatId]
+    [pathname, userTOChatId, customerId, providerId]
   );
 
   return accountRoutes;

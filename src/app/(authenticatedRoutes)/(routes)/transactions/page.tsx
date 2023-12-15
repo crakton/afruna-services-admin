@@ -33,8 +33,8 @@ const TransactionsPage: FC<pageProps> = ({}) => {
   //       return <OtherTransactionstable />;
   //   }
   // }, [transactionsTab]);
- const transactionApis = new Transactions()
   useEffect(() => {
+    const transactionApis = new Transactions()
     transactionApis.getOtherTransactions()
   }, []);
   const transaction = useSelector((state:RootState) => state.transaction.other_transactions)

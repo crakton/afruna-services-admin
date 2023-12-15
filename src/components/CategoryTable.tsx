@@ -18,11 +18,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { MdDeleteOutline, MdRemoveRedEye } from "react-icons/md";
+import { MdDeleteOutline } from "react-icons/md";
 import Image from "next/image";
 import { imgs } from "@/constants/images";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
-import * as Switch from "@radix-ui/react-switch";
 import { useSelector } from "react-redux";
 import { RootState, store } from "@/redux/store";
 import { IServiceCategory } from "@/interfaces/IService";
@@ -39,7 +38,6 @@ import { useRouter } from "next/navigation";
 import { MdEditSquare } from "react-icons/md";
 
 const CategoryTable = () => {
-  const router = useRouter();
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<IServiceCategory[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -79,12 +77,8 @@ const CategoryTable = () => {
       .finally(() => onClose());
   };
 
-  const handleEditOption = (value: { catId: string; catName: string }) => {
-    store.dispatch(setCatId(value.catId))  
-    store.dispatch(setCatName(value.catName))
-    store.dispatch(setCatIcon([]))
-    router.push('/create_category')
-  };
+  const router = useRouter();
+  
 
   useEffect(() => {
     const updatedDataWithIds = assignUniqueIds(categories);
@@ -108,13 +102,21 @@ const CategoryTable = () => {
         accessorKey: "serviceCategory",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 items-center ml-48">
-            <Image
-              src={imgs.provider2}
-              width={35}
-              height={35}
-              alt="item Image"
-              className="rounded-md w-[35px] h-[35px] object-fill shadow-sm"
-            />
+            <div className=" relative overflow-hidden bg-slate-200 rounded-md w-[35px] h-[35px] flex justify-center items-center">
+              {row.original?.icon ? (
+                <Image
+                  src={
+                    row.original.icon.includes("https://")
+                      ? row.original.icon
+                      : `https://${row.original.icon}`
+                  }
+                  alt="Your image"
+                  fill
+                />
+              ) : (
+                <Image src={imgs.afruna_logo} alt="Your image" fill />
+              )}
+            </div>
             <span className=" text-slate-600 text-xs">{row.original.name}</span>
           </div>
         ),
@@ -122,34 +124,6 @@ const CategoryTable = () => {
           <span className="text-sm text-[#7C7C7C] ml-48">Service Category</span>
         ),
       },
-      // {
-      //   accessorKey: "categorySlug",
-      //   cell: ({ row }) => (
-      //     <span key={row.id} className=" text-slate-500 text-xs ml-3">
-      //       Computer
-      //     </span>
-      //   ),
-      //   header: () => (
-      //     <span className="text-sm text-[#7C7C7C] ml-3">Category Slug</span>
-      //   ),
-      // },
-      // {
-      //   accessorKey: "date",
-      //   cell: ({ row }) => {
-      //     const createdAtDate = new Date(row.original.createdAt);
-      //     const year = createdAtDate.getFullYear();
-      //     const day = createdAtDate.getDate();
-      //     const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
-      //     const month = new Date(year, monthIndex).toLocaleString("en-US", {
-      //       month: "short",
-      //     });
-      //     return (<span className="text-afruna-blue text-xs ml-3">{`${day} ${month}, ${year}`}</span>
-
-      //     );
-      //   },
-      //   header: () => <span className="text-sm text-[#7C7C7C] ml-3">Date</span>,
-      // },
-
       {
         id: "actions",
         cell: ({ row }) => {
@@ -159,11 +133,18 @@ const CategoryTable = () => {
             catId,
             catName,
           };
+          const handleEditOption = (value: { catId: string; catName: string }) => {
+            store.dispatch(setCatId(value.catId));
+            store.dispatch(setCatName(value.catName));
+            store.dispatch(setCatIcon([]));
+            router.push("/create_category");
+          };
           return (
-            <div
-              className="flex justify-start gap-2 items-center ml-6"
-            >
-              <button onClick={() => handleEditOption(value)} className="hover:scale-90 border-none transition duration-300">
+            <div className="flex justify-start gap-2 items-center ml-6">
+              <button
+                onClick={() => handleEditOption(value)}
+                className="hover:scale-90 border-none transition duration-300"
+              >
                 <MdEditSquare size={22} />
               </button>
               <button
@@ -180,7 +161,7 @@ const CategoryTable = () => {
         ),
       },
     ],
-    [data]
+    [router]
   );
 
   const table = useReactTable({
@@ -331,5 +312,8 @@ const ShowModal: FC<{ children: ReactNode; cancelModel: () => void }> = memo(
     >
       {children}
     </div>
-  )
+  ),
 );
+
+ShowModal.displayName = 'ShowModal'
+

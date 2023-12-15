@@ -30,8 +30,6 @@ const PendingServiceTable: FC<ServicesTableProps> = () => {
   const [data, setData] = useState<IService[]>([]);
   const services = useSelector((state: RootState) => state.service.pendingServices);
   const loading = useSelector((state: RootState) => state.loading.loading);
-  const serviceApis = new Service();
-
   useEffect(() => {
     setData(services);
   }, [services]);
@@ -201,6 +199,7 @@ const PendingServiceTable: FC<ServicesTableProps> = () => {
 
           const handleVerificaton = () => {
             if (publish) {
+              const serviceApis = new Service();
               serviceApis
               .verifyService(serviceId)
               .then((data) => console.log(data));
@@ -243,6 +242,7 @@ const PendingServiceTable: FC<ServicesTableProps> = () => {
           const blocked = row.original.blocked;
           const serviceId = row.original?._id;
           const handleBlockService = (serviceId: string) => {
+            const serviceApis = new Service();
             serviceApis
               .blockService(serviceId)
               .then((data) => console.log(data));
@@ -283,7 +283,7 @@ const PendingServiceTable: FC<ServicesTableProps> = () => {
       //   header: () => <span className="text-sm text-[#7C7C7C]">Action</span>,
       // },
     ],
-    [data]
+    []
   );
 
   const table = useReactTable({
@@ -311,7 +311,7 @@ const PendingServiceTable: FC<ServicesTableProps> = () => {
         </div>
       ) : services?.length > 0 ? (
         <table className=" w-screen lg:w-full px-4 relative">
-          <thead className="sticky top-0 bg-white">
+          <thead className="sticky z-20 top-0 bg-white">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

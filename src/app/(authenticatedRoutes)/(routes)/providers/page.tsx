@@ -22,9 +22,9 @@ const ProvidersPage: FC<pageProps> = ({}) => {
 
   if (page === null) page = "1";
 
-  const providerApis = new Provider()
 
   useEffect(() => {
+    const providerApis = new Provider()
     providerApis.getProviders(Number(page))
   }, [page])
 

@@ -37,7 +37,6 @@ const statsDetails = [
 
 const ProviderDetailPage = ({ params: { providerId } }: Params) => {
   const router = useRouter();
-  const providerApis = new Provider();
   const userConversations = useSelector(
     (state: RootState) => state.chat.conversations
   );
@@ -64,13 +63,14 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
   };
 
   useEffect(() => {
+    const providerApis = new Provider();
     providerApis.getProviders();
     providerApis.getProviderServices(providerId);
     providerApis.getProviderBookings(providerId);
 
     getCardInfo(providerId);
 
-    // setDocuments([...providerServices[0]?.insuranceCoverage, ...providerServices[0]?.licenseAndCertification])
+    // setDocuments([providerServices[0]?.insuranceCoverage, providerServices[0]?.licenseAndCertification])
   }, [providerId]);
 
   const providers = useSelector((state: RootState) => state.provider.providers);
@@ -137,13 +137,13 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
               </Button> */}
             </aside>
             <aside className="flex flex-col gap-8 w-full">
-              <div className=" overflow-hidden w-full bg-white  lg:px-6 rounded-xl border shadow-sm border-slate-300">
+              <div className=" overflow-hidden w-full bg-white  lg:px-6 pt-4 pb-8 rounded-xl border shadow-sm border-slate-300">
                 <header className="flex justify-start items-center py-4 ">
                   <h1 className="font-bold text-slate-500 text-sm">
                     Uploaded Document
                   </h1>
                 </header>
-                <DocumentReviewTable />
+                <DocumentReviewTable documents={providerServices[0]} />
               </div>
               <div className="flex flex-wrap gap-5 justify-start items-center">
                 <div className="border text-sm font-semibold text-afruna-blue flex flex-col gap-2 justify-start w-[14.6rem] pt-8 h-[8rem] overflow-hidden  pl-7 border-[#D5D5E6] relative rounded-xl bg-white ">
@@ -263,118 +263,130 @@ const ProviderDetailPage = ({ params: { providerId } }: Params) => {
           </div>
           {/* Booking */}
           <div className="bookings flex flex-col gap-5">
-            {providerServices && providerServices.length > 0 ?
-             providerServices.map((ser) => (
-              <div key={ser._id} className="w-full border p-4 rounded-lg">
-                <div
-                
-                className="flex flex-col items-center sm:flex-row lg:max-w-[80%] w-full gap-6"
-              >
-                <div className="w-fit">
-                  <div className="flex justify-center items-center w-[18rem]  h-[12rem] sm:h-[14rem] ">
-                    <div className="w-full h-full overflow-hidden relative rounded-md">
-                      {ser.photos.length ? (
-                        <Image
-                          src={
-                            ser.photos[0].includes("https://")
-                              ? ser.photos[0]
-                              : `https://${ser.photos[0]}`
-                          }
-                          alt="Your image"
-                          fill
-                        />
-                      ) : (
-                        <Image
-                          src={imgs.fallback_ser_img}
-                          alt="Your image"
-                          fill
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col justify-start gap-4 w-full">
-                  <div className="flex justify-start items-center gap-2">
-                    <span className="lg:max-w-[35%] w-full text-black font-bold">
-                      Service name
-                    </span>
-                    <span className="sm:text-sm flex justify-end lg:justify-start font-bold lg:max-w-[65%] w-full text-afruna-gray">
-                      
-                        {ser.name}
-                    </span>
-                  </div>
-                  <div className="flex justify-start items-center gap-2">
-                    <span className="lg:max-w-[35%] w-full text-black font-bold text-sm">
-                      Status
-                    </span>
-                    <span className="sm:text-sm flex justify-end lg:justify-start text-[0.65rem] lg:max-w-[65%] w-full text-afruna-gray">
-                      <p className="bg-rose-100 text-red-700 px-2 py-1 w-fit ">
-                        {ser.status}
-                      </p>
-                    </span>
-                  </div>
-                  <div className="flex justify-start items-center gap-2">
-                    <span className="text-xs  lg:max-w-[35%] w-full text-black font-bold">
-                      Created on
-                    </span>
-                    <span className="text-xs text-end lg:text-start lg:max-w-[65%] w-full text-slate-800">
-                      January 23, 2023
-                    </span>
-                  </div>
-                  <div className="flex justify-start items-center gap-2">
-                    <span className="text-xs  lg:max-w-[35%] w-full text-black font-bold">
-                      Amount
-                    </span>
-                    <span className="text-xs text-end lg:text-start lg:max-w-[65%] w-full text-slate-800">
-                      #{ser.price}
-                    </span>
-                  </div>
-                  <div className="flex justify-start items-center gap-2">
-                    <span className="text-xs  lg:max-w-[35%] w-full text-black font-bold">
-                      Rating
-                    </span>
-                    {/* <span className="text-xs  text-slate-800">
-                      #{ser.price}
-                    </span> */}
-                    <div className="flex justify-start items-center gap-1 text-[#FF9E3A] text-xs text-end lg:text-start lg:max-w-[65%] w-full">
-                      {Array(5)
-                        .fill("_")
-                        .map((star, index) => (
-                          <div
-                            className={`${
-                              index < ser.ratings
-                                ? "text-[#FF9E3A]"
-                                : "text-slate-500"
-                            }  text-sm md:text-xs cursor-pointer`}
-                            key={index}
-                          >
-                            {index < ser.ratings ? (
-                              index === Math.floor(ser.ratings) &&
-                              ser.ratings % 1 !== 0 ? (
-                                <BsStarHalf />
-                              ) : (
-                                <BsStarFill />
-                              )
+            {providerServices && providerServices.length > 0 ? (
+              providerServices.map((ser) => {
+                const createdAtDate = new Date(ser.createdAt);
+                const year = createdAtDate.getFullYear();
+                const day = createdAtDate.getDate();
+                const monthIndex = createdAtDate.getMonth(); // Months are zero-indexed
+                const month = new Date(year, monthIndex).toLocaleString(
+                  "en-US",
+                  {
+                    month: "short",
+                  }
+                );
+                return (
+                  <div key={ser._id} className="w-full border p-4 rounded-lg">
+                    <div className="flex flex-col items-center sm:flex-row lg:max-w-[80%] w-full gap-6">
+                      <div className="w-fit">
+                        <div className="flex justify-center items-center w-[18rem]  h-[12rem] sm:h-[14rem] ">
+                          <div className="w-full h-full overflow-hidden relative rounded-md">
+                            {ser.photos.length ? (
+                              <Image
+                                src={
+                                  ser.photos[0].includes("https://")
+                                    ? ser.photos[0]
+                                    : `https://${ser.photos[0]}`
+                                }
+                                alt="Your image"
+                                fill
+                              />
                             ) : (
-                              <BsStar />
+                              <Image
+                                src={imgs.fallback_ser_img}
+                                alt="Your image"
+                                fill
+                              />
                             )}
                           </div>
-                        ))}
+                        </div>
+                      </div>
+                      <div className="flex flex-col justify-start gap-4 w-full">
+                        <div className="flex justify-start items-center gap-2">
+                          <span className="lg:max-w-[35%] w-full text-black font-bold">
+                            Service name
+                          </span>
+                          <span className="sm:text-sm flex justify-end lg:justify-start font-bold lg:max-w-[65%] w-full text-afruna-gray">
+                            {ser.name}
+                          </span>
+                        </div>
+                        <div className="flex justify-start items-center gap-2">
+                          <span className="lg:max-w-[35%] w-full text-black font-bold text-sm">
+                            Status
+                          </span>
+                          <span className="sm:text-sm flex justify-end lg:justify-start text-[0.65rem] lg:max-w-[65%] w-full text-afruna-gray">
+                            <p className="bg-rose-100 text-red-700 px-2 py-1 w-fit ">
+                              {ser.status}
+                            </p>
+                          </span>
+                        </div>
+                        <div className="flex justify-start items-center gap-2">
+                          <span className="text-xs  lg:max-w-[35%] w-full text-black font-bold">
+                            Created on
+                          </span>
+                          <span className="text-xs text-end lg:text-start lg:max-w-[65%] w-full text-slate-800">
+                            {`${day} ${month}, ${year}`}
+                          </span>
+                        </div>
+                        <div className="flex justify-start items-center gap-2">
+                          <span className="text-xs  lg:max-w-[35%] w-full text-black font-bold">
+                            Amount
+                          </span>
+                          <span className="text-xs text-end lg:text-start lg:max-w-[65%] w-full text-slate-800">
+                            #{ser.price}
+                          </span>
+                        </div>
+                        <div className="flex justify-start items-center gap-2">
+                          <span className="text-xs  lg:max-w-[35%] w-full text-black font-bold">
+                            Rating
+                          </span>
+                          {/* <span className="text-xs  text-slate-800">
+                      #{ser.price}
+                    </span> */}
+                          <div className="flex justify-start items-center gap-1 text-[#FF9E3A] text-xs text-end lg:text-start lg:max-w-[65%] w-full">
+                            {Array(5)
+                              .fill("_")
+                              .map((star, index) => (
+                                <div
+                                  className={`${
+                                    index < ser.ratings
+                                      ? "text-[#FF9E3A]"
+                                      : "text-slate-500"
+                                  }  text-sm md:text-xs cursor-pointer`}
+                                  key={index}
+                                >
+                                  {index < ser.ratings ? (
+                                    index === Math.floor(ser.ratings) &&
+                                    ser.ratings % 1 !== 0 ? (
+                                      <BsStarHalf />
+                                    ) : (
+                                      <BsStarFill />
+                                    )
+                                  ) : (
+                                    <BsStar />
+                                  )}
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                        <div className="flex justify-start items-center gap-2">
+                          <span className="text-xs lg:max-w-[35%] w-full text-afruna-blue font-bold">
+                            Location
+                          </span>
+                          <span className="text-xs text-end lg:text-start lg:max-w-[65%] w-full text-slate-800">
+                            {ser.state}, {ser.country}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex justify-start items-center gap-2">
-                    <span className="text-xs lg:max-w-[35%] w-full text-afruna-blue font-bold">
-                      Location
-                    </span>
-                    <span className="text-xs text-end lg:text-start lg:max-w-[65%] w-full text-slate-800">
-                      {ser.state}, {ser.country}
-                    </span>
-                  </div>
-                </div>
+                );
+              })
+            ) : (
+              <div className=" h-20 w-full flex justify-center items-center text-center font-bold">
+                Currently, there is no service by this vendor
               </div>
-              </div>
-            )) : <div className=" h-20 w-full flex justify-center items-center text-center font-bold">Currently, there is no service by this vendor</div>
-            }
+            )}
           </div>
         </section>
       </div>

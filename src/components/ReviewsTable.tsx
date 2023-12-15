@@ -188,7 +188,7 @@ const ReviewTable: FC<ReviewsTableProps> = ({ reviews }) => {
         header: () => <span className="text-xs text-[#7C7C7C] ">Comment</span>,
       },
     ],
-    [data]
+    []
   );
 
   const table = useReactTable({

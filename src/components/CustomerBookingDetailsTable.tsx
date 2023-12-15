@@ -204,7 +204,7 @@ const CustomerBookingDetailsTable: FC<CustomerBookingDetailsTableProps> = ({
         header: () => <span className="text-sm text-[#7C7C7C]">Amount</span>,
       },
     ],
-    [data]
+    []
   );
 
   const table = useReactTable({

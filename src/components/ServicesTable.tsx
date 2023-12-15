@@ -33,7 +33,7 @@ const ServicesTable: FC<ServicesTableProps> = ({}) => {
   const [data, setData] = useState<IService[]>([]);
   const services = useSelector((state: RootState) => state.service.services);
   const loading = useSelector((state: RootState) => state.loading.loading);
-  const serviceApis = new Service();
+  
   const { searchResult } = useSearchService({ data: services });
 
   useEffect(() => {
@@ -214,6 +214,7 @@ const ServicesTable: FC<ServicesTableProps> = ({}) => {
           const publish = row.original.publish;
 
           const handleVerificaton = () => {
+            const serviceApis = new Service();
             if (publish) {
               serviceApis
                 .verifyService(serviceId)
@@ -257,6 +258,7 @@ const ServicesTable: FC<ServicesTableProps> = ({}) => {
           const blocked = row.original.blocked;
           const serviceId = row.original?._id;
           const handleBlockService = (serviceId: string) => {
+            const serviceApis = new Service();
             serviceApis
               .blockService(serviceId)
               .then((data) => console.log(data));
@@ -297,7 +299,7 @@ const ServicesTable: FC<ServicesTableProps> = ({}) => {
       //   header: () => <span className="text-sm text-[#7C7C7C]">Action</span>,
       // },
     ],
-    [data]
+    []
   );
 
   const table = useReactTable({

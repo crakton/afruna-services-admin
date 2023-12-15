@@ -1,33 +1,33 @@
-"use client";
+'use client'
 
-import CustomerBookingDetailsTable from "@/components/CustomerBookingDetailsTable";
-import { RootState } from "@/redux/store";
-import Customers from "@/services/customer.service";
+import { RootState } from '@/redux/store';
+import Customers from '@/services/customer.service';
+import {  useEffect, useState } from 'react'
+import { useSelector } from 'react-redux';
+import { LoadingUserDetails } from '../../_components/LoadingUserDetails';
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { LoadingUserDetails } from "../../_components/LoadingUserDetails";
+import CustomerBookingDetailsTable from '@/components/CustomerBookingDetailsTable';
 
 type Params = {
-  params: {
-    customerId: string;
+    params: {
+        customerId: string;
+    };
   };
-};
 
-export default function CustomerPage({ params: { customerId } }: Params) {
-  const loading = useSelector((state: RootState) => state.loading.loading);
+const CustomerDetailPage = ({ params: { customerId } }: Params) => {
+    const loading = useSelector((state: RootState) => state.loading.loading);
   const customerCard = useSelector(
     (state: RootState) => state.customer.customerCard
   );
 
   const [loadingBookings, setLoadingBookings] = useState<boolean>(true);
-  const customersApis = new Customers();
   useEffect(() => {
+    const customersApis = new Customers();
     customersApis.getCustomerBookings(customerId).finally(() => {
       setLoadingBookings(false);
     });
     customersApis.getCustomersCard(customerId);
-  }, []);
+  }, [customerId]);
   const customerBookings = useSelector(
     (state: RootState) => state.customer.customerBookings
   );
@@ -44,12 +44,13 @@ export default function CustomerPage({ params: { customerId } }: Params) {
   const month = new Date(year, monthIndex).toLocaleString("en-US", {
     month: "short",
   });
+  
 
   return (
     <section className="flex flex-col gap-7 ">
       <div className="flex justify-start items-center pl-4 lg:pl-6 bg-white w-full h-16">
         <h1 className="text-xl lg:pl-0  leading-3 text-afruna-blue font-bold">
-          Customers Details
+          Customer Details
         </h1>
       </div>
       {loading ? (
@@ -124,3 +125,5 @@ export default function CustomerPage({ params: { customerId } }: Params) {
     </section>
   );
 }
+
+export default CustomerDetailPage

@@ -221,7 +221,7 @@ const BookingsTable: FC<BookingTableProps> = () => {
       //   header: () => <span className="text-sm text-[#7C7C7C]">Action</span>,
       // },
     ],
-    [data]
+    []
   );
 
   const table = useReactTable({

@@ -30,7 +30,6 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
     []
   );
   const router = useRouter();
-  const authApis = new Auth(router);
 
   const {
     register,
@@ -40,10 +39,11 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
 
   const onSubmit: SubmitHandler<FormData> = useCallback((data) => {
     const validatedData = schema.parse(data);
+    const authApis = new Auth(router);
     authApis
       .logIn(validatedData, { setIsLoading })
       .then((data) => console.log(data));
-  }, []);
+  }, [router]);
   const [rememberMe, setRememberMe] = useState(false);
   const handleRememberMe: ChangeEventHandler<HTMLInputElement> = useCallback(
     (event) => setRememberMe(event.target.checked),
