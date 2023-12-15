@@ -16,11 +16,6 @@ export const CurrentUsersConversations: FC<CurrentUsersConversationsProps> = ({
   isOwn,
   convo,
 }) => {
-  // const usersData = useSelector((state: RootState) => state.chat.users);
-  // const userConvoAvatar = usersData.filter(
-  //   (user) => user?._id === convo?.to?._id
-  // )[0];
-  // const avatar = userConvoAvatar?.avatar;
   const name = `${convo?.from?.firstName} ${convo?.from?.lastName}`;
   const nameSplit = name?.split(" ");
   const firstWord = nameSplit[0];
@@ -49,8 +44,8 @@ export const CurrentUsersConversations: FC<CurrentUsersConversationsProps> = ({
         {isOwn ? (
           <Image src={imgs.afruna_2nd_logo} alt="image" fill />
         ) : convo?.from?.avatar ? (
-          <Image src={convo?.from?.avatar} alt="image" fill />
-        ) : (
+          <Image src={convo?.from?.avatar.includes("https://") ? convo?.from?.avatar : `https://${convo?.from?.avatar}`} alt="image" fill />
+           ) : (
           <div className=" text-[0.68rem] w-full h-full bg-slate-300 flex justify-center items-center">
             {`${firstLetterFirstWord} ${firstLetterSecondWord}`}
           </div>

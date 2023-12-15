@@ -35,8 +35,8 @@ const GallarySetup: FC<GallarySetupProps> = ({ mediaSrc, formData, handleChange 
                         </div>
 
                         {mediaSrc && <div className="img-preview">
-                            {mediaSrc.map((src: any) => (
-                                <Image className="rounded-[4px]" src={src} alt="" width={105} height={72} />
+                            {mediaSrc.map((src: any, index) => (
+                                <Image key={index} className="rounded-[4px]" src={src} alt="" width={105} height={72} />
                             ))}
                         </div>}
                     </form>

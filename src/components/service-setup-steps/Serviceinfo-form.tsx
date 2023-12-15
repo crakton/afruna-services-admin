@@ -41,7 +41,7 @@ const ServiceInfoForm: FC<ServiceInfoFormProps> = ({ formData, handleChange, han
                                     <SelectContent className="focus:outline-none text-sm border-[#FFDBB6] rounded-[6px]">
                                         <SelectGroup>
                                             {cats?.map(cat => (
-                                                <SelectItem value={cat._id}>{ cat.name }</SelectItem>
+                                                <SelectItem key={cat._id} value={cat._id}>{ cat.name }</SelectItem>
                                             ))}
                                         </SelectGroup>
                                     </SelectContent>
@@ -56,7 +56,7 @@ const ServiceInfoForm: FC<ServiceInfoFormProps> = ({ formData, handleChange, han
                                     <SelectContent className="focus:outline-none text-sm border-[#FFDBB6] rounded-[6px]">
                                         <SelectGroup>
                                             {subCats?.map(subCat => (
-                                                <SelectItem value={subCat._id}>{ subCat.name }</SelectItem>
+                                                <SelectItem key={subCat._id} value={subCat._id}>{ subCat.name }</SelectItem>
                                             ))}
                                         </SelectGroup>
                                     </SelectContent>

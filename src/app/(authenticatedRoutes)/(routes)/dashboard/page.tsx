@@ -108,8 +108,8 @@ const DashboardPage: FC<pageProps> = ({}) => {
   const [loadingTopProviders, setLoadingTopProviders] = useState<boolean>(true);
   const [loadingRecentBookings, setLoadingRecentBookings] =
     useState<boolean>(true);
-  const dashboardApis = new Dashboard();
   useEffect(() => {
+    const dashboardApis = new Dashboard();
     dashboardApis.getDashboardCards();
     dashboardApis.getBookingsSummary().finally(() => setLoadingSummary(false));
     dashboardApis.getDashboardStats().finally(() => setLoadingStats(false));

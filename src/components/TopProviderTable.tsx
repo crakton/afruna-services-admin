@@ -123,7 +123,7 @@ const TopProviderTable: FC<TopProviderTableProps> = ({ topProviders }) => {
         header: () => <span className="text-sm text-[#7C7C7C]">Reg date</span>,
       },
     ],
-    [data]
+    []
   );
 
   const table = useReactTable({

@@ -63,7 +63,7 @@ const CustomersTable: FC<CustomersTableProps> = ({ searchCustomerResult }) => {
         accessorKey: "customerName",
         cell: ({ row }) => (
           <div key={row.id} className="flex gap-2 ml-8 items-center ">
-            <div className=" overflow-hidden rounded-full flex justify-center items-center">
+            <div className="overflow-hidden rounded-full w-[35px] h-[35px] flex justify-center items-center">
               {row.original.avatar ? (
                 <Image
                   src={
@@ -199,7 +199,7 @@ const CustomersTable: FC<CustomersTableProps> = ({ searchCustomerResult }) => {
             <div className="flex justify-start gap-1 items-center">
               <Link
                 // onClick={() => }
-                href={`/users/${userId}`}
+                href={`/customers/${userId}`}
                 className="hover:scale-90 border-none transition duration-300"
               >
                 <MdRemoveRedEye size={24} />
@@ -219,7 +219,7 @@ const CustomersTable: FC<CustomersTableProps> = ({ searchCustomerResult }) => {
         header: () => <span className="text-sm text-[#7C7C7C]">Action</span>,
       },
     ],
-    [data]
+    []
   );
 
   const table = useReactTable({

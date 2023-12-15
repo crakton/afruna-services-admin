@@ -31,7 +31,7 @@ export default function useSearchUsers<T extends IUserBio>({
       );
     });
 	return filtered
-  }, [searchInput, data, sortingType]);
+  }, [searchInput, data]);
   const filteredData = filteredUsers
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function useSearchUsers<T extends IUserBio>({
 	} else {
 		setSearchResult(filteredData);
 	}
-  }, [filteredUsers, sortingType]);
+  }, [filteredUsers, sortingType, filteredData]);
 
   return {
     searchInput,

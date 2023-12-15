@@ -53,9 +53,9 @@ const Page: FC<pageProps> = ({}) => {
   );
   let services = useSelector((state: RootState) => state.service.services);
 
-  const serviceApis = new Service();
 
   const handleTabSelect = (status: tableStatus) => {
+    const serviceApis = new Service();
     switch (status) {
       case "all":
         store.dispatch(setStatus("all"));
@@ -127,15 +127,16 @@ const Page: FC<pageProps> = ({}) => {
       default:
         return <ServicesTable data={searchResult} />;
     }
-  }, [currentStatus, searchInput]);
+  }, [currentStatus,searchResult]);
 
   useEffect(() => {
+    const serviceApis = new Service();
     serviceApis.getServices(Number(page));
 
     return () => {
       store.dispatch(setStatus("all"));
     };
-  }, []);
+  }, [ page]);
 
   return (
     <section className="flex flex-col gap-7 pb-12">

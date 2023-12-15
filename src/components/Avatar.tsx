@@ -3,7 +3,7 @@ import Image, { StaticImageData } from "next/image";
 import { FC } from "react";
 
 interface AvatarProps {
-  img: string | StaticImageData;
+  img: string;
   active?: boolean;
   isOwn?: boolean;
   convo?: boolean;
@@ -27,7 +27,11 @@ export const Avatar: FC<AvatarProps> = ({
         }`}
       >
         {img ? (
-          <Image src={img || imgs.provider1} alt="image" fill />
+          <Image
+            src={img.includes("https://") ? img : `https://${img}`}
+            alt="image"
+            fill
+          />
         ) : (
           <div className=" w-full h-full text-sm bg-slate-300 flex justify-center items-center">
             {name}

@@ -28,16 +28,15 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
   const cat_name = useSelector((state: RootState) => state.service.catName);
   const cat_icon = useSelector((state: RootState) => state.service.catIcon);
   const loading = useSelector((state: RootState) => state.loading.loading);
-  const [categoryForm, setCategoryForm] = useState<T_Cate_Form>({
-    name: cat_id === "" ? "" : cat_name,
-    icon: cat_id === "" ? [] : cat_icon,
-  });
+  const [catgyName, setCatgyName] = useState<string>(
+    cat_id === "" ? "" : cat_name
+  );
   const [files, setFiles] = useState<ExtFile[]>(cat_id === "" ? [] : cat_icon);
 
   const serviceApis = new Service();
   const router = useRouter();
 
-  const updateFiles = useCallback((incommingFiles: ExtFile[]) => {
+  const updateFiles = (incommingFiles: ExtFile[]) => {
     if (incommingFiles.length <= 1) {
       setFiles(
         incommingFiles.filter((file) => {
@@ -49,11 +48,10 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
           }
         })
       );
-      setCategoryForm({ ...categoryForm, icon: files });
     } else {
       toast.warn("Maximum files reached!");
     }
-  }, []);
+  };
   const removeFile = useCallback(
     (id: string | number | undefined) => {
       setFiles(files.filter((x: ExtFile) => x.id !== id));
@@ -62,17 +60,19 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
   );
 
   useEffect(() => {
-    console.log(categoryForm);
-  }, [categoryForm.name, categoryForm.icon]);
+    console.log(files);
+    console.log(catgyName);
+    [catgyName, files];
+  });
 
-  const handleChange = (e: any) => {
+  const handleChangeCatName = (e: any) => {
     const { name, value } = e.target;
-    setCategoryForm({ ...categoryForm, [name]: value });
+    setCatgyName(value);
   };
 
   const submitCategory = (e: any) => {
     e.preventDefault();
-    if (categoryForm.name == "") {
+    if (catgyName == "") {
       toast.error("Category name must be provided");
       return;
     }
@@ -81,15 +81,18 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
         toast.warn("Please select image");
         return;
       }
+    } else {
+      if (!files?.length) {
+        toast.warn("Please select image");
+        return;
+      }
     }
 
     const formData = new FormData();
-    formData.append("name", categoryForm.name);
+    formData.append("name", catgyName);
     for (let i = 0; i < files.length; i++) {
       formData.append("icon", files[i].file as Blob);
     }
-    // console.log(formData);
-    console.log(categoryForm);
 
     if (cat_id === "") {
       serviceApis
@@ -99,7 +102,7 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
           toast.success("Category created");
         })
         .finally(() => {
-          setCategoryForm({ ...categoryForm, [categoryForm.name]: "" });
+          setCatgyName("");
           router.push("/category");
         });
     } else {
@@ -123,7 +126,7 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
     store.dispatch(setCatName(""));
     store.dispatch(setCatIcon([]));
     router.push("/category");
-  }
+  };
 
   return (
     <section className="flex flex-col gap-6 pb-12 ">
@@ -151,8 +154,8 @@ const CreateCategoryPage: FC<pageProps> = ({}) => {
               <input
                 name="name"
                 type="text"
-                onChange={handleChange}
-                value={categoryForm.name}
+                onChange={handleChangeCatName}
+                value={catgyName}
                 placeholder="Enter Category Name"
                 autoComplete={"category_name"}
                 className={`form-input w-full border-[2px] px-3 py-2.5 focus-within:border-[2px] focus-within:border-[#FFDBB6] 

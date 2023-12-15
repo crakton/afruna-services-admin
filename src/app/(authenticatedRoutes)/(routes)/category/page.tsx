@@ -16,7 +16,6 @@ import Pagination from "../_components/Pagination";
 interface pageProps {}
 
 const Category: FC<pageProps> = () => {
-  const serviceApis = new Service();
   const totalPages = useSelector((state: RootState) => state.util.totalPages);
 
   const searchParams = useSearchParams();
@@ -26,6 +25,7 @@ const Category: FC<pageProps> = () => {
   if (page === null) page = "1";
 
   useEffect(() => {
+    const serviceApis = new Service();
     serviceApis.getCategories(Number(page));
   }, [page]);
   return (

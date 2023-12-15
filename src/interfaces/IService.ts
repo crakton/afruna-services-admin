@@ -43,6 +43,7 @@ export interface IServiceCategory {
   customId: string;
   featured: boolean;
   children: IServiceSubCategory;
+  icon : string
 }
 
 export interface IServiceSubCategory {

@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 interface CurrentUserHeaderProps {
   active: boolean;
   name: string;
-  img: string | StaticImageData;
+  img: string
 }
 
 export const CurrentUserHeader: FC<CurrentUserHeaderProps> = ({

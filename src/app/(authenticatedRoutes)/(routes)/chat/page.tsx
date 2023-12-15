@@ -4,22 +4,17 @@ import {
   FC,
   ReactNode,
   memo,
-  useCallback,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { UsersList } from "@/components/UsersList";
 import EmptyState from "@/components/EmptyState";
-import { BiSolidMessageSquareDetail } from "react-icons/bi";
-import { MdMessage } from "react-icons/md";
-import { FaTimes } from "react-icons/fa";
 import { Avatar } from "@/components/Avatar";
 import ChatService from "@/services/chat.service";
 import { useSelector } from "react-redux";
 import { RootState, store } from "@/redux/store";
-import { IConversation, IUserBio } from "@/types/user";
+import { IUserBio } from "@/types/user";
 import { setConversations } from "@/redux/features/app/chat_slice";
 import { LuMessageSquarePlus } from "react-icons/lu";
 import { toast } from "react-toastify";
@@ -27,8 +22,6 @@ import { IoRemoveOutline } from "react-icons/io5";
 import { LoadingUser } from "../_components/LoadingUser";
 import useSearchUsers from "@/hooks/useSearchUsers";
 import useSearchConvo from "@/hooks/useSearchConvo";
-import ItemPicker from "@/components/ItemPicker";
-
 interface pageProps {}
 
 const ChatPage: FC<pageProps> = ({}) => {
@@ -292,3 +285,5 @@ const ShowModal: FC<{ children: ReactNode; cancelModel: () => void }> = memo(
     </div>
   )
 );
+
+ShowModal.displayName = 'ShowModal'

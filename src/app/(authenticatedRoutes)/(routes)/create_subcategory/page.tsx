@@ -69,7 +69,7 @@ const CreateSubCategoryPage: FC<pageProps> = ({}) => {
               <select className="w-full border-[2px] px-3 py-2.5 focus-within:border-[2px] focus-within:border-[#FFDBB6] 
               focus-within:shadow-md text-sm font-medium rounded-md placeholder:text-gray-400 
               focus-visible:shadow-md transition duration-300 sm:text-[0.8rem] sm:leading-6" name="parent" onChange={handleChange}>
-                {categories.map((cat) => <option value={cat._id}>{ cat.name }</option>)}
+                {categories.map((cat) => <option key={cat._id} value={cat._id}>{ cat.name }</option>)}
               </select>
             </div>
           </fieldset>
